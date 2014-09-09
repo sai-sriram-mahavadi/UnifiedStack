@@ -1,8 +1,23 @@
+#   Copyright 2014 Aman Sinha
+#   Copyright 2014 Venkata Sai Sriram Mahavadi
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 # FI_Port_setup.py:
 # Configures server ports and uplink ports.
 # Values are hardcoded for the purpose of simplicity as of now.
 
-from UcsSdk import *
+import UcsSdk
 
 class FIConfigurator:
 
@@ -51,11 +66,8 @@ class FIConfigurator:
                                 FabricEthLanEp.PORT_ID: "20"})
         handle.CompleteTransaction()
 
-"""
-USAGE:
-`````
 fi_conf = FIConfigurator()
 fi_conf.login_fi()
 fi_conf.configure_server_port()
 fi_conf.configure_uplink_port()
-"""
+

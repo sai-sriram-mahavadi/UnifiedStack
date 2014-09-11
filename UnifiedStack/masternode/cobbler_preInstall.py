@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/bin/sh
-# exec /share/vim/vim74/vim "$@"
+#!/bin/python
+
 
 # This File prepares system for cobbler installation.
 from general_utils import shell_command, bcolors

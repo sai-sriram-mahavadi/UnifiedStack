@@ -17,6 +17,7 @@
 
 # This File prepares system for cobbler installation.
 from general_utils import shell_command, bcolors
+import os
 
 
 def enable_repos():
@@ -43,18 +44,17 @@ def enable_repos():
     print bcolors.OKGREEN + "Please check if rhel-7-server-openstack-5.0-rpms \
           and home_libertas-ict_cobbler26 is ENABLED. If not enable them by own"
 
-import os
-
 
 def disable_SELinux():
     #disable SELinux and reboot
     shell_command(
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
-    shell_command("yum -y update && reboot")
+    shell_command("yum -y update")
     #Write the path of cobbler_setup.py in rc.local
     file = open("/etc/rc.local", "a")
     file.write("python " + os.getcwd() + '/cobbler_setup.py')
     file.close()
+    shell_command("reboot")
 
 
 if __name__ == "__main__":

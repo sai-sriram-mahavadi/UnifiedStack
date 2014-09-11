@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-#!/bin/sh
+#!/bin/python
 
 # This File sets up the cobbler node.
 from general_utils import shell_command, bcolors
@@ -31,7 +31,7 @@ def cobbler_setup():
         "yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot iptables.service")
     # setup cobbler
     shell_command(
-        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$XEPOyhlw$sA3j8uZahdK5yngAulKLh0\"/' /etc/cobbler/settings")
+        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
     shell_command(
         "sed -i 's/^manage_dhcp:.*/manage_dhcp: 1/' /etc/cobbler/settings")
     shell_command(
@@ -103,11 +103,11 @@ def enable_services():
     shell_command("/sbin/iptables-save > /etc/sysconfig/iptables")
 
 
-import cobbler.api as capi
 
 
 def sync():
     shell_command("cobbler get-loaders")
+    import cobbler.api as capi
     handle = capi.BootAPI()
     handle.check()
     handle.sync()

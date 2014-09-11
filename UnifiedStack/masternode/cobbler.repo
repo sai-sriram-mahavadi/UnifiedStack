@@ -1,0 +1,7 @@
+[home_libertas-ict_cobbler26]
+name=Cobbler (2.6.x) (RedHat_RHEL-7)
+type=rpm-mtd
+baseurl=http://download.opensuse.org/repositories/home:/libertas-ict:/cobbler26/RedHat_RHEL-7/
+gpgcheck=1
+gpgkey=http://download.opensuse.org/repositories/home:/libertas-ict:/cobbler26/RedHat_RHEL-7/repodata/repomd.xml.key
+enabled=1

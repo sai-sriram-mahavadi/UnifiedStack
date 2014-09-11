@@ -19,7 +19,7 @@
 
 import UcsSdk
 
-class FIConfigurator:
+class FIPortConfigurator:
 
     # Login to FI
     # will take params ip_address, username, password

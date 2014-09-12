@@ -21,9 +21,6 @@ import os
 
 
 def enable_repos():
-    # subscription
-    print bcolors.OKGREEN + "Register to REDHAT subscription manager\n"\
-        + "Enter your credentials when asked"
     #Enabling the XML repos database of linux for installing
     file1 = open("./cobbler.repo")
     file2 = open('/etc/yum.repos.d/cobbler.repo', 'w')

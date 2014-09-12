@@ -54,7 +54,6 @@ def split_into_words(var):
 	partitioned_list=var.partition(' ')
 	left_part=partitioned_list[0]
 	right_part=partitioned_list[2]
-	words_list.append(left_part)
     words_list.append(left_part)
     return words_list
     

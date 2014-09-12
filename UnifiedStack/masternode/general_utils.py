@@ -28,6 +28,9 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
+def exec_sed(fully_qualified_command):
+    print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
+    subprocess.call(fully_qualified_command,shell=True)
 
 def shell_command(command_title, command_args):
     subprocess.call()
@@ -52,7 +55,8 @@ def split_into_words(var):
 	left_part=partitioned_list[0]
 	right_part=partitioned_list[2]
 	words_list.append(left_part)
-	return words_list
+    words_list.append(left_part)
+    return words_list
     
 def is_basestring(var):
     if isinstance(var,basestring):

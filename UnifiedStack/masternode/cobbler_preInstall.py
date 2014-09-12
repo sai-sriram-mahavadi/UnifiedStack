@@ -16,7 +16,7 @@
 
 
 # This File prepares system for cobbler installation.
-from general_utils import shell_command, bcolors
+from general_utils import shell_command, bcolors,exec_sed
 import os
 
 
@@ -24,8 +24,6 @@ def enable_repos():
     # subscription
     print bcolors.OKGREEN + "Register to REDHAT subscription manager\n"\
         + "Enter your credentials when asked"
-    shell_command("subscription-manager register")
-    shell_command("subscription-manager subscribe --auto")
     #Enabling the XML repos database of linux for installing
     file1 = open("./cobbler.repo")
     file2 = open('/etc/yum.repos.d/cobbler.repo', 'w')
@@ -47,9 +45,9 @@ def enable_repos():
 
 def disable_SELinux():
     #disable SELinux and reboot
-    shell_command(
+    exec_sed(
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
-    shell_command("yum -y update")
+    shell_command("yum update -y")
     #Write the path of cobbler_setup.py in rc.local
     file = open("/etc/rc.local", "a")
     file.write("python " + os.getcwd() + '/cobbler_setup.py')
@@ -58,5 +56,5 @@ def disable_SELinux():
 
 
 if __name__ == "__main__":
-    enable_repos()
+    #enable_repos()
     disable_SELinux()

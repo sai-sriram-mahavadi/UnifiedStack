@@ -16,7 +16,7 @@
 #!/bin/python
 
 # This File sets up the cobbler node.
-from general_utils import shell_command, bcolors
+from general_utils import shell_command, bcolors,exec_sed
 
 # configurable parameters. These should go in conf file
 server = "10.0.2.15"
@@ -27,47 +27,47 @@ DNS = "10.0.2.0"
 
 
 def cobbler_setup():
-    shell_command(
+    exec_sed(
         "yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot iptables.service")
     # setup cobbler
-    shell_command(
+    exec_sed(
         "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
-    shell_command(
+    exec_sed(
         "sed -i 's/^manage_dhcp:.*/manage_dhcp: 1/' /etc/cobbler/settings")
-    shell_command(
+    exec_sed(
         "sed -i 's/^manage_dns:.*/manage_dns: 1/' /etc/cobbler/settings")
-    shell_command(
+    exec_sed(
         "sed -i 's/^server:.*/server: " + server + "/' /etc/cobbler/settings")
-    shell_command(
+    exec_sed(
         "sed -i 's/^next_server:.*/next_server: " +
         next_server +
         "/' /etc/cobbler/settings")
-    shell_command(
+    exec_sed(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
 
-    shell_command(
+    exec_sed(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
 
     print "\n" + bcolors.OKGREEN + "Please provide the password for Cobbler WEB"
-    shell_command(
+    exec_sed(
         "htdigest /etc/cobbler/users.digest \"Cobbler\" cobbler")
-
+    
     # Setup DHCP template
-    shell_command(
+    exec_sed(
         "sed -i 's/^subnet 192.168.1.0/subnet " +
         subnet +
         "/' /etc/cobbler/dhcp.template")
-    shell_command(
+    exec_sed(
         "sed -i 's/option routers.*/option routers " +
         option_router +
         ";/' /etc/cobbler/dhcp.template")
-    shell_command(
+    exec_sed(
         "sed -i 's/domain-name-servers.*/domain-name-servers " +
         DNS +
         ";/' /etc/cobbler/dhcp.template")
-    shell_command(
+    exec_sed(
         "sed -i 's/range dynamic-bootp.*/deny unknown-clients;/' /etc/cobbler/dhcp.template")
-    shell_command(
+    exec_sed(
         "sed -i '/^subnet/i include \"/etc/dhcp/dhcpd.CIMC.conf\";' /etc/cobbler/dhcp.template")
 
     # Add CIMC addresses to DHCP
@@ -84,7 +84,7 @@ def enable_services():
     shell_command("systemctl start httpd.service")
     shell_command("systemctl enable httpd.service")
     shell_command("systemctl status httpd.service")
-
+    """
     # Restart xinetd
     shell_command("systemctl restart xinetd.service")
 
@@ -93,11 +93,11 @@ def enable_services():
         "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 80 -j ACCEPT")
     shell_command(
         "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT")
-
+ 
     # Restart iptables
     shell_command("systemctl restart xinetd.service")
     shell_command("systemctl status xinetd.service")
-
+    """
     # Open up Firewall
     shell_command("/sbin/iptables -F")
     shell_command("/sbin/iptables-save > /etc/sysconfig/iptables")
@@ -132,7 +132,7 @@ def setup_Install_Server():
 
 import inspect
 if __name__ == "__main__":
-    cobbler_setup()
+    #cobbler_setup()
     enable_services()
     sync()
     setup_Install_Server()
@@ -145,5 +145,5 @@ if __name__ == "__main__":
                 inspect.currentframe()) not in line:
             file.write(line)
     file.close()
-                                      
+                       
 

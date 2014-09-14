@@ -53,5 +53,5 @@ def disable_SELinux():
 
 
 if __name__ == "__main__":
-    #enable_repos()
+    enable_repos()
     disable_SELinux()

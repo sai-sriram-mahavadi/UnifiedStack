@@ -28,7 +28,7 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
-def exec_sed(fully_qualified_command):
+def shell_command_true(fully_qualified_command):
     print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
     subprocess.call(fully_qualified_command,shell=True)
 

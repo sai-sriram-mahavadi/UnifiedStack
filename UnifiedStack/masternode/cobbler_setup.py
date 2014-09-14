@@ -16,61 +16,63 @@
 #!/bin/python
 
 # This File sets up the cobbler node.
-from general_utils import shell_command, bcolors,exec_sed
+from general_utils import shell_command, bcolors,shell_command_true
 
 # configurable parameters. These should go in conf file
 server = "10.0.2.15"
 next_server = "10.0.2.15"
 subnet = "10.0.2.0"
 option_router = "10.0.2.254"
-DNS = "10.0.2.0"
+DNS = "10.0.2.15"
 
 
 def cobbler_setup():
-    exec_sed(
-        "yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot iptables.service")
+    shell_command_true(
+        "yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot iptables-services")
     # setup cobbler
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^manage_dhcp:.*/manage_dhcp: 1/' /etc/cobbler/settings")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^manage_dns:.*/manage_dns: 1/' /etc/cobbler/settings")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^server:.*/server: " + server + "/' /etc/cobbler/settings")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^next_server:.*/next_server: " +
         next_server +
         "/' /etc/cobbler/settings")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
 
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
 
     print "\n" + bcolors.OKGREEN + "Please provide the password for Cobbler WEB"
-    exec_sed(
+    shell_command_true(
         "htdigest /etc/cobbler/users.digest \"Cobbler\" cobbler")
     
     # Setup DHCP template
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^subnet 192.168.1.0/subnet " +
         subnet +
         "/' /etc/cobbler/dhcp.template")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/option routers.*/option routers " +
         option_router +
         ";/' /etc/cobbler/dhcp.template")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/domain-name-servers.*/domain-name-servers " +
         DNS +
         ";/' /etc/cobbler/dhcp.template")
-    exec_sed(
+    shell_command_true(
         "sed -i 's/range dynamic-bootp.*/deny unknown-clients;/' /etc/cobbler/dhcp.template")
-    exec_sed(
+    shell_command("touch /etc/dhcp/dhcpd.CIMC.conf")
+    shell_command_true(
         "sed -i '/^subnet/i include \"/etc/dhcp/dhcpd.CIMC.conf\";' /etc/cobbler/dhcp.template")
 
     # Add CIMC addresses to DHCP
+    shell_command("touch /tmp/dhcpd.CIMC.conf")
     shell_command("cp /tmp/dhcpd.CIMC.conf /etc/dhcp/")
 
 
@@ -84,24 +86,28 @@ def enable_services():
     shell_command("systemctl start httpd.service")
     shell_command("systemctl enable httpd.service")
     shell_command("systemctl status httpd.service")
-    """
+    
     # Restart xinetd
     shell_command("systemctl restart xinetd.service")
+
+    shell_command("systemctl start iptables.service")
 
     # Allow traffic on ports 80 and 443
     shell_command(
         "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 80 -j ACCEPT")
     shell_command(
         "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT")
+    shell_command("systemctl restart iptables.service") 
  
-    # Restart iptables
-    shell_command("systemctl restart xinetd.service")
-    shell_command("systemctl status xinetd.service")
-    """
-    # Open up Firewall
-    shell_command("/sbin/iptables -F")
-    shell_command("/sbin/iptables-save > /etc/sysconfig/iptables")
-
+	    
+    #Open up Firewall
+    shell_command_true("/sbin/iptables -F")
+    shell_command_true("/sbin/iptables-save > /etc/sysconfig/iptables")
+    
+    #start dhcpd
+    shell_command("systemctl start dhcpd.service")
+    shell_command("systemctl enable dhcpd.service")
+    shell_command("systemctl status dhcpd.service")
 
 
 
@@ -112,7 +118,7 @@ def sync():
     handle.check()
     handle.sync()
     print "Sync Successful"
-
+    
 def setup_Install_Server():
     # Assuming the RHEL dvd.iso is already downloaded in the /root directory
     # So the lines below has been commented
@@ -132,9 +138,10 @@ def setup_Install_Server():
 
 import inspect
 if __name__ == "__main__":
-    #cobbler_setup()
+    cobbler_setup()
     enable_services()
-    sync()
+    sync()    
+    
     setup_Install_Server()
     file = open("/etc/rc.local", "r")
     lines = file.readlines()
@@ -145,5 +152,5 @@ if __name__ == "__main__":
                 inspect.currentframe()) not in line:
             file.write(line)
     file.close()
-                       
+                
 

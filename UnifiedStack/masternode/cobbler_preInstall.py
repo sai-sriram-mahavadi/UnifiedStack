@@ -16,7 +16,7 @@
 
 
 # This File prepares system for cobbler installation.
-from general_utils import shell_command, bcolors,exec_sed
+from general_utils import shell_command, bcolors,shell_command_true
 import os
 
 
@@ -42,7 +42,7 @@ def enable_repos():
 
 def disable_SELinux():
     #disable SELinux and reboot
-    exec_sed(
+    shell_command_true(
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
     shell_command("yum update -y")
     #Write the path of cobbler_setup.py in rc.local

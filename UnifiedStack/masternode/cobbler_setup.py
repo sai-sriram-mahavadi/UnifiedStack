@@ -19,16 +19,20 @@
 from general_utils import shell_command, bcolors,shell_command_true
 
 # configurable parameters. These should go in conf file
-server = "10.0.2.15"
-next_server = "10.0.2.15"
-subnet = "10.0.2.0"
-option_router = "10.0.2.254"
-DNS = "10.0.2.15"
+interface="enp0s8"
+ipaddress="192.168.133.4"
+netmask="255.255.255.0"
+server = ipaddress
+next_server = ipaddress
+subnet = "192.168.133.0"
+option_router = "192.168.133.254"
+DNS = ipaddress
 
 
 def cobbler_setup():
     shell_command_true(
-        "yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot iptables-services")
+        "/usr/bin/yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd")
+    shell_command_true("ifconfig " + interface + " " + ipaddress + " netmask " + netmask)
     # setup cobbler
     shell_command_true(
         "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
@@ -89,16 +93,8 @@ def enable_services():
     
     # Restart xinetd
     shell_command("systemctl restart xinetd.service")
-
-    shell_command("systemctl start iptables.service")
-
-    # Allow traffic on ports 80 and 443
-    shell_command(
-        "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 80 -j ACCEPT")
-    shell_command(
-        "/sbin/iptables -A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT")
-    shell_command("systemctl restart iptables.service") 
- 
+    shell_command("iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT")
+    shell_command("iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT")
 	    
     #Open up Firewall
     shell_command_true("/sbin/iptables -F")
@@ -117,32 +113,13 @@ def sync():
     handle = capi.BootAPI()
     handle.check()
     handle.sync()
-    print "Sync Successful"
     
-def setup_Install_Server():
-    # Assuming the RHEL dvd.iso is already downloaded in the /root directory
-    # So the lines below has been commented
-    # shell_command("wget https://access.cdn.redhat.com/content/origin/files\
-    #       /sha256/85/85a9fedc2bf0fc825cc7817056aa00b3ea87d7e111e0cf8de77d3ba643f8646c/\
-    #        rhel-server-7.0-x86_64-dvd.iso?_auth_=1406320140_25139854a8d910baebec0c004b2\
-    #        a4ad9 -O /root/rhel-server-7.0-x86_64-dvd.iso")
-
-    #import RHEL
-    shell_command(
-        "mount -t iso9660 -o loop,ro /root/rhel-server-7.0-x86_64-dvd.iso /mnt")
-    shell_command("cobbler import --name=RHEL7 --arch=x86_64 --path=/mnt")
-    shell_command("umount /mnt")
-    #shell_command("rm /root/rhel-server-7.0-x86_64-dvd.iso")
-    shell_command(
-        "sed -i '/^\%packages/a wget' /var/lib/cobbler/kickstarts/sample_end.ks")
 
 import inspect
 if __name__ == "__main__":
     cobbler_setup()
     enable_services()
-    sync()    
-    
-    setup_Install_Server()
+    sync()        
     file = open("/etc/rc.local", "r")
     lines = file.readlines()
     file.close()
@@ -152,5 +129,13 @@ if __name__ == "__main__":
                 inspect.currentframe()) not in line:
             file.write(line)
     file.close()
-                
+    file=open("rhel7-osp5.ks","r")
+    lines = file.readlines()
+    file.close()
+    file = open("/var/lib/cobbler/kickstarts/rhel7-osp5.ks", "w")
+    for line in lines:
+        file.write(line)
+    file.close()
+
+               
 

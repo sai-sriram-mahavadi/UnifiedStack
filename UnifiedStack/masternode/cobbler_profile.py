@@ -38,6 +38,7 @@ class New_profile():
         self.name = name
         # list of owners delimited by commas
         self.owners = owners
+        #The distro to be used with this profile
         self.distro = distro
         self.enable_pxe_menu = enable_pxe_menu
         # full path of the kickstart
@@ -154,7 +155,7 @@ class New_profile():
             cobbler_profile.set_virt_type(virt_type)
             cobbler_profile.set_virt_bridge(virt_bridge)
             cobbler_profile.set_virt_disk_driver(virt_disk_driver_type)
-            # save the p profile
+            # save the profile
             cobbler_api_handle.add_profile(cobbler_profile)
         except Exception as e:
             print str(e)
@@ -189,7 +190,7 @@ class Profile_operate():
         except Exception as e:
             print str(e)
             return False
-        return False
+        return True
 
     def rename_profile(self, old_profile_name, new_profile_name):
         cobbler_api_handle = cobapi.BootAPI()
@@ -287,6 +288,8 @@ class Profile_operate():
         return True
 
 if __name__ == "__main__":
+    """Refer this section for usage."""
+
     ref = Profile_operate()
     ref.delete_profile("profile1")
     """

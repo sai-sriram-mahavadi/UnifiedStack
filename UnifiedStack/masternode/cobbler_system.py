@@ -46,13 +46,23 @@ class New_system():
         self.name = name
         # list of owners delimited by commas
         self.owners = owners
+        #name of the profile to associate 
         self.profile = profile
+        #It should be either--production, testing
+        #acceptance or development
         self.status=status
+        #Set true if netboot needs to be enabled
         self.netboot_enabled = netboot_enabled
+        #hostname of the system
         self.hostname = hostname
+        #Interface which will be used for PXE boot
+        #by the system which is going to network boot
         self.interface = interface
+        #mac address of the above interface
         self.mac_addr = mac_addr
+        #ip address of this interface
         self.ipaddr = ipaddr
+        #Below parameters are less used.
         self.virt_bridge = virt_bridge
         self.power_management_type = power_management_type
         self.power_management_addr = power_management_addr

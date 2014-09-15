@@ -17,22 +17,23 @@
 
 # This File sets up the cobbler node.
 from general_utils import shell_command, bcolors,shell_command_true
+import inspect
 
 # configurable parameters. These should go in conf file
-interface="enp0s8"
-ipaddress="192.168.133.4"
-netmask="255.255.255.0"
-server = ipaddress
-next_server = ipaddress
-subnet = "192.168.133.0"
-option_router = "192.168.133.254"
-DNS = ipaddress
+cobbler_interface="enp0s8"
+cobbler_ipaddress="192.168.133.4"
+cobbler_netmask="255.255.255.0"
+cobbler_server = cobbler_ipaddress
+cobbler_next_server = cobbler_ipaddress
+cobbler_subnet = "192.168.133.0"
+cobbler_option_router = "192.168.133.254"
+cobbler_DNS = cobbler_ipaddress
 
 
 def cobbler_setup():
     shell_command_true(
         "/usr/bin/yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd")
-    shell_command_true("ifconfig " + interface + " " + ipaddress + " netmask " + netmask)
+    shell_command_true("ifconfig " + cobbler_interface + " " + cobbler_ipaddress + " netmask " + cobbler_netmask)
     # setup cobbler
     shell_command_true(
         "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
@@ -41,10 +42,10 @@ def cobbler_setup():
     shell_command_true(
         "sed -i 's/^manage_dns:.*/manage_dns: 1/' /etc/cobbler/settings")
     shell_command_true(
-        "sed -i 's/^server:.*/server: " + server + "/' /etc/cobbler/settings")
+        "sed -i 's/^server:.*/server: " + cobbler_server + "/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^next_server:.*/next_server: " +
-        next_server +
+        cobbler_next_server +
         "/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
@@ -59,15 +60,15 @@ def cobbler_setup():
     # Setup DHCP template
     shell_command_true(
         "sed -i 's/^subnet 192.168.1.0/subnet " +
-        subnet +
+        cobbler_subnet +
         "/' /etc/cobbler/dhcp.template")
     shell_command_true(
         "sed -i 's/option routers.*/option routers " +
-        option_router +
+        cobbler_option_router +
         ";/' /etc/cobbler/dhcp.template")
     shell_command_true(
         "sed -i 's/domain-name-servers.*/domain-name-servers " +
-        DNS +
+        cobbler_DNS +
         ";/' /etc/cobbler/dhcp.template")
     shell_command_true(
         "sed -i 's/range dynamic-bootp.*/deny unknown-clients;/' /etc/cobbler/dhcp.template")
@@ -115,7 +116,6 @@ def sync():
     handle.sync()
     
 
-import inspect
 if __name__ == "__main__":
     cobbler_setup()
     enable_services()

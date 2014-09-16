@@ -73,7 +73,10 @@ class PackStackConfigurator:
     def is_packstack_field(self, section, field):
         value = self.get_packstack_field(section, field)
         return (value=='y')
-    
+
+    def configure_packstack(self):
+        self.install_packstack()
+        
 if __name__ == "__main__":
     packstack = PackStackConfigurator()
     packstack.install_packstack()

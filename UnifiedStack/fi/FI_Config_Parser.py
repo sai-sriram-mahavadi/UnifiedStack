@@ -30,7 +30,7 @@ class FIConfig:
     
     @staticmethod
     def get_cluster_ipaddress():
-        return FIConfig.config.get('FI-Configuration', 'fi-cluster-ip-address', 0)
+        return FIConfig.get_field('fi-cluster-ip-address')
 
     @staticmethod
     def get_cluster_username():
@@ -94,14 +94,18 @@ class FIConfig:
 
     @staticmethod
     def get_vlans(vnic_index):
-        vlan_str = FIConfig.get_field('fi-vnic-'+vnic_index+'-range')
+        vlan_str = FIConfig.get_field('fi-vnic-'+str(vnic_index)+'-vlan-range')
         vlan_ids = []
-        str_vlan_ids = uplink_ports_str.split('-')
-        vlan_id_start = int(str_vlan_ids[0].trim)
-        vlan_id_end = int(str_vlan_ids[1].trim) if (len(str_vlan_ids) == 2)) else vlan_id_start
-        for vlan_id in range(vlan_id_start, vlan_id_end+1)
+        str_vlan_ids = vlan_str.split('-')
+        vlan_id_start = int(str_vlan_ids[0].strip())
+        vlan_id_end = int(str_vlan_ids[1].strip()) if (len(str_vlan_ids) == 2) else vlan_id_start
+        for vlan_id in range(vlan_id_start, vlan_id_end+1):
             vlan_ids.append(vlan_id)
         return vlan_ids               
+
+    @staticmethod
+    def get_service_profile_name():
+        return FIConfig.get_field('fi-service-profile-name')
     
 if __name__ == '__main__':
     print FIConfig.get_cluster_ipaddress()
@@ -109,7 +113,7 @@ if __name__ == '__main__':
     print FIConfig.get_cluster_password()
     print FIConfig.get_server_ports()
     print FIConfig.get_uplink_ports()
-    print FIConfig.get_vinc_names()
+    print FIConfig.get_vnic_names()
     print FIConfig.get_vlans(1)
     print FIConfig.get_vlans(2)
     print FIConfig.get_vlans(3)

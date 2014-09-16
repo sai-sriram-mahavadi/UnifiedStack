@@ -10,7 +10,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# FI_Configurator.py:
 # Common interface to access/configure fi from outside
 
 

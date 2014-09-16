@@ -10,9 +10,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# integrator.py:
-# Parser to parse config file.
-# Provides any additional config details as necessary.
+# Integrates all the modules to install all modules together
+# Final interface to install unifiedstack
 
 import sys
 import os

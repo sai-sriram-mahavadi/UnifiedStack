@@ -10,8 +10,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Packstack_Setup.py:
-# Sets up packstack makes the intial configuration settings necessary
+# Sets up packstack makes the intial packstack_configuration settings necessary
 
 import ConfigParser
 import sys
@@ -23,39 +22,43 @@ sys.path.append(root_path)
 
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cono
+from UnifiedStack.config import Config_Parser
+
+AffirmativeList = ['true', 'True', 'TRUE', True, 'yes', 'Yes', 'YES']
+Config = Config_Parser.Config
+
 
 class PackStackConfigurator:
 
-    config = ConfigParser.ConfigParser(allow_no_value = True)
-    config.read(r'packstack_original.cfg')
-    
+    packstack_config = ConfigParser.ConfigParser(allow_no_value=True)
+
     def setup_packstack_pre_requisites(self):
         shell = shi.ShellInterpretter()
-        shell.execute_command("/usr/bin/yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
-        
-    # rhel-7-server-openstack-5.0-rpms should be already enabled in yum repolist
+        shell.execute_command(
+            "/usr/bin/yum-packstack_config-manager --enable rhel-7-server-openstack-5.0-rpms")
+
     def install_packstack(self):
-        #from Shell_Interpretter import ShellInterpretter
-        #from ..cli.Shell_Interpretter import ShellInterpretter
         shell = shi.ShellInterpretter()
         shell.execute_command("/usr/bin/yum install -y openstack-packstack")
 
+    def generate_answer_file(self):
+        shell = shi.ShellInterpretter()
+        shell.execute_command(
+            "/usr/bin/packstack --gen-answer-file=packstack.cfg")
+        PackStackConfigurator.packstack_config.read(r'packstack.cfg')
+
     def setup_packstack(self):
         shell = shi.ShellInterpretter()
-        shell.execute_command("/usr/bin/packstack --answer-file=packstack_result.cfg")
-    
-    def generate_answer_file(self):
-        #from Shell_Interpretter import ShellInterpretter
-        shell = shi.ShellInterpretter()
-        shell.execute_command("packstack --gen-answer-file=packstack.cfg")
-        PackStackConfigurator.config.read(r'packstack.cfg')
+        shell.execute_command(
+            "/usr/bin/packstack --answer-file=packstack_result.cfg")
+
     # def setup_passwords(self, password):
     # def setup_passwords(self, password):
 
     def backup_answer_file(self):
-        with open(r'packstack_backup.cfg', 'wb') as configfile:
-            PackStackConfigurator.config.write(configfile)
-    
+        with open(r'packstack_backup.cfg', 'wb') as packstack_configfile:
+            PackStackConfigurator.packstack_config.write(packstack_configfile)
+
     def enable_packstack_field(self, section, field):
         self.set_packstack_field(section, field, 'y')
 
@@ -63,51 +66,93 @@ class PackStackConfigurator:
         self.set_packstack_field(section, field, 'n')
 
     def set_packstack_field(self, section, field, value):
-        PackStackConfigurator.config.set(section, field, value)
-        with open(r'packstack_result.cfg', 'wb') as configfile:
-            PackStackConfigurator.config.write(configfile)
-        
+        PackStackConfigurator.packstack_config.set(section, field, value)
+        with open(r'packstack_result.cfg', 'wb') as packstack_configfile:
+            PackStackConfigurator.packstack_config.write(packstack_configfile)
+
     def get_packstack_field(self, section, field):
-        return PackStackConfigurator.config.get(section, field, 0) # Raw parse
+        return PackStackConfigurator.packstack_config.get(
+            section,
+            field,
+            0)  # Raw parse
 
     def is_packstack_field(self, section, field):
         value = self.get_packstack_field(section, field)
-        return (value=='y')
+        return (value == 'y')
 
-    def configure_packstack(self):
+    def configure_packstack(self, console):
+        self.setup_packstack_pre_requisites()
         self.install_packstack()
-        
+        self.generate_answer_file()
+        # For Testing, change packstack_config-rw-pw to Cisco12345
+        packstack.set_packstack_field("general", "CONFIG_RH_PW", "Cisco12345")
+
+        # Turn off swift, Turn on Heat, set CVF ntp server
+        packstack.disable_packstack_field("general", "CONFIG_SWIFT_INSTALL")
+        packstack.enable_packstack_field("general", "CONFIG_HEAT_INSTALL")
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NTP_SERVERS",
+            "cvf-ntp1")
+
+        # Move networker and compute services to proper nodes
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_COMPUTE_HOSTS",
+            Config.get_packstack_field("COMPUTE-HOSTS"))
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NETWORK_HOSTS",
+            Config.get_packstack_field("NETWORK-HOSTS"))
+
+        # Customers will want to set admin keystone password to something sane
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_KEYSTONE_ADMIN_PW",
+            Config.get_packstack_field("KEYSTONE-ADMIN-PW"))
+
+        # Set oversubscription based on Karen's requirements
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO",
+            "8.0")
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO",
+            "1.0")
+
+        # Configure neutron mechanism drivers and networking
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NEUTRON_ML2_TYPE_DRIVERS",
+            "vlan")
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES",
+            "vlan")
+        drivers_str = ""
+        if Config.get_packstack_field("ENABLE-OPENVSWITCH") in AffirmativeList:
+            drivers_str += (", " +
+                            "openvswitch" if drivers_str == "" else "openvswitch")
+        if Config.get_packstack_field("ENABLE-CISCONEXUS") in AffirmativeList:
+            drivers_str += (", " +
+                            "ciso_nexus" if drivers_str == "" else "cisconexus")
+        # Any of the drivers are enabled
+        if drivers_str != "":
+            packstack.set_packstack_field(
+                "general",
+                "CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS",
+                drivers_str)
+        packstack.set_packstack_field(
+            "general",
+            "CONFIG_NEUTRON_ML2_VLAN_RANGES",
+            Config.get_packstack_field("VLAN-MAPPING-RANGES"))
+
+        # Do not packstack_configure demo project/user/network
+        packstack.disable_packstack_field("general", "CONFIG_PROVISION_DEMO")
+        packstack.setup_packstack()
+
+
 if __name__ == "__main__":
     packstack = PackStackConfigurator()
-    packstack.install_packstack()
-    packstack.generate_answer_file()
-    #packstack.backup_answer_file()
-    #For Testing, change config-rw-pw to Cisco12345
-    packstack.set_packstack_field("general", "CONFIG_RH_PW", "Cisco12345")
-
-    #Turn off swift, Turn on Heat, set CVF ntp server
-    packstack.disable_packstack_field("general", "CONFIG_SWIFT_INSTALL")
-    packstack.enable_packstack_field("general", "CONFIG_HEAT_INSTALL")
-    packstack.set_packstack_field("general", "CONFIG_NTP_SERVERS", "cvf-ntp1")
-
-    #Move networker and compute services to proper nodes
-    packstack.set_packstack_field("general", "CONFIG_COMPUTE_HOSTS", "192.168.131.10,192.168.131.11")
-    packstack.set_packstack_field("general", "CONFIG_NETWORK_HOSTS", "192.168.131.9")
-
-    #Customers will want to set admin keystone password to something sane
-    packstack.set_packstack_field("general", "CONFIG_KEYSTONE_ADMIN_PW", "Cisco12345")
-
-    #Set oversubscription based on Karen's requirements
-    packstack.set_packstack_field("general", "CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO", "8.0")
-    packstack.set_packstack_field("general", "CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO", "1.0")
-
-    #Configure neutron mechanism drivers and networking
-    packstack.set_packstack_field("general", "CONFIG_NEUTRON_ML2_TYPE_DRIVERS", "vlan")
-    packstack.set_packstack_field("general", "CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES", "vlan")
-    packstack.set_packstack_field("general", "CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS", "openvswitch,cisco_nexus")
-    packstack.set_packstack_field("general", "CONFIG_NEUTRON_ML2_VLAN_RANGES", "physnet:2100:2999")
-
-    #Do not configure demo project/user/network
-    packstack.disable_packstack_field("general", "CONFIG_PROVISION_DEMO")
-
-    packstack.setup_packstack()
+    packstack.configure_packstack(cono.ConsoleOutput())

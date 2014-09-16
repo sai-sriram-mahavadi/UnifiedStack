@@ -10,7 +10,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Console_Output.py:
 # General Utils useful for the purpose of simple
 # development of code and presentation of output.
 # Presently supported over all *nix systems.

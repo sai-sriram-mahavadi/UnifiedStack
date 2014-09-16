@@ -10,7 +10,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# FI_Pool_setup.py:
 # Configures uuid pools and mac pools.
 # Values are hardcoded for the purpose of simplicity as of now.
 

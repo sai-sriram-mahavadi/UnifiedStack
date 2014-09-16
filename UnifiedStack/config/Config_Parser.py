@@ -18,10 +18,37 @@ import ConfigParser
 
 
 class Config:
+    
     config = ConfigParser.ConfigParser()
-    config.read(r'unified_stack.cfg')
+    config.read(r'../data_static/unified_stack.cfg')
     
     @staticmethod
     def get_field(section, field):
-        return FIConfig.config.get(section, field, 0)
+        return Config.config.get(section, field, 0)
+
+    @staticmethod
+    def get_cobbler_field(field):
+        return Config.get_field("Cobber-Configuration", field)
     
+    @staticmethod
+    def get_fi_field(field):
+        return Config.get_field("FI-Configuration", field)
+    
+    @staticmethod
+    def get_switch_field(field):
+        return Config.get_field("Switch-Configuration", field)
+
+    @staticmethod
+    def get_cimc_field(field):
+        return Config.get_field("CIMC-Configuration", field)
+
+    @staticmethod
+    def get_cobbler_field(field):
+        return Config.get_field("Cobber-Configuration", field)
+
+    @staticmethod
+    def get_packstack_field(field):
+        return Config.get_field("Packstack-Configuration", field)
+    
+if __name__=="__main__":
+    print Config.get_packstack_field("keystone-admin-pw")

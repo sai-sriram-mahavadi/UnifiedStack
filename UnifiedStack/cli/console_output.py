@@ -73,10 +73,10 @@ class ConsoleOutput:
         else:
             self.erase_above_line()
         status_marks = 50
-        progress_marks = percentage*status_marks/100
+        progress_marks = percentage * status_marks / 100
         b = "[" + "=" * progress_marks
         # Number of '=' denotes the status of event
-        b += ">" + " "*(status_marks-progress_marks) + " | "\
+        b += ">" + " " * (status_marks - progress_marks) + " | "\
             + str(percentage) + "%]"
         b += message
         self.PROGRESS_MESSAGE = b

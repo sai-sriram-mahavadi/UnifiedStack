@@ -1,4 +1,4 @@
-#   Copyright 2014 Sudarshan Kumar
+#   Copyright 2014
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -11,10 +11,8 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
-# Switch_setup.py:
-# Establishes an ssh session to the switch.
-# Configures the switch.
+#   Establishes an ssh session to the switch.
+#   Configures the switch.
 
 import paramiko
 import time
@@ -24,22 +22,23 @@ ip = '10.106.16.253'
 username = 'sdu'
 password = '1@#$sDu%^7'
 
+
 class SwitchConfigurator:
+    # Create instance of SSHClient object
+    # Automatically add untrusted hosts (make sure okay for security policy
+    # in your environment)
+    # initiate SSH connection
+    # Use invoke_shell to establish an 'interactive session'
+    # remote_conn = remote_conn_pre.invoke_shell()
 
     def establish_connection(self, ipaddress, username, password):
-        # Create instance of SSHClient object
         remote_conn_pre = paramiko.SSHClient()
-        # Automatically add untrusted hosts (make sure okay for security policy
-        # in your environment)
         remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        # initiate SSH connection
         remote_conn_pre.connect(
             ipaddress,
             username=username,
             password=password)
         print "SSH connection established to %s" % ipaddress
-        # Use invoke_shell to establish an 'interactive session'
-        # remote_conn = remote_conn_pre.invoke_shell()
         print "Interactive SSH session established"
         return remote_conn_pre
 
@@ -53,13 +52,19 @@ class SwitchConfigurator:
         remote_conn = remote_conn_client.invoke_shell()
         output = remote_conn.recv(1000)
         print output
-        # sending configuration commands to switch
+        # sending configuration commands to switch from a text file as input
         for line in open('sw_commands.txt'):
-        #error check for ssh connection and send function
-            try:
-                remote_conn.send(line)
-            except socket.error as e:
-                print "Connection is not established : " + e.strerror
+            # error check for ssh connection and send function and retry 3
+            # times if fail
+            success = False
+            attempts = 0
+            while not success and attempts < 3
+                try:
+                    remote_conn.send(line)
+                    success = True
+                except socket.error as e:
+                    print "Connection is not established : " + e.strerror
+                    attempts += 1
         # Adding a delay to let the commands work. Add at the end of all
         # commands
         time.sleep(2)

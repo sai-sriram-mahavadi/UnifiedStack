@@ -1,6 +1,3 @@
-#   Copyright 2014 Aman Sinha
-#   Copyright 2014 Venkata Sai Sriram Mahavadi
-#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -13,61 +10,53 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# FI_Port_setup.py:
 # Configures server ports and uplink ports.
 # Values are hardcoded for the purpose of simplicity as of now.
 
-import UcsSdk
+import UcsSdk as ucs
+from FI_Config_Base import FIConfiguratorBase
 
-class FIConfigurator:
-
-    # Login to FI
-    # will take params ip_address, username, password
-    def login_fi(self):
-        handle = UcsHandle()
-        handle.Login("19.19.102.10", "admin", "Cisco12345")
-
+FI_FABRIC_SERVER = "fabric/server/"
+FI_FABRIC_LAN = "fabric/lan/"
+# sw-A, 
+class FIPortConfigurator(FIConfiguratorBase):
+    
     # Configure Server Port
     # will take params port_id, slot_id
-    def configure_server_port(self):
-        handle = UcsHandle()
-        handle.Login("19.19.102.10", "admin", "Cisco12345")
+    def configure_server_port(self, server_port, switch, slot_id):
+        # Getting handle from FIConfiguratorBase
+        handle = self.handle 
         handle.StartTransaction()
-        obj = handle.GetManagedObject(None, FabricDceSwSrv.ClassId(),
-                                      {FabricDceSwSrv.DN:
-                                       "fabric/server/sw-A"})
-        handle.AddManagedObject(obj, FabricDceSwSrvEp.ClassId(),
-                                {FabricDceSwSrvEp.ADMIN_STATE: "enabled",
-                                FabricDceSwSrvEp.SLOT_ID: "1",
-                                FabricDceSwSrvEp.DN:
-                                 "fabric/server/sw-A/slot-1-port-15",
-                                FabricDceSwSrvEp.PORT_ID: "15"})
-        handle.AddManagedObject(obj, FabricDceSwSrvEp.ClassId(),
-                                {FabricDceSwSrvEp.ADMIN_STATE: "enabled",
-                                FabricDceSwSrvEp.SLOT_ID: "1",
-                                FabricDceSwSrvEp.DN:
-                                 "fabric/server/sw-A/slot-1-port-16",
-                                FabricDceSwSrvEp.PORT_ID: "16"})
+        obj = handle.GetManagedObject(None, ucs.FabricDceSwSrv.ClassId(),
+                                      {ucs.FabricDceSwSrv.DN:
+                                       FI_FABRIC_SERVER + switch})
+        handle.AddManagedObject(obj, ucs.FabricDceSwSrvEp.ClassId(),
+                                {ucs.FabricDceSwSrvEp.ADMIN_STATE: "enabled",
+                                ucs.FabricDceSwSrvEp.SLOT_ID: slot_id,
+                                ucs.FabricDceSwSrvEp.DN:
+                                 FI_FABRIC_SERVER + switch + "/slot-"+
+                                 slot_id + "-port-" + server_port,
+                                ucs.FabricDceSwSrvEp.PORT_ID: server_port})
         handle.CompleteTransaction()
 
     # Configure Uplink Port
     # will take params port_id, slot_id
-    def configure_uplink_port(self):
-        handle = UcsHandle()
-        handle.Login("19.19.102.10", "admin", "Cisco12345")
+    def configure_uplink_port(self, uplink_port, switch, slot_id):
+        handle = self.handle
         handle.StartTransaction()
         obj = handle.GetManagedObject(None, None, {"dn": "fabric/lan/A"})
-        handle.AddManagedObject(obj, FabricEthLanEp.ClassId(),
-                                {FabricEthLanEp.DN:
-                                 "fabric/lan/A/phys-slot-1-port-20",
-                                FabricEthLanEp.ADMIN_SPEED: "10gbps",
-                                FabricEthLanEp.SLOT_ID: "1",
-                                FabricEthLanEp.ADMIN_STATE: "enabled",
-                                FabricEthLanEp.PORT_ID: "20"})
+        handle.AddManagedObject(obj, ucs.FabricEthLanEp.ClassId(),
+                                {ucs.FabricEthLanEp.DN:
+                                 FI_FABRIC_LAN + "phys-slot-" + slot_id +
+                                 "-port-" + uplink_port,
+                                ucs.FabricEthLanEp.ADMIN_SPEED: "10gbps",
+                                ucs.FabricEthLanEp.SLOT_ID: slot_id,
+                                ucs.FabricEthLanEp.ADMIN_STATE: "enabled",
+                                ucs.FabricEthLanEp.PORT_ID: uplink_port})
         handle.CompleteTransaction()
 
-fi_conf = FIConfigurator()
-fi_conf.login_fi()
-fi_conf.configure_server_port()
-fi_conf.configure_uplink_port()
+if __name__ == '__main__':
+    fi_conf = FIPortConfigurator()
+    fi_conf.configure_server_port()
+    fi_conf.configure_uplink_port()
 

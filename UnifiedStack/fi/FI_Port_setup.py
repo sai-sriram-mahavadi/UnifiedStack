@@ -1,6 +1,3 @@
-#   Copyright 2014 Aman Sinha
-#   Copyright 2014 Venkata Sai Sriram Mahavadi
-#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -18,45 +15,45 @@
 # Values are hardcoded for the purpose of simplicity as of now.
 
 import UcsSdk as ucs
-from FI_Configurator_Base import FIConfiguratorBase
+from FI_Config_Base import FIConfiguratorBase
 
+FI_FABRIC_SERVER = "fabric/server/"
+FI_FABRIC_LAN = "fabric/lan/"
+# sw-A, 
 class FIPortConfigurator(FIConfiguratorBase):
     
     # Configure Server Port
     # will take params port_id, slot_id
-    def configure_server_port(self):
-        handle = self.handle # Getting handle from FIConfiguratorBase
+    def configure_server_port(self, server_port, switch, slot_id):
+        # Getting handle from FIConfiguratorBase
+        handle = self.handle 
         handle.StartTransaction()
         obj = handle.GetManagedObject(None, ucs.FabricDceSwSrv.ClassId(),
                                       {ucs.FabricDceSwSrv.DN:
-                                       "fabric/server/sw-A"})
+                                       FI_FABRIC_SERVER + switch})
         handle.AddManagedObject(obj, ucs.FabricDceSwSrvEp.ClassId(),
                                 {ucs.FabricDceSwSrvEp.ADMIN_STATE: "enabled",
-                                ucs.FabricDceSwSrvEp.SLOT_ID: "1",
+                                ucs.FabricDceSwSrvEp.SLOT_ID: slot_id,
                                 ucs.FabricDceSwSrvEp.DN:
-                                 "fabric/server/sw-A/slot-1-port-15",
-                                ucs.FabricDceSwSrvEp.PORT_ID: "15"})
-        handle.AddManagedObject(obj, ucs.FabricDceSwSrvEp.ClassId(),
-                                {ucs.FabricDceSwSrvEp.ADMIN_STATE: "enabled",
-                                ucs.FabricDceSwSrvEp.SLOT_ID: "1",
-                                ucs.FabricDceSwSrvEp.DN:
-                                 "fabric/server/sw-A/slot-1-port-16",
-                                ucs.FabricDceSwSrvEp.PORT_ID: "16"})
+                                 FI_FABRIC_SERVER + switch + "/slot-"+
+                                 slot_id + "-port-" + server_port,
+                                ucs.FabricDceSwSrvEp.PORT_ID: server_port})
         handle.CompleteTransaction()
 
     # Configure Uplink Port
     # will take params port_id, slot_id
-    def configure_uplink_port(self):
+    def configure_uplink_port(self, uplink_port, switch, slot_id):
         handle = self.handle
         handle.StartTransaction()
         obj = handle.GetManagedObject(None, None, {"dn": "fabric/lan/A"})
         handle.AddManagedObject(obj, ucs.FabricEthLanEp.ClassId(),
                                 {ucs.FabricEthLanEp.DN:
-                                 "fabric/lan/A/phys-slot-1-port-20",
+                                 FI_FABRIC_LAN + "phys-slot-" + slot_id +
+                                 "-port-" + uplink_port,
                                 ucs.FabricEthLanEp.ADMIN_SPEED: "10gbps",
-                                ucs.FabricEthLanEp.SLOT_ID: "1",
+                                ucs.FabricEthLanEp.SLOT_ID: slot_id,
                                 ucs.FabricEthLanEp.ADMIN_STATE: "enabled",
-                                ucs.FabricEthLanEp.PORT_ID: "20"})
+                                ucs.FabricEthLanEp.PORT_ID: uplink_port})
         handle.CompleteTransaction()
 
 if __name__ == '__main__':

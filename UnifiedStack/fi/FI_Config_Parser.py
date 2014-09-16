@@ -14,23 +14,103 @@
 #   limitations under the License.
 
 # FI_Config_Parser.py:
-# Common interface to access/configure fi from outside
+# Parser to parse config file.
+# Provides any additional config details as necessary.
+
 import ConfigParser
+
 
 class FIConfig:
     config = ConfigParser.ConfigParser()
     config.read(r'..\config\unified_stack.cfg')
+    
+    @staticmethod
+    def get_field(field):
+        return FIConfig.config.get('FI-Configuration', field, 0)
+    
     @staticmethod
     def get_cluster_ipaddress():
         return FIConfig.config.get('FI-Configuration', 'fi-cluster-ip-address', 0)
+
     @staticmethod
     def get_cluster_username():
         return FIConfig.config.get('FI-Configuration', 'fi-cluster-username', 0)
+
     @staticmethod
     def get_cluster_password():
         return FIConfig.config.get('FI-Configuration', 'fi-cluster-password', 0)
+
+    @staticmethod
+    def get_server_ports():
+        server_ports_str = FIConfig.get_field('fi-server-ports')
+        server_ports = []
+        str_ports = server_ports_str.split(',')
+        for str_port in str_ports:
+            port_num = int(str_port.strip())
+            server_ports.append(port_num)
+        return server_ports
+
+    @staticmethod
+    def get_uplink_ports():
+        uplink_ports_str = FIConfig.get_field('fi-uplink-ports')
+        uplink_ports = []
+        str_ports = uplink_ports_str.split(',')
+        for str_port in str_ports:
+            port_num = int(str_port.strip())
+            uplink_ports.append(port_num)
+        return uplink_ports
+
+    @staticmethod
+    def get_uuid_pool_name():
+        return FIConfig.get_field('fi-uuid-pool-name')
+
+    @staticmethod
+    def get_uuid_pool_start():
+        return FIConfig.get_field('fi-uuid-pool-start')
+
+    @staticmethod
+    def get_uuid_pool_end():
+        return FIConfig.get_field('fi-uuid-pool-end')
+
+    @staticmethod
+    def get_mac_pool_name():
+        return FIConfig.get_field('fi-mac-pool-name')
+
+    @staticmethod
+    def get_mac_pool_start():
+        return FIConfig.get_field('fi-mac-pool-start')
+
+    @staticmethod
+    def get_mac_pool_end():
+        return FIConfig.get_field('fi-mac-pool-end')
+
+    @staticmethod
+    def get_vnic_names():
+        vnic_names = []
+        vnic_names.append(FIConfig.get_field('fi-vnic-1-name'))
+        vnic_names.append(FIConfig.get_field('fi-vnic-2-name'))
+        vnic_names.append(FIConfig.get_field('fi-vnic-3-name'))
+        return vnic_names
+
+    @staticmethod
+    def get_vlans(vnic_index):
+        vlan_str = FIConfig.get_field('fi-vnic-'+vnic_index+'-range')
+        vlan_ids = []
+        str_vlan_ids = uplink_ports_str.split('-')
+        vlan_id_start = int(str_vlan_ids[0].trim)
+        vlan_id_end = int(str_vlan_ids[1].trim) if (len(str_vlan_ids) == 2)) else vlan_id_start
+        for vlan_id in range(vlan_id_start, vlan_id_end+1)
+            vlan_ids.append(vlan_id)
+        return vlan_ids               
+    
 if __name__ == '__main__':
     print FIConfig.get_cluster_ipaddress()
     print FIConfig.get_cluster_username()
     print FIConfig.get_cluster_password()
+    print FIConfig.get_server_ports()
+    print FIConfig.get_uplink_ports()
+    print FIConfig.get_vinc_names()
+    print FIConfig.get_vlans(1)
+    print FIConfig.get_vlans(2)
+    print FIConfig.get_vlans(3)
     

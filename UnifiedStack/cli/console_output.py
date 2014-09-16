@@ -1,5 +1,3 @@
-#   Copyright 2014 Venkata Sai Sriram Mahavadi
-#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -12,7 +10,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# console_output.py:
+# Console_Output.py:
 # General Utils useful for the purpose of simple
 # development of code and presentation of output.
 # Presently supported over all *nix systems.
@@ -53,8 +51,8 @@ class ConsoleOutput:
         print message
         if self.ISPROGRESSBAR:
             print ""  # To Adjust Automatic clear from progress bar update
-        self.cprint_progress_bar(self.PROGRESS_MESSAGE,
-                                 self.PROGRESS_PERCENTAGE)
+            self.cprint_progress_bar(self.PROGRESS_MESSAGE,
+                                     self.PROGRESS_PERCENTAGE)
 
     def cprint_error(self, message):
         self.simple_print(PrintColors.FAIL + message + PrintColors.ENDC)

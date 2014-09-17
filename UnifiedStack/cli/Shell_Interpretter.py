@@ -14,15 +14,20 @@
 
 import subprocess
 from subprocess import Popen, PIPE
-from .Console_Output import ConsoleOutput
+from Console_Output import ConsoleOutput
 
 
 class ShellInterpretter:
+    console = ConsoleOutput()
+    
+    @staticmethod
+    def set_console(console):
+        console.flush()
+        ShellInterpretter.console = console
 
     def execute_command(self, fully_qualified_command):
         # command_list = fully_qualified_command.split()
-        #console = ConsoleOutput()
-        #console.cprint("COMMAND: " + fully_qualified_command)
+        ShellInterpretter.console.cprint("COMMAND: " + fully_qualified_command)
         with open(r'../log/unified_stack.log', 'a') as output:
             cmd = Popen(fully_qualified_command, stdout=PIPE, shell=True)
             output.write("[Command]: " + fully_qualified_command + "\r\n")

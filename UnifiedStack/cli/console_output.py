@@ -42,6 +42,7 @@ class ConsoleOutput:
         CURSOR_UP_ONE = '\x1b[1A'
         ERASE_LINE = '\x1b[2K'
         sys.stdout.write(CURSOR_FRONT_COLUMN + CURSOR_UP_ONE + ERASE_LINE)
+        sys.stdout.flush()
 
     def simple_print(self, message):
         if self.ISPROGRESSBAR:
@@ -77,11 +78,14 @@ class ConsoleOutput:
         # Number of '=' denotes the status of event
         b += ">" + " " * (status_marks - progress_marks) + " | "\
             + str(percentage) + "%]"
-        b += message
-        self.PROGRESS_MESSAGE = b
+        b += message + "\r\n"
+        self.PROGRESS_MESSAGE = message
         self.PROGRESS_PERCENTAGE = percentage
-        print b
-
+        sys.stdout.write( b )
+        sys.stdout.flush()
+        
+    def flush(self):
+        sys.stdout.flush()
 if __name__ == '__main__':
     # Testing Console
     console = ConsoleOutput()

@@ -54,3 +54,7 @@ target/
 
 #Ignore any .iso files
 *.iso
+
+#Ignore .swp files
+*.swp
+*.ext~

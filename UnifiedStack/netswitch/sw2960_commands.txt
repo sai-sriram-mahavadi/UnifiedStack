@@ -1,0 +1,83 @@
+conf t
+hostname SDU-2960-1
+username sdu privilege 15 password 0 1@#$sDu%^7
+username cisco privilege 15 password 0 cisco
+no aaa new-model
+vtp mode transparent
+ip subnet-zero
+spanning-tree mode pvst
+spanning-tree extend system-id
+vlan internal allocation policy ascending
+vlan 10
+vlan 19
+name VLAN-19
+vlan 20,30,40,50,100,170,180,190-199
+vlan 300
+name UPLINK
+interface GigabitEthernet0/1
+description CIMC to C220 (19.19.100.1)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/2
+description CIMC to C220 (19.19.100.2)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/3
+description CIMC to C240 (19.19.100.3)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/4
+description CIMC to C240 (19.19.100.4)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/5
+description CIMC to C240 (19.19.100.5)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/6
+description CIMC to C240 (19.19.100.6)
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/13
+description CONNTECTED TO 3750-1
+switchport access vlan 300
+switchport mode trunk
+interface GigabitEthernet0/14
+description CONNTECTED TO 3750-2
+switchport access vlan 300
+switchport mode access
+interface GigabitEthernet0/21
+description CONNECTED-TO-FI-MGMT0
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/22
+description CONNECTED-TO-FI-MGMT0
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/23
+description CONNECTED-TO-STORAGE-MGMT
+switchport access vlan 19
+switchport mode access
+interface GigabitEthernet0/24
+description CONNECT MANAGEMENT ONLY AND CHANGE DESCRIPTION
+switchport access vlan 300
+switchport mode access
+interface Vlan1
+no ip address
+no ip route-cache
+interface Vlan100
+ip address 10.11.12.10 255.255.255.0
+no ip route-cache
+interface Vlan300
+ip address 10.106.16.252 255.255.255.224
+no ip route-cache
+exit
+ip default-gateway 10.106.16.225
+ip http server
+control-plane
+line con 0
+exit
+line vty 0 4
+login local
+line vty 5 15
+login local

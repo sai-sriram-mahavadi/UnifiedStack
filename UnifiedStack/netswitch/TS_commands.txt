@@ -1,0 +1,8 @@
+conf t
+hostname Terminal_Server
+enable secret  Cisco12345
+username cisco password Cisco12345
+ip subnet-zero
+ip domain-list sdulab.com
+no ip domain-lookup
+ip host 3600-3 2014 172.21.1.1

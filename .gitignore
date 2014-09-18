@@ -58,3 +58,7 @@ target/
 #Ignore .swp files
 *.swp
 *.ext~
+
+#Ignore Packstack Answer files
+packstack.cfg
+packstack_result.cfg

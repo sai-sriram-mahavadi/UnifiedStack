@@ -51,26 +51,26 @@ class Switch3750Configurator:
         # Use invoke_shell to establish an 'interactive session'
         remote_conn = remote_conn_client.invoke_shell()
         output = remote_conn.recv(1000)
-        #print output
-        #sending configuration commands to switch from a text file as input
+        # print output
+        # sending configuration commands to switch from a text file as input
         for line in open('netswitch/sw3750_commands.txt'):
             # error check for ssh connection and send function and retry 3
             # times if fail
             success = False
             attempts = 0
             while (success == False) and (attempts < 3):
-				try:
-					remote_conn.send(line)
-					time.sleep(1)
-					success = True
-				except socket.error as e:
-					#print "Connection is not established : " + e.strerror
-					attempts += 1
+                try:
+                    remote_conn.send(line)
+                    time.sleep(1)
+                    success = True
+                except socket.error as e:
+                    # print "Connection is not established : " + e.strerror
+                    attempts += 1
         # Adding a delay to let the commands work. Add at the end of all
         # commands
         output = remote_conn.recv(5000)
-        #Use for testing only
-		#print output
+        # Use for testing only
+        # print output
 
 if __name__ == "__main__":
     sw3750_config = Switch3750Configurator()

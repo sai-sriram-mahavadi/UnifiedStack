@@ -16,11 +16,19 @@
 
 import paramiko
 import time
+import sys
+import os
+import subprocess
+
+root_path = os.path.abspath(r"../..")
+sys.path.append(root_path)
+
+from UnifiedStack.config import Config_Parser as cfg
 
 # TODO ip, username and password will be taken from config file later.
-ip = '10.106.16.253'
-username = 'sdu'
-password = '1@#$sDu%^7'
+#ip = "10.106.16.253"
+#username = "sdu"
+#password = "1@#$sDu%^7"
 
 
 class Switch3750Configurator:
@@ -43,7 +51,11 @@ class Switch3750Configurator:
         return remote_conn_pre
 
     def configure_3750switch(self, console):
-        # Calling the function to make the ssh connection
+	Config = cfg.Config()
+        ip = Config.get_switch_field("3750-ip-address")
+	username = Config.get_switch_field("3750-username")
+	password = Config.get_switch_field("3750-password")
+	# Calling the function to make the ssh connection
         remote_conn_client = self.establish_connection(
             ipaddress=ip,
             username=username,

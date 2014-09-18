@@ -7,7 +7,7 @@ root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 from UnifiedStack.config.Config_Parser import Config
-
+from cobbler_api_wrapper import Build_Server 
 
 class Cobbler_Integrator():
 
@@ -58,7 +58,9 @@ class Cobbler_Integrator():
             file.write(line)
         file.close()
         #cobbler_setup.create_install_server(console)
-
+        Build_Server.create_distro()
+        Build_Server.create_profile()        
+        Build_Server.create_system()
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

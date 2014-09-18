@@ -18,7 +18,7 @@ class Build_Server():
 
     def create_distro(self):
 
-        name = "RHELx_86"  # Config.get_distro_field("distro_name")
+        name = "RHELx86_64"  # Config.get_distro_field("distro_name")
 
         # Config.get_distro_field("vmlinuz_path")
         vmlinuz_path = "rhel_mount/isolinux/vmlinuz"

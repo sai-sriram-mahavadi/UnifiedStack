@@ -16,11 +16,19 @@
 
 import paramiko
 import time
+import sys
+import os
+import subprocess
+
+root_path = os.path.abspath(r"../..")
+sys.path.append(root_path)
+
+from UnifiedStack.config import Config_Parser as cfg
 
 # TODO ip, username and password will be taken from config file later.
-ip = '19.19.0.3'
-username = 'admin'
-password = 'Cisco123'
+#ip = '19.19.0.3'
+#username = 'admin'
+#password = 'Cisco123'
 
 
 class Switch9kConfigurator:
@@ -43,6 +51,11 @@ class Switch9kConfigurator:
         return remote_conn_pre
 
     def configure_9kswitch(self):
+	Config = cfg.Config()
+        ip = Config.get_switch_field("9k-ip-address")
+        username = Config.get_switch_field("9k-username")
+        password = Config.get_switch_field("9k-password")
+
         # Calling the function to make the ssh connection
         remote_conn_client = self.establish_connection(
             ipaddress=ip,

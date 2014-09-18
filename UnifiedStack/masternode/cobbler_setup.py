@@ -143,13 +143,21 @@ def sync():
 
 def mount():
     """Here goes the code to wget the rhel image in the /root directory"""
+<<<<<<< HEAD
     rhel_image_url=Config.get_general_field("rhel-image-url")
     shell_command("wget " + rhel_image_url + "-P /root/rhel-server-7.0-x86_64-dvd.iso")
+=======
+
+>>>>>>> upstream/proto
     shell_command(
         "mount -t iso9660 -o loop,ro  /root/rhel-server-7.0-x86_64-dvd.iso " +
         root_path +
         "/UnifiedStack/masternode/rhel_mount")
+<<<<<<< HEAD
     shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
+=======
+    #shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
+>>>>>>> upstream/proto
 
 
 def create_install_server():

@@ -127,7 +127,6 @@ def enable_services(console):
 
 def sync(console):
     console.cprint_progress_bar("Cobbler Get-loaders and Sync",80)
-    console.cprint_progress_bar("Installing pre-requistes for cobbler--",95)
     shell_command("cobbler get-loaders")
     import cobbler.api as capi
     handle = capi.BootAPI()
@@ -145,7 +144,7 @@ def mount(console):
         root_path +
         "/UnifiedStack/masternode/rhel_mount")
     shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
-    
+    console.cprint_progress_bar("Task Completed",100)
 
 def create_install_server(console):
     shell_command(

@@ -21,7 +21,8 @@ class Cobbler_Integrator():
             "/etc/yum.repos.d/cobbler.repo")
         cobbler_preInstall.enable_repos(console)
         cobbler_preInstall.disable_SELinux(console)
-        cobbler_preInstall.enable_networking(console)
+        #cobbler_preInstall.enable_networking(console)
+        #cobbler_preInstall.add_name_server(console)
 
     def cobbler_postInstall(self,console):
         cobbler_setup.cobbler_setup(console)
@@ -56,7 +57,6 @@ class Cobbler_Integrator():
         for line in towrite:
             file.write(line)
         file.close()
-
         #cobbler_setup.create_install_server(console)
 
 

@@ -31,41 +31,41 @@ class Switch3750Configurator:
     # Use invoke_shell to establish an 'interactive session'
     # remote_conn = remote_conn_pre.invoke_shell()
 
-    def establish_connection(self, ipaddress, username, password):
+    def establish_connection(self, ipaddress, username, password, console):
         remote_conn_pre = paramiko.SSHClient()
         remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         remote_conn_pre.connect(
             ipaddress,
             username=username,
             password=password)
-        print "SSH connection established to %s" % ipaddress
-        print "Interactive SSH session established"
+        console.cprint("SSH connection established to " + ipaddress)
+        console.cprint("Interactive SSH session established")
         return remote_conn_pre
 
-    def configure_3750switch(self):
+    def configure_3750switch(self, console):
         # Calling the function to make the ssh connection
         remote_conn_client = self.establish_connection(
             ipaddress=ip,
             username=username,
-            password=password)
+            password=password, console=console)
         # Use invoke_shell to establish an 'interactive session'
         remote_conn = remote_conn_client.invoke_shell()
         output = remote_conn.recv(1000)
-        print output
-        # sending configuration commands to switch from a text file as input
-        for line in open('sw3750_commands.txt'):
+        #print output
+        #sending configuration commands to switch from a text file as input
+        for line in open('netswitch/sw3750_commands.txt'):
             # error check for ssh connection and send function and retry 3
             # times if fail
             success = False
             attempts = 0
-            while not success and attempts < 3
-                try:
-                    remote_conn.send(line)
+            while (success == False) and (attempts < 3):
+				try:
+					remote_conn.send(line)
 					time.sleep(1)
-                    success = True
-                except socket.error as e:
-                    print "Connection is not established : " + e.strerror
-                    attempts += 1
+					success = True
+				except socket.error as e:
+					#print "Connection is not established : " + e.strerror
+					attempts += 1
         # Adding a delay to let the commands work. Add at the end of all
         # commands
         output = remote_conn.recv(5000)
@@ -74,4 +74,4 @@ class Switch3750Configurator:
 
 if __name__ == "__main__":
     sw3750_config = Switch3750Configurator()
-    sw3750_config.configure3750_switch()
+    sw3750_config.configure_3750switch()

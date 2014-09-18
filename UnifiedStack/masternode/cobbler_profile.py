@@ -19,7 +19,7 @@
 # Values are hardcoded for the purpose of simplicity as of now.
 
 import cobbler.api as cobapi
-from .general_utils import is_basestring
+from general_utils import is_basestring
 
 
 class New_profile():
@@ -38,7 +38,7 @@ class New_profile():
         self.name = name
         # list of owners delimited by commas
         self.owners = owners
-        #The distro to be used with this profile
+        # The distro to be used with this profile
         self.distro = distro
         self.enable_pxe_menu = enable_pxe_menu
         # full path of the kickstart

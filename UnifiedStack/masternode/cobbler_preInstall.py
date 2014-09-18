@@ -25,35 +25,50 @@ sys.path.append(root_path)
 from UnifiedStack.config.Config_Parser import Config
 
 
-def enable_repos():
+def enable_repos(console):
 
-    redhat_username = Config.get_cobbler_field('redhat_username')
-    redhat_password = Config.get_cobbler_field('redhat_password')
+    redhat_username = Config.get_cobbler_field('redhat_username') 
+    redhat_password = Config.get_cobbler_field('redhat_password')   
     redhat_pool = Config.get_cobbler_field('redhat_pool')
     # Subscription
+    console.cprint_progress_bar("Running Subscription manager",1)
     shell_command_true(
         "subscription-manager register --username=" +
         redhat_username +
         " --password=" +
-        redhat_password)
+        redhat_password) 
     shell_command_true("subscription-manager attach --pool=" + redhat_pool)
-
+    console.cprint_progress_bar("Updating the System",10)
     # Enabling the XML repos database of linux for installing
     shell_command("yum update -y")
+    console.cprint_progress_bar("Enabling the Required Repositories",50)
     shell_command(
-        "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
+        "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms") 
     shell_command(
         "sudo yum-config-manager --enable home_libertas-ict_cobbler26")
+    console.cprint_progress_bar("Cleaing the repositories list and populating",60)
     shell_command("yum clean all")
     shell_command("yum repolist all")
 
 
-def disable_SELinux():
+def disable_SELinux(console):
     # disable SELinux and reboot
+    console.cprint_progress_bar("Disabling the SELinux",80)
     shell_command_true(
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
     shell_command("yum update -y")
+    console.cprint_progress_bar("Reupdating",90)
+    console.cprint_progress_bar("TASK COMPLETED",100)
 
+def enable_networking(console):
+    cobbler_interface = Config.get_cobbler_field('cobbler_interface')
+    cobbler_ipaddress = Config.get_cobbler_field('cobbler_ipaddress')
+    cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
+    file=open("/etc/sysconfig/network-scripts/ifcfg-" + cobbler_interface,"w")
+    file.write("DEVICE=" + cobbler_interface + "\n")
+    file.write("IPADDR=" + cobbler_ipaddress + "\n")
+    file.write("NETMASK=" + cobbler_netmask + "\n" )
+    file.close()
 
 if __name__ == "__main__":
     enable_repos()

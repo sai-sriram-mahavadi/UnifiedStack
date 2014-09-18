@@ -15,18 +15,17 @@
 
 import sys
 import os
-
+import inspect
 root_path = os.path.abspath(r"..")
 sys.path.append(root_path)
 
 
 #from UnifiedStack.cimc import CIMC_Setup as cimc
-from UnifiedStack.cobbler import Cobbler_Setup as cobb
+from UnifiedStack.masternode import cobbler_integrator as cobb
 from UnifiedStack.packstack import Packstack_Setup as pst
-from UnifiedStack.netswitch import Switch_Setup as sw
+#from UnifiedStack.netswitch import Switch_Setup as sw
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
-
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
 
@@ -34,29 +33,30 @@ class Integrator:
     
     def configure_unifiedstack(self):
         console = cli.ConsoleOutput()
+	shi.ShellInterpretter.set_console(console)
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")
         
         # Configuring Cobbler
         console.cprint_progress_bar("Started Installation of Cobbler", 0)
-        cobbler_config = cobb.CobblerConfigurator()
+        cobbler_config = cobb.Cobbler_Integrator()
         
         if len(sys.argv)>1 and sys.argv[1]=="-postboot":
-            cobbler_config.configure_post_boot_cobbler(console)
-            read_bash = open("/root/.bashrc")
+            cobbler_config.cobbler_postInstall(console)
+            read_bash = open("/root/.bashrc","r")
             lines = read_bash.readlines()
             read_bash.close()
-            write_bash = open("/root/.bashrc",'w')
+            write_bash = open("/root/.bashrc","w")
             write_bash.writelines([item for item in lines[:-1]])
             write_bash.close()
         else:
-            cobbler_config.configure_pre_boot_cobbler(console)
+            cobbler_config.cobbler_preInstall(console)
             #Write the path of integrator.py in .bashrc
             read_bash = open("/root/.bashrc", "a")
             integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-            read_bash.write("bash -c  && /usr/bin/python " + integrator_path + '/integrator.py -postboot')
+            read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -postboot"')
             read_bash.close()
             shell = shi.ShellInterpretter()
-            shell.execute("reboot")
+            shell.execute_command("reboot")
 
         '''           
         # Configuring CIMC
@@ -69,12 +69,12 @@ class Integrator:
         console.cprint_progress_bar("Started Configuration of Packstack", 0)
         packstack_config = pst.PackStackConfigurator()
         packstack_config.configure_packstack(console)
-
+	"""
         # Configuring Switch
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
-    
+        """
   
 
   

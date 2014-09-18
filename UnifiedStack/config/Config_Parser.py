@@ -56,20 +56,18 @@ class Profile:
 class Config:
     
     config = ConfigParser.ConfigParser()
-    config.read(r'../data_static/unified_stack.cfg')
+    config.read(r'data_static/unified_stack.cfg')
     
     @staticmethod
     def get_field(section, field):
         return Config.config.get(section, field, 0)
-<<<<<<< HEAD
-   
-=======
-
+    @staticmethod
+    def get_general_field(field):
+	return Config.get_field("Default", field)
     @staticmethod
     def get_cobbler_field(field):
         return Config.get_field("Cobbler-Configuration", field)
     
->>>>>>> upstream/proto
     @staticmethod
     def get_fi_field(field):
         return Config.get_field("FI-Configuration", field)
@@ -140,13 +138,12 @@ class Config:
         return Config.get_field("Packstack-Configuration", field)
     
 if __name__=="__main__":
-<<<<<<< HEAD
     print Config.get_cobbler_field("cobbler_ipaddress")
-=======
+
     print Config.get_packstack_field("keystone-admin-pw")
     for node in Config.get_systems_data():
         print node
     for node in Config.get_profiles_data():
         print node
     #node = SystemNode()
->>>>>>> upstream/proto
+

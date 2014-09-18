@@ -137,7 +137,7 @@ class Config:
     
 if __name__=="__main__":
     print Config.get_packstack_field("keystone-admin-pw")
-    for node in Config.get_cobbler_nodes():
+    for node in Config.get_systems_data():
         print node
     for node in Config.get_profiles_data():
         print node

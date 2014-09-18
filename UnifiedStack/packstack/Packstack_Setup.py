@@ -70,6 +70,10 @@ class PackStackConfigurator:
         with open(r'packstack_result.cfg', 'wb') as packstack_configfile:
             PackStackConfigurator.packstack_config.write(packstack_configfile)
 
+    def setup_ini_nexus_plugin(self):
+        nexus_config = ConfigParser.ConfigParser(allow_no_value=True)
+        nexus_config.read(r'packstack.cfg')
+
     def get_packstack_field(self, section, field):
         return PackStackConfigurator.packstack_config.get(
             section,
@@ -81,7 +85,6 @@ class PackStackConfigurator:
         return (value == 'y')
 
     def configure_packstack(self, console):
-
         console.cprint_progress_bar("Installing Pre-requisites for packstack", 5)
         self.setup_packstack_pre_requisites()
         console.cprint_progress_bar("Installing packstack", 15)

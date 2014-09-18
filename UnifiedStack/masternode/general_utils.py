@@ -22,7 +22,7 @@ import os
 import sys
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-
+from UnifiedStack.cli import Shell_Interpretter as shi
 
 class bcolors:
     HEADER = '\033[95m'
@@ -34,8 +34,8 @@ class bcolors:
 
 
 def shell_command_true(fully_qualified_command):
-    print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
-    subprocess.call(fully_qualified_command, shell=True)
+    shell=shi.ShellInterpretter()
+    shell.execute_command(fully_qualified_command)
 
 
 def shell_command(command_title, command_args):
@@ -43,11 +43,8 @@ def shell_command(command_title, command_args):
 
 
 def shell_command(fully_qualified_command):
-
-    print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
-    words_in_command = []
-    words_in_command = split_into_words(fully_qualified_command)
-    subprocess.call(words_in_command)
+    shell=shi.ShellInterpretter()
+    shell.execute_command(fully_qualified_command)
 
 
 def split_into_words(var):

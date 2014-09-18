@@ -25,11 +25,7 @@ class Config:
     @staticmethod
     def get_field(section, field):
         return Config.config.get(section, field, 0)
-
-    @staticmethod
-    def get_cobbler_field(field):
-        return Config.get_field("Cobber-Configuration", field)
-    
+   
     @staticmethod
     def get_fi_field(field):
         return Config.get_field("FI-Configuration", field)
@@ -44,11 +40,11 @@ class Config:
 
     @staticmethod
     def get_cobbler_field(field):
-        return Config.get_field("Cobber-Configuration", field)
-
+        return Config.get_field("Cobbler-Configuration", field)
+   
     @staticmethod
     def get_packstack_field(field):
         return Config.get_field("Packstack-Configuration", field)
     
 if __name__=="__main__":
-    print Config.get_packstack_field("keystone-admin-pw")
+    print Config.get_cobbler_field("cobbler_ipaddress")

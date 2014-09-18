@@ -46,23 +46,23 @@ class New_system():
         self.name = name
         # list of owners delimited by commas
         self.owners = owners
-        #name of the profile to associate 
+        # name of the profile to associate
         self.profile = profile
-        #It should be either--production, testing
+        # It should be either--production, testing
         #acceptance or development
-        self.status=status
-        #Set true if netboot needs to be enabled
+        self.status = status
+        # Set true if netboot needs to be enabled
         self.netboot_enabled = netboot_enabled
-        #hostname of the system
+        # hostname of the system
         self.hostname = hostname
-        #Interface which will be used for PXE boot
-        #by the system which is going to network boot
+        # Interface which will be used for PXE boot
+        # by the system which is going to network boot
         self.interface = interface
-        #mac address of the above interface
+        # mac address of the above interface
         self.mac_addr = mac_addr
-        #ip address of this interface
+        # ip address of this interface
         self.ipaddr = ipaddr
-        #Below parameters are less used.
+        # Below parameters are less used.
         self.virt_bridge = virt_bridge
         self.power_management_type = power_management_type
         self.power_management_addr = power_management_addr
@@ -132,9 +132,9 @@ class New_system():
                 cobbler_system.set_interface_type('na', self.interface)
             cobbler_system.set_netboot_enabled(self.netboot_enabled)
             if self.mac_addr is not None:
-                cobbler_system.set_mac_address(self.mac_addr,interface)
+                cobbler_system.set_mac_address(self.mac_addr, interface)
             if self.ipaddr is not None:
-                cobbler_system.set_ip_address(self.ipaddr,interface)
+                cobbler_system.set_ip_address(self.ipaddr, interface)
             if self.owners is not None:
                 cobbler_system.set_owners(self.owners)
             else:
@@ -310,9 +310,9 @@ class System_operate():
             if netboot_enabled is not None:
                 reference.set_netboot_enabled(netboot_enabled)
             if mac_addr is not None:
-                reference.set_mac_address(mac_addr,interface)
+                reference.set_mac_address(mac_addr, interface)
             if ipaddr is not None:
-                reference.set_ip_address(ipaddr,interface)
+                reference.set_ip_address(ipaddr, interface)
             if owners is not None:
                 reference.set_owners(owners)
             if virt_bridge is not None:
@@ -337,10 +337,17 @@ class System_operate():
         return True
 
 
-if __name__=="__main__":
-   """
-   ref=New_system("test-sys",interface="eth0",owners="admin",profile="profile4",status="develpoment")
-   ref.save_system()
-   """
-   ref=System_operate()
-   ref.edit_system("system2",owners="admin, cobbler",profile="RHEL7-1",status="production",ipaddr="192.168.10.1",mac_addr="AD:12:12:12:12:11",interface='eth0')
+if __name__ == "__main__":
+    """
+    ref=New_system("test-sys",interface="eth0",owners="admin",profile="profile4",status="develpoment")
+    ref.save_system()
+    """
+    ref = System_operate()
+    ref.edit_system(
+        "system2",
+        owners="admin, cobbler",
+        profile="RHEL7-1",
+        status="production",
+        ipaddr="192.168.10.1",
+        mac_addr="AD:12:12:12:12:11",
+        interface='eth0')

@@ -26,31 +26,35 @@ Note:-- Every operation returns True or False
         for success or unsuccess.
         Also every parameter being passed is checked
         if it is of correct type and in correct format
-        using basestring  method if it needs to be a 
+        using basestring  method if it needs to be a
         string or using isinstance method with the
         correct type it is supposed to be.
-        Ex. owners should be passed as string with 
+        Ex. owners should be passed as string with
         owners separated by comma.
 """
+
+
 class New_distro():
-    """Create an instance of New_Distro. While instantiation 
-       call the constructor with the required parameters. 
+
+    """Create an instance of New_Distro. While instantiation
+       call the constructor with the required parameters.
        kernel--full path of the vmlinuz file
        initrd-- full path of the initrd.img file
        arch--architecture
-       os_version-- ex. rhel7, rhel6 
+       os_version-- ex. rhel7, rhel6
        owners-- who are the owners of the distro
 
-       Note that u can send the parameters during the 
-       New_distro constructor call or these parameters 
+       Note that u can send the parameters during the
+       New_distro constructor call or these parameters
        can be set using set_XXX method.
-       The constructor will return the reference to the 
-       New_distro object. Call the save_distro method 
+       The constructor will return the reference to the
+       New_distro object. Call the save_distro method
        on it.
        For usage:- refer to the __name__==__main__
        section at the bottom of file.
 
     """
+
     def __init__(
             self,
             name=None,
@@ -128,40 +132,40 @@ class New_distro():
         except Exception as e:
             print str(e)
             return False
-        
+
         cobbler_api_handle = cobapi.BootAPI()
         try:
             # check whether distro with this name already exists
             if not cobbler_api_handle.find_distro(self.name) is None:
                 raise Exception("Distro with this name already exist")
             cobbler_distro = cobbler_api_handle.new_distro()
-            #Below is called the API methods of the
- 	    #cobbler.item_distro package.
+            # Below is called the API methods of the
+            # cobbler.item_distro package.
             cobbler_distro.set_name(self.name)
             cobbler_distro.set_kernel(self.kernel)
             cobbler_distro.set_initrd(self.initrd)
-            #assumption--x86_64 is the default arch
+            # assumption--x86_64 is the default arch
             if self.arch is not None:
                 cobbler_distro.set_arch(self.arch)
             else:
                 cobbler_distro.set_arch('x86_64')
-            #assumptiom--rhel7 is the default os_version
+            # assumptiom--rhel7 is the default os_version
             if self.os_version is not None:
                 cobbler_distro.set_os_version(self.os_version)
             else:
                 cobbler_distro.set_os_version('rhel7')
-            #assumption--admin is the default owner
+            # assumption--admin is the default owner
             if self.owners is not None:
                 cobbler_distro.set_owners(self.owners)
             else:
                 cobbler_distro.set_owners('admin')
-            #Assumtiom--Since the prototype is for
-            #openstack setup breed is redhat by default
-            #modify __init__() to accept os breed in case
-            #apart from rhel any other o/s is going to be
-            #used.
+            # Assumtiom--Since the prototype is for
+            # openstack setup breed is redhat by default
+            # modify __init__() to accept os breed in case
+            # apart from rhel any other o/s is going to be
+            # used.
             cobbler_distro.set_breed('redhat')
-
+            print "Ok"
             cobbler_api_handle.add_distro(cobbler_distro)
         except Exception as e:
             print str(e)
@@ -170,22 +174,25 @@ class New_distro():
 
 
 class Distro_operate():
-    """Create an instance of Distro_operate to delete 
+
+    """Create an instance of Distro_operate to delete
        copy, rename or edit an existing distro
-       Usage:-- Create an instance of the Distro_operate 
+       Usage:-- Create an instance of the Distro_operate
        class and call the methods like edit, copy etc.
        to perform operation. For usage see the __name__
        ==__main__ section at the bottom of file.
     """
+
     def __init__(self):
         pass
+
     def copy_distro(self, src_distro_name, new_distro_name):
         """Provide the distro name of an existing distro which
            is to be copied and the name of the newly distro
            being created.
-           src_distro name is the name of the existing distro 
-           which is to be copied. 
-        """ 
+           src_distro name is the name of the existing distro
+           which is to be copied.
+        """
         cobbler_api_handle = cobapi.BootAPI()
         try:
             if not is_basestring(src_distro_name):
@@ -193,13 +200,13 @@ class Distro_operate():
             if not is_basestring(new_distro_name):
                 raise("new distro name must be string")
             reference = cobbler_api_handle.find_distro(src_distro_name)
-            #check if the source distro exists
+            # check if the source distro exists
             if reference is None:
                 raise Exception(
                     "Distro with name " +
                     src_distro_name +
                     " does not exists")
-            #if a distro with the name same as new_distro already exists
+            # if a distro with the name same as new_distro already exists
             # the copy operation can't be performed.
             if not cobbler_api_handle.find_distro(new_distro_name) is None:
                 raise Exception(
@@ -223,13 +230,13 @@ class Distro_operate():
             if not is_basestring(new_distro_name):
                 raise("new distro name must be string")
             reference = cobbler_api_handle.find_distro(old_distro_name)
-            #check if odl_distro already exists.
+            # check if odl_distro already exists.
             if reference is None:
                 raise Exception(
                     "Distro with name " +
                     old_distro_name +
                     " does not exists")
-            #if a distro with the name same as new_distro already exists
+            # if a distro with the name same as new_distro already exists
             # the rename operation can't be performed.
             if not cobbler_api_handle.find_distro(new_distro_name) is None:
                 raise Exception(
@@ -248,7 +255,7 @@ class Distro_operate():
             if not is_basestring(distro_name):
                 raise("name of the distro to be deleted must be string")
             reference = cobbler_api_handle.find_distro(distro_name)
-            #check if the distro being deleted does exists.
+            # check if the distro being deleted does exists.
             if reference is None:
                 raise Exception(
                     "Distro with " +
@@ -277,7 +284,7 @@ class Distro_operate():
             if not is_basestring(distro_name):
                 raise distro_name
             reference = cobbler_api_handle.find_distro(distro_name)
-            #checking if distro already exists
+            # checking if distro already exists
             if reference is None:
                 raise Exception(
                     "Distro with " +
@@ -314,11 +321,11 @@ class Distro_operate():
 if __name__ == "__main__":
     """This section can be seen for knowing usage."""
 
-    #refer=Distro_operate()
+    # refer=Distro_operate()
     #refer.edit_distro('test',new_owners='admin, cobbler')
     ref = New_distro(
         'test1',
-        '/mnt/isolinux/vmlinuz',
-        '/mnt/isolinux/initrd.img',
+        'rhel_mount/isolinux/vmlinuz',
+        'rhel_mount/isolinux/initrd.img',
         owners='admin, cobbler')
     ref.save_distro()

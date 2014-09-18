@@ -18,6 +18,10 @@
 
 ####### General Utils #########
 import subprocess
+import os
+import sys
+root_path = os.path.abspath(r"../..")
+sys.path.append(root_path)
 
 
 class bcolors:
@@ -28,39 +32,43 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
+
 def shell_command_true(fully_qualified_command):
     print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
-    subprocess.call(fully_qualified_command,shell=True)
+    subprocess.call(fully_qualified_command, shell=True)
+
 
 def shell_command(command_title, command_args):
     subprocess.call()
 
+
 def shell_command(fully_qualified_command):
+
     print bcolors.OKBLUE + "COMMAND: " + fully_qualified_command + bcolors.ENDC
-    words_in_command=[]
-    words_in_command=split_into_words(fully_qualified_command)
+    words_in_command = []
+    words_in_command = split_into_words(fully_qualified_command)
     subprocess.call(words_in_command)
 
+
 def split_into_words(var):
-    var=var.strip(' ')
-    partitioned_list=var.partition(' ')
-    left_part=partitioned_list[0]
-    right_part=partitioned_list[2]
-    words_list=[]
+    var = var.strip(' ')
+    partitioned_list = var.partition(' ')
+    left_part = partitioned_list[0]
+    right_part = partitioned_list[2]
+    words_list = []
     while right_part != '':
-	words_list.append(left_part)
-        var=right_part
-        var=var.strip(' ')
-	partitioned_list=var.partition(' ')
-	left_part=partitioned_list[0]
-	right_part=partitioned_list[2]
+        words_list.append(left_part)
+        var = right_part
+        var = var.strip(' ')
+        partitioned_list = var.partition(' ')
+        left_part = partitioned_list[0]
+        right_part = partitioned_list[2]
     words_list.append(left_part)
     return words_list
-    
+
+
 def is_basestring(var):
-    if isinstance(var,basestring):
+    if isinstance(var, basestring):
         return True
     else:
         return False
-    
-

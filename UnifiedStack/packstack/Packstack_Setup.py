@@ -17,7 +17,7 @@ import sys
 import os
 import subprocess
 
-root_path = os.path.abspath(r"..\..")
+root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 from UnifiedStack.cli import Shell_Interpretter as shi

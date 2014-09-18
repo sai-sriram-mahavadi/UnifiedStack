@@ -53,6 +53,11 @@ class Integrator:
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
+    
+  
+
+  
+	
 
 if __name__ == "__main__":
     integrator = Integrator()

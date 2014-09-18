@@ -16,19 +16,29 @@
 
 
 # This File prepares system for cobbler installation.
-from general_utils import shell_command, bcolors,shell_command_true
+from general_utils import shell_command, bcolors, shell_command_true
 import os
+import sys
+
+root_path = os.path.abspath(r"../..")
+sys.path.append(root_path)
+from UnifiedStack.config.Config_Parser import Config
 
 
 def enable_repos():
-    #Enabling the XML repos database of linux for installing
-    file1 = open("./cobbler.repo")
-    file2 = open('/etc/yum.repos.d/cobbler.repo', 'w')
-    lines = file1.readlines()
-    file1.close()
-    for line in lines:
-        file2.write(line)
-    file2.close()
+
+    redhat_username = Config.get_cobbler_field('redhat_username')
+    redhat_password = Config.get_cobbler_field('redhat_password')
+    redhat_pool = Config.get_cobbler_field('redhat_pool')
+    # Subscription
+    shell_command_true(
+        "subscription-manager register --username=" +
+        redhat_username +
+        " --password=" +
+        redhat_password)
+    shell_command_true("subscription-manager attach --pool=" + redhat_pool)
+
+    # Enabling the XML repos database of linux for installing
     shell_command("yum update -y")
     shell_command(
         "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
@@ -36,20 +46,13 @@ def enable_repos():
         "sudo yum-config-manager --enable home_libertas-ict_cobbler26")
     shell_command("yum clean all")
     shell_command("yum repolist all")
-    print bcolors.OKGREEN + "Please check if rhel-7-server-openstack-5.0-rpms \
-          and home_libertas-ict_cobbler26 is ENABLED. If not enable them by own"
 
 
 def disable_SELinux():
-    #disable SELinux and reboot
+    # disable SELinux and reboot
     shell_command_true(
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
     shell_command("yum update -y")
-    #Write the path of cobbler_setup.py in rc.local
-    file = open("/etc/rc.local", "a")
-    file.write("python " + os.getcwd() + '/cobbler_setup.py')
-    file.close()
-    shell_command("reboot")
 
 
 if __name__ == "__main__":

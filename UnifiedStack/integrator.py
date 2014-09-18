@@ -27,8 +27,8 @@ from UnifiedStack.netswitch import Switch_Setup as sw
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 
-name, purpose(networker, compute), os -> name of system
-system, rhel img (access.redhat)(http server), 
+#name, purpose(networker, compute), os -> name of system
+#system, rhel img (access.redhat)(http server), hostname port
 
 class Integrator:
     

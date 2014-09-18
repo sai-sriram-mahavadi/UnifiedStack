@@ -58,7 +58,7 @@ def disable_SELinux(console):
         "sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config")
     shell_command("yum update -y")
     console.cprint_progress_bar("Reupdating",90)
-    console.cprint_progress_bar("TASK COMPLETED",100)
+    console.cprint_progress_bar("TASK COMPLETED",100)    
 
 def enable_networking(console):
     cobbler_interface = Config.get_cobbler_field('cobbler_interface')
@@ -70,6 +70,21 @@ def enable_networking(console):
     file.write("NETMASK=" + cobbler_netmask + "\n" )
     file.close()
 
-if __name__ == "__main__":
-    enable_repos()
-    disable_SELinux()
+def add_name_server(console):
+    console.cprint_progress_bar("Reupdating",90)
+    name_server=Config.get_cobbler_field("name-server")
+    file=open("/etc/resolv.conf","r")
+    lines=file.readlines()
+    file.close() 
+    found=False
+    for line in lines:
+	if "nameserver" in line:
+	    found=True
+            break
+    if not found:
+        file=open("/etc/resolv.conf","w")
+        file.writelines(lines)
+        file.write("nameserver " + name_server) 
+        file.close()
+    console.cprint_progress_bar("TASK COMPLETED",100)
+ 

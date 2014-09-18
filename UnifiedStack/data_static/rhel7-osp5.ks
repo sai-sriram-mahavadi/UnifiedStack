@@ -58,7 +58,6 @@ while : ; do
 done &
 
 
-wget "http://192.168.3.31/cblr/svc/op/trig/mode/pre/profile/rhel7_x64" -O /dev/null
 
 # Enable installation monitoring
 
@@ -83,8 +82,7 @@ exec 1>/root/ks-post.log 2>&1
 # Start download cobbler managed config files (if applicable)
 # End download cobbler managed config files (if applicable)
 # Start koan environment setup
-echo "export COBBLER_SERVER=192.168.3.31" > /etc/profile.d/cobbler.sh
-echo "setenv COBBLER_SERVER 192.168.3.31" > /etc/profile.d/cobbler.csh
+
 # End koan environment setup
 
 # begin Red Hat Network certificate-based server registration
@@ -99,8 +97,6 @@ echo "setenv COBBLER_SERVER 192.168.3.31" > /etc/profile.d/cobbler.csh
 
 # Start final steps
 
-wget "http://192.168.3.31/cblr/svc/op/ks/profile/rhel7_x64" -O /root/cobbler.ks
-wget "http://192.168.3.31/cblr/svc/op/trig/mode/post/profile/rhel7_x64" -O /dev/null
 # End final steps
 %end
 

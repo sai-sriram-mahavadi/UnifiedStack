@@ -44,16 +44,16 @@ Config = Config_Parser.Config
 class Integrator:
     
     @staticmethod
-    def get_cobbler_integrator_path():
+    def get_cobbler_integrator_command():
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        return 'bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -cobbler-postboot"'
+        return 'bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -switch"'
          
     def configure_cobbler_preboot(self, shell, console):
         cobbler_config.cobbler_preInstall(console)
         #Write the path of integrator.py in .bashrc
         read_bash = open("/root/.bashrc", "a")
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        read_bash.write(Integrator.get_cobbler_integrator_path())
+        read_bash.write(Integrator.get_cobbler_integrator_command())
         # read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -cobbler-postboot"')
         read_bash.close()
         shell.execute_command("reboot")
@@ -65,7 +65,7 @@ class Integrator:
         read_bash.close()
         write_bash = open("/root/.bashrc","w")
         for line in lines:
-             if line!=Integrator.get_cobbler_integrator_path()+"\n":
+             if line!=Integrator.get_cobbler_integrator_command()+"\n":
                 write_bash.write(line)
         # write_bash.writelines([item for item in lines[:-1]])
         write_bash.close()
@@ -85,15 +85,21 @@ class Integrator:
 
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
         runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
-        RUNSTATUSCODE = {"-cobbler-preboot":0, "-cobbler-postboot":1, "-packstack":2, "-switch":3}
-        runstatus = RUNSTATUSCODE[runstatusmsg]
+        RUNSTATUSCODE = {"-cobbler-preboot":0, "-cobbler-postboot":2, "-switch":1, "-packstack":3}
+        try:
+            runstatus = RUNSTATUSCODE[runstatusmsg]
+        except Exception:
+            print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -switch, -packstack ]"
         if(runstatus <= 0):  # Configuring Cobbler pre-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
             self.configure_cobbler_preboot(shell, console)
-        if(runstatus <= 1):  # Congiguing Cobbler post-boot
+        if(runstatus <= 1):  # Switch
+            console.cprint_progress_bar("Started Configuration of Switch", 0)
+            self.configure_switch(shell, console)
+        if(runstatus <= 2):  # Congiguing Cobbler post-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
             self.configure_cobbler_postboot(shell, console)
-        if(runstatus <= 2):  # Packstack
+        if(runstatus <= 3):  # Packstack
             # Test if all the nodes are active; else wait for the same even to occur
             tries = 0
             while not self.poll_all_nodes():
@@ -107,9 +113,7 @@ class Integrator:
                 exit(0)
             console.cprint_progress_bar("Started Configuration of Packstack", 0)
             self.configure_packstack(shell, console)
-        if(runstatus <= 3):  # Switch
-            console.cprint_progress_bar("Started Configuration of Switch", 0)
-            self.configure_switch(shell, console)
+        
         '''           
         # Configuring CIMC
         console.cprint_progress_bar("Started Configuration of CIMC", 0)

@@ -29,7 +29,7 @@ class New_system():
             owners=None,
             profile=None,
             status="testing",
-            netboot_enabled=False,
+            netboot_enabled=True,
             hostname=None,
             interface=None,
             mac_addr=None,
@@ -357,6 +357,9 @@ class System_operate():
         except Exception,e:
             print "Not able to power on system",e
 	    return False
+
+   
+	    
 
 if __name__ == "__main__":
     """

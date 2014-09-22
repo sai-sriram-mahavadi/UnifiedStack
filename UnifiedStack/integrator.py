@@ -38,7 +38,7 @@ class Integrator:
         # Configuring Cobbler
         console.cprint_progress_bar("Started Installation of Cobbler", 0)
         cobbler_config = cobb.Cobbler_Integrator()
-                 
+         
         if len(sys.argv)>1 and sys.argv[1]=="-postboot":
             cobbler_config.cobbler_postInstall(console)
             read_bash = open("/root/.bashrc","r")

@@ -63,9 +63,7 @@ class Build_Server():
             			      power_management_username=power_user,
 				      power_management_type=power_type,
             			      power_management_password=power_pass,
-				      power_management_addr=power_addr)            
-           
-	    
+				      power_management_addr=power_addr)            	    
 	    handle.save_system()
 	    
 
@@ -84,7 +82,24 @@ class Build_Server():
 		except Exception,e:
 		    print e
 		
-	
+    def disable_netboot_systems(self):
+	    handle=syst.System_operate()
+            systems = Config.get_systems_data()
+            for system in systems:
+                purpose = system.purpose
+                hostname = system.hostname
+                name = '' + hostname + "-" + purpose
+	        handle.edit_system(name,netboot_enabled=False)
+
+    def enable_netboot_systems(_self,name):
+            handle=syst.System_operate()
+            systems = Config.get_systems_data()
+            for system in systems:
+                purpose = system.purpose
+                hostname = system.hostname
+                name = '' + hostname + "-" + purpose
+            handle.edit_system(name,netboot_enabled=True)
+
 	    
 if __name__ == "__main__":
     handle = Build_Server()

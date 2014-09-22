@@ -1,7 +1,7 @@
 import cobbler_preInstall
 import cobbler_setup
 import os,inspect
-import sys
+import sys,time
 import shutil
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
@@ -31,7 +31,7 @@ class Cobbler_Integrator():
             "/../data_static/rsync",
             "/etc/xinetd.d/rsync")
         cobbler_setup.sync(console)
-        #cobbler_setup.mount(console)
+        cobbler_setup.mount(console)
         towrite = []
         file = open(self.cur+ "/../data_static/rhe7-osp5.ks", "r")
         lines = file.readlines()
@@ -53,9 +53,12 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool +
                     "\n")
+		#TO DO REMOVE HARD CODING
 		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
                 towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
+	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" 2>> /root/.bashrc\n")
                 towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" 2>> /etc/resolv.conf\n")
+		
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         file.writelines(towrite)
         file.close()
@@ -66,9 +69,12 @@ class Cobbler_Integrator():
         handle.create_distro()
         handle.create_profile()        
         handle.create_system()
-        handle.power_on_systems()
+	time.sleep(360)
+	handle.disable_netboot_systems()
+        #handle.power_on_systems()
         console.cprint_progress_bar("Task Completed",100)
-        
+
+    def  
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

@@ -29,6 +29,11 @@ class SystemNode:
         self.profile_name = ""
         self.port = ""
         self.proxy = ""
+	self.power_type = ""
+        self.power_user = ""
+	self.power_password = ""
+	self.power_address = ""
+
     def __str__(self):
         str_node = ""
         str_node += "Purpose:       " + self.purpose + "\r\n"
@@ -98,6 +103,11 @@ class Config:
             sys_node.port = other_fields[2]
             sys_node.interface = other_fields[3]
             sys_node.profile_name = other_fields[4]
+	    sys_node.power_user = other_fields[5]
+	    sys_node.power_password = other_fields[6]
+	    sys_node.power_address = other_fields[7]
+	    sys_node.power_type = Config.get_cobbler_field("power_type")
+	    sys_node.power_proxy = Config.get_cobbler_field("proxy")
             sys_nodes.append(sys_node)
 
         str_nodes = Config.get_field("Cobbler-Configuration", "network-hosts")

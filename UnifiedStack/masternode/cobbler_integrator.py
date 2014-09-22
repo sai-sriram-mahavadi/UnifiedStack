@@ -63,7 +63,9 @@ class Cobbler_Integrator():
         handle.create_distro()
         handle.create_profile()        
         handle.create_system()
+        handle.power_on_systems()
         console.cprint_progress_bar("Task Completed",100)
+        
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

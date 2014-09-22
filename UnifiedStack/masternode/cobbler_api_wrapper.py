@@ -48,28 +48,40 @@ class Build_Server():
             profile = system.profile_name
 	    proxy=system.proxy
             #power_id= system.power_id
-            #power_type=system.power_type
-            #power_user=system.power_user
-            #power_pass=system.power_password
-            #power_addr=system.power_address
+            power_type=system.power_type
+            power_user=system.power_user
+            power_pass=system.power_password
+            power_addr=system.power_address
             name = '' + hostname + "-" + purpose
             handle = syst.New_system( name=name,
-                                      hostname=hostname,
-                                      mac_addr=mac_addr,
-                                      ipaddr=ipaddress,
+				      hostname=hostname, 
+           			      mac_addr=mac_addr,
+				      ipaddr=ipaddress,
 				      interface=interface,
-                                      profile=profile
-				      proxy=proxy)
-            """
-            handle = syst.New_system( name=name,hostname=hostname, 
-            mac_addr=mac_addr,ipaddr=ipaddress,interface=interface,
-            profile=profile,power_management_id=power_id,
-            power_management_username=power_user,power_management_type=power_type,
-            power_management_password=power_pass,power_management_addr=power_addr)
-            """
+         			      profile=profile,
+				      power_management_id=power_id,
+            			      power_management_username=power_user,
+				      power_management_type=power_type,
+            			      power_management_password=power_pass,
+				      power_management_addr=power_addr)            
             handle.save_system()
 
-
+    def power_on_systems(self):
+	    handle=System_operate()
+	    for system in systems:
+		purpose = system.purpose
+                hostname = system.hostname
+		name = '' + hostname + "-" + purpose
+		try:
+                    if handle.power_on(name):
+			print "System " + name + " powered on"
+		    else:
+			raise Exception("Not able to power on System " + name )
+		except Exception,e:
+		    print e
+		
+	
+	    
 if __name__ == "__main__":
     handle = Build_Server()
     handle.create_distro()

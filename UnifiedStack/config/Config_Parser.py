@@ -28,7 +28,7 @@ class SystemNode:
         self.interface = ""
         self.profile_name = ""
         self.port = ""
-        
+        self.proxy = ""
     def __str__(self):
         str_node = ""
         str_node += "Purpose:       " + self.purpose + "\r\n"

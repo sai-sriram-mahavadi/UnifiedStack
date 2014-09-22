@@ -34,8 +34,10 @@ class New_system():
             hostname=None,
             interface=None,
             mac_addr=None,
+ 	    proxy=None,
             ipaddr=None,
             virt_bridge=None,
+	    kickstart="/var/lib/cobbler/kickstarts/rhe7-osp5.ks",
             power_management_type=None,
             power_management_addr=None,
             power_management_username=None,
@@ -63,6 +65,8 @@ class New_system():
         # ip address of this interface
         self.ipaddr = ipaddr
         # Below parameters are less used.
+        self.proxy=proxy
+	self.kickstart=kickstart
         self.virt_bridge = virt_bridge
         self.power_management_type = power_management_type
         self.power_management_addr = power_management_addr
@@ -155,6 +159,9 @@ class New_system():
                 cobbler_system.set_power_id(self.power_management_id)
             if self.power_management_addr is not None:
                 cobbler_system.set_power_address(self.power_management_addr)
+	    if self.proxy is not None:
+		cobbler_system.set_proxy(self.proxy)
+	    cobbler_system.set_kickstart(self.kickstart)
             cobbler_api_handle.add_system(cobbler_system)
         except Exception as e:
             print str(e)

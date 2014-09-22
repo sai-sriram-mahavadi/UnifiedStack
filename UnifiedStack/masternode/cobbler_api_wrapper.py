@@ -46,6 +46,7 @@ class Build_Server():
             ipaddress = system.ip_address
             interface = system.interface
             profile = system.profile_name
+	    proxy=system.proxy
             #power_id= system.power_id
             #power_type=system.power_type
             #power_user=system.power_user
@@ -57,7 +58,8 @@ class Build_Server():
                                       mac_addr=mac_addr,
                                       ipaddr=ipaddress,
 				      interface=interface,
-                                      profile=profile)
+                                      profile=profile
+				      proxy=proxy)
             """
             handle = syst.New_system( name=name,hostname=hostname, 
             mac_addr=mac_addr,ipaddr=ipaddress,interface=interface,

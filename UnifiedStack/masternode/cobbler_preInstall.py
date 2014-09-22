@@ -37,7 +37,7 @@ def enable_repos(console):
         redhat_username +
         " --password=" +
         redhat_password) 
-    shell_command_true("subscription-manager attach --pool=" + redhat_pool)
+    #shell_command_true("subscription-manager attach --pool=" + redhat_pool)
     console.cprint_progress_bar("Updating the System",10)
     # Enabling the XML repos database of linux for installing
     shell_command("yum update -y")

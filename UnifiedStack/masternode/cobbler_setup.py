@@ -42,13 +42,15 @@ def cobbler_setup(console):
     cobbler_web_password = Config.get_cobbler_field('cobbler_web_password')
     cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
 
+    shell_command(
+        "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
     shell_command_true(
-        "/usr/bin/yum -y install cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd")
+        "/usr/bin/yum -y install tftp-server cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd python-devel python-paramiko")
     console.cprint_progress_bar("Writing in the necessary files",60)
     shell_command("hostname " + cobbler_hostname)
     # setup cobbler
     shell_command_true(
-        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$7DMgQ9Ew$5d4IbaDMzVQ0FbqiiOH600\"/' /etc/cobbler/settings")
+        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$yxb/WepJ$Bd1Iy7Pm71CuErWcdnBlh.\"/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^manage_dhcp:.*/manage_dhcp: 1/' /etc/cobbler/settings")
     shell_command_true(
@@ -127,7 +129,7 @@ def enable_services(console):
 
 def sync(console):
     console.cprint_progress_bar("Cobbler Get-loaders and Sync",80)
-    shell_command("cobbler get-loaders")
+    shell_command("cobbler get-loaders --force")
     import cobbler.api as capi
     handle = capi.BootAPI()
     handle.check()
@@ -136,19 +138,19 @@ def sync(console):
 
 def mount(console):
     """Here goes the code to wget the rhel image in the /root directory"""
-    console.cprint_progress_bar("Mounting the RHEL iso to /root and doing cobbler import",95)
+    shell_command("mkdir /root/rhel_mount")
+    console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",95)
     rhel_image_url=Config.get_general_field("rhel-image-url")
-    shell_command("wget " + rhel_image_url + "-P /root/rhel-server-7.0-x86_64-dvd.iso")
+    shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
-        "mount -t iso9660 -o loop,ro  /root/rhel-server-7.0-x86_64-dvd.iso " +
-        root_path +
-        "/UnifiedStack/masternode/rhel_mount")
+        "mount -t iso9660 -o loop,ro  /root/rhel-server-7.0-x86_64-dvd.iso /root/rhel_mount")
     shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
-    console.cprint_progress_bar("Task Completed",100)
+
 
 def create_install_server(console):
+    
     shell_command(
         "cobbler import --name=RHEL7 --arch=x86_64 --path=" +
         root_path +
         "/UnifiedStack/masternode/rhel_mount")
-    console.cprint_progress_bar("Task Completed",100)
+    

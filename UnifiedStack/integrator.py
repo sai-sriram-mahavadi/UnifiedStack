@@ -23,7 +23,6 @@ sys.path.append(root_path)
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from UnifiedStack.masternode import cobbler_integrator as cobb
 from UnifiedStack.packstack import Packstack_Setup as pst
-from UnifiedStack.netswitch import Switch_Setup as sw
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 #name, purpose(networker, compute), os -> name of system
@@ -39,7 +38,7 @@ class Integrator:
         # Configuring Cobbler
         console.cprint_progress_bar("Started Installation of Cobbler", 0)
         cobbler_config = cobb.Cobbler_Integrator()
-        
+                 
         if len(sys.argv)>1 and sys.argv[1]=="-postboot":
             cobbler_config.cobbler_postInstall(console)
             read_bash = open("/root/.bashrc","r")
@@ -71,6 +70,7 @@ class Integrator:
         packstack_config.configure_packstack(console)
 	
         # Configuring Switch
+        from UnifiedStack.netswitch import Switch_Setup as sw
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)

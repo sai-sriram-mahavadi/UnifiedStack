@@ -7,7 +7,6 @@ root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 from UnifiedStack.config.Config_Parser import Config
-from cobbler_api_wrapper import Build_Server 
 
 class Cobbler_Integrator():
 
@@ -34,7 +33,7 @@ class Cobbler_Integrator():
         cobbler_setup.sync(console)
         cobbler_setup.mount(console)
         towrite = []
-        file = open(self.cur+ "/../data_static/rhel7-osp5.ks", "r")
+        file = open(self.cur+ "/../data_static/rhe7-osp5.ks", "r")
         lines = file.readlines()
         file.close()
         towrite = []
@@ -53,14 +52,18 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool +
                     "\n")
-        file = open("/var/lib/cobbler/kickstarts/rhel7-osp5.ks", "w")
+        file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         for line in towrite:
             file.write(line)
         file.close()
         #cobbler_setup.create_install_server(console)
-        Build_Server.create_distro()
-        Build_Server.create_profile()        
-        Build_Server.create_system()
+        console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)
+        from cobbler_api_wrapper import Build_Server
+        handle=Build_Server()
+        handle.create_distro()
+        handle.create_profile()        
+        handle.create_system()
+        console.cprint_progress_bar("Task Completed",100)
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

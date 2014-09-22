@@ -20,6 +20,7 @@ import ConfigParser
 class SystemNode:
     
     def __init__(self):
+       
         self.purpose = ""
         self.hostname = ""
         self.mac_address = ""

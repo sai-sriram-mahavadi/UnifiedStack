@@ -1,6 +1,6 @@
-import cobbler_system as system
-import cobbler_profile as profile
-import cobbler_distro as distro
+import cobbler_system as syst
+import cobbler_profile as prof
+import cobbler_distro as dist
 import inspect
 import os
 import sys
@@ -17,14 +17,12 @@ class Build_Server():
         pass
 
     def create_distro(self):
-
         name = "RHELx86_64"  # Config.get_distro_field("distro_name")
-
         # Config.get_distro_field("vmlinuz_path")
-        vmlinuz_path = "rhel_mount/isolinux/vmlinuz"
+        vmlinuz_path = "/root/rhel_mount/images/pxeboot/vmlinuz"
         # Config.get_distro_field("initrd_path")
-        initrd_path = "rhel_mount/isolinux/initrd.img"
-        handle = distro.New_distro(
+        initrd_path = "/root/rhel_mount/images/pxeboot/initrd.img"
+        handle = dist.New_distro(
             name,
             kernel=vmlinuz_path,
             initrd=initrd_path)
@@ -35,27 +33,38 @@ class Build_Server():
         for profile in profiles:
             name = profile.profile_name
             distro = profile.distro_name
-            handle = distro.New_profile(name, distro)
-            handle.save_distro()
+            handle = prof.New_profile(name=name, distro=distro)
+            handle.save_profile()
+           
 
     def create_system(self):
         systems = Config.get_systems_data()
         for system in systems:
-            name = system.system_name
             purpose = system.purpose
             hostname = system.hostname
             mac_addr = system.mac_address
             ipaddress = system.ip_address
             interface = system.interface
             profile = system.profile_name
-            name = '' + name + "-" + purpose
-            handle = distro.New_system(
-                name=name,
-                hostname=hostname,
-                mac_addr=mac_addr,
-                ipaddr=ipaddress,
-                interface=interface,
-                profile=profile)
+            #power_id= system.power_id
+            #power_type=system.power_type
+            #power_user=system.power_user
+            #power_pass=system.power_password
+            #power_addr=system.power_address
+            name = '' + hostname + "-" + purpose
+            handle = syst.New_system( name=name,
+                                      hostname=hostname,
+                                      mac_addr=mac_addr,
+                                      ipaddr=ipaddress,
+				      interface=interface,
+                                      profile=profile)
+            """
+            handle = syst.New_system( name=name,hostname=hostname, 
+            mac_addr=mac_addr,ipaddr=ipaddress,interface=interface,
+            profile=profile,power_management_id=power_id,
+            power_management_username=power_user,power_management_type=power_type,
+            power_management_password=power_pass,power_management_addr=power_addr)
+            """
             handle.save_system()
 
 

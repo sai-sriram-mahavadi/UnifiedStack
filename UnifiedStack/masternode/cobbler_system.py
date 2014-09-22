@@ -29,7 +29,7 @@ class New_system():
             name=None,
             owners=None,
             profile=None,
-            status=None,
+            status="testing",
             netboot_enabled=False,
             hostname=None,
             interface=None,
@@ -78,7 +78,7 @@ class New_system():
                 raise Exception("Owners must be comma separated string ")
             if not is_basestring(self.profile):
                 raise Exception("Profile must be of string ")
-            if not is_basestring(self.status):
+            if self.status is not None and not is_basestring(self.status):
                 raise Exception("Status must be of string ")
             if self.hostname is not None and not is_basestring(self.hostname):
                 raise Exception("Hostname must be string")
@@ -114,7 +114,7 @@ class New_system():
                     self.self.power_management_id):
                 raise Exception("self.power_management_id must be of string ")
             if self.name is None or self.profile is None or self.status is None:
-                raise Exception("Name, Profile and status are required")
+                raise Exception("Name, Profile status are required")
         except Exception as e:
             print str(e)
             return False
@@ -132,9 +132,9 @@ class New_system():
                 cobbler_system.set_interface_type('na', self.interface)
             cobbler_system.set_netboot_enabled(self.netboot_enabled)
             if self.mac_addr is not None:
-                cobbler_system.set_mac_address(self.mac_addr, interface)
+                cobbler_system.set_mac_address(self.mac_addr,self.interface)
             if self.ipaddr is not None:
-                cobbler_system.set_ip_address(self.ipaddr, interface)
+                cobbler_system.set_ip_address(self.ipaddr, self.interface)
             if self.owners is not None:
                 cobbler_system.set_owners(self.owners)
             else:

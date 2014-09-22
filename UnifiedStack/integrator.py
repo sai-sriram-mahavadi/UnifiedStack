@@ -39,63 +39,74 @@ from UnifiedStack.config import Config_Parser
 #system, rhel img (access.redhat)(http server), hostname port
 
 Config = Config_Parser.Config
+
+
 class Integrator:
-    
+
+    def configure_cobbler_preboot(self, shell, console):
+        cobbler_config.cobbler_preInstall(console)
+        #Write the path of integrator.py in .bashrc
+        read_bash = open("/root/.bashrc", "a")
+        integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -postboot"')
+        read_bash.close()
+        shell.execute_command("reboot")
+        
+    def configure_cobbler_postboot(self, shell, console):
+        cobbler_config.cobbler_postInstall(console)
+        read_bash = open("/root/.bashrc","r")
+        lines = read_bash.readlines()
+        read_bash.close()
+        write_bash = open("/root/.bashrc","w")
+        write_bash.writelines([item for item in lines[:-1]])
+        write_bash.close()
+        
+    def configure_packstack(self, shell, console):
+        packstack_config = pst.PackStackConfigurator()
+        packstack_config.configure_packstack(console)
+        
+    def configure_switch(self, shell, console):
+        sw_config = sw.SwitchConfigurator()
+        sw_config.configure_switch(console)
+        
     def configure_unifiedstack(self):
         console = cli.ConsoleOutput()
         shi.ShellInterpretter.set_console(console)
-        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")
-        
-        # Configuring Cobbler
-        console.cprint_progress_bar("Started Installation of Cobbler", 0)
-        cobbler_config = cobb.Cobbler_Integrator()
-        
-        if len(sys.argv)>1 and sys.argv[1]=="-postboot":
-            cobbler_config.cobbler_postInstall(console)
-            read_bash = open("/root/.bashrc","r")
-            lines = read_bash.readlines()
-            read_bash.close()
-            write_bash = open("/root/.bashrc","w")
-            write_bash.writelines([item for item in lines[:-1]])
-            write_bash.close()
-        else:
-            cobbler_config.cobbler_preInstall(console)
-            #Write the path of integrator.py in .bashrc
-            read_bash = open("/root/.bashrc", "a")
-            integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-            read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -postboot"')
-            read_bash.close()
-            shell = shi.ShellInterpretter()
-            shell.execute_command("reboot")
+        shell = shi.ShellInterpretter()
 
+        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
+        runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
+        RUNSTATUSCODE = {"-cobbler-preboot":0, "-cobbler-postboot":1, "-packstack":2, "-switch":3}
+        runstatus = RUNSTATUSCODE[runstatusmsg]
+        if(runstatus <= 0):  # Configuring Cobbler pre-boot
+            console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
+            self.configure_cobbler_preboot(shell, console)
+        if(runstatus <= 1):  # Congiguing Cobbler post-boot
+            console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
+            self.configure_cobbler_postboot(shell, console)
+        if(runstatus <= 2):  # Packstack
+            # Test if all the nodes are active; else wait for the same even to occur
+            tries = 0
+            while not self.poll_all_nodes():
+                time.sleep(120)
+                if tries < MAX_TRIES:
+                    tries += 1
+                else:
+                    break
+            if not self.poll_all_nodes():
+                console.cprint("Not all systems could boot!!!")
+                exit(0)
+            console.cprint_progress_bar("Started Configuration of Packstack", 0)
+            self.configure_packstack(shell, console)
+        if(runstatus <= 3):  # Switch
+            console.cprint_progress_bar("Started Configuration of Switch", 0)
+            self.configure_switch(shell, console)
         '''           
         # Configuring CIMC
         console.cprint_progress_bar("Started Configuration of CIMC", 0)
         cimc_config = cimc.CIMCConfigurator(console)
         cimc_config.configure_cimc()
         '''
-        count = 0
-        while not self.poll_all_nodes():
-            time.sleep(120)
-            if count < MAX_TRIES:
-                count += 1
-            else:
-                break
-        if not self.poll_all_nodes():
-            console.cprint("Not all systems could boot!!!")
-            exit(0)
-
-        
-        # Configuring Packstack
-        console.cprint_progress_bar("Started Configuration of Packstack", 0)
-        packstack_config = pst.PackStackConfigurator()
-        packstack_config.configure_packstack(console)
-	
-        # Configuring Switch
-        console.cprint_progress_bar("Started Configuration of Switch", 0)
-        sw_config = sw.SwitchConfigurator()
-        sw_config.configure_switch(console)
-
 
     def poll_node(self, ipaddress, username, password):
         remote_conn_pre = paramiko.SSHClient()

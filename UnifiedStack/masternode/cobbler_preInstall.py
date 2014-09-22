@@ -37,7 +37,7 @@ def enable_repos(console):
         redhat_username +
         " --password=" +
         redhat_password) 
-    #shell_command_true("subscription-manager attach --pool=" + redhat_pool)
+    shell_command_true("subscription-manager attach --pool=" + redhat_pool)
     console.cprint_progress_bar("Updating the System",10)
     # Enabling the XML repos database of linux for installing
     shell_command("yum update -y")
@@ -72,7 +72,7 @@ def enable_networking(console):
 
 def add_name_server(console):
     console.cprint_progress_bar("Reupdating",90)
-    name_server=Config.get_cobbler_field("name-server")
+    name_server=Config.get_general_field("name-server")
     file=open("/etc/resolv.conf","r")
     lines=file.readlines()
     file.close() 
@@ -88,3 +88,4 @@ def add_name_server(console):
         file.close()
     console.cprint_progress_bar("TASK COMPLETED",100)
  
+

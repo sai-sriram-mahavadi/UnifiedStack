@@ -139,13 +139,13 @@ def sync(console):
 def mount(console):
     """Here goes the code to wget the rhel image in the /root directory"""
     shell_command("mkdir /var/www/cobbler/images/RHEL")
-    console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",95)
+    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",95)
     rhel_image_url=Config.get_general_field("rhel-image-url")
     shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
-        "mount -t iso9660 -o loop,ro  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
+        "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
     shell_command("cp -r /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")
-    shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
+    #shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
 
 
 def create_install_server(console):

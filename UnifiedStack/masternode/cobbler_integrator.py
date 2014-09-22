@@ -31,7 +31,7 @@ class Cobbler_Integrator():
             "/../data_static/rsync",
             "/etc/xinetd.d/rsync")
         cobbler_setup.sync(console)
-        cobbler_setup.mount(console)
+        #cobbler_setup.mount(console)
         towrite = []
         file = open(self.cur+ "/../data_static/rhe7-osp5.ks", "r")
         lines = file.readlines()
@@ -40,7 +40,7 @@ class Cobbler_Integrator():
         redhat_username = Config.get_cobbler_field("redhat_username")
         redhat_password = Config.get_cobbler_field("redhat_password")
         redhat_pool = Config.get_cobbler_field("redhat_pool")
-        name-server = Config.get_general_field("name-server")	
+        name_server = Config.get_general_field("name-server")	
         for line in lines:
             towrite.append(line)
             if '%post' in line:
@@ -55,7 +55,7 @@ class Cobbler_Integrator():
                     "\n")
 		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
                 towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
-                towrite.append("/usr/bin/echo \"nameserver " + name-server + "\" 2>> /etc/resolv.conf\n")
+                towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" 2>> /etc/resolv.conf\n")
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         file.writelines(towrite)
         file.close()

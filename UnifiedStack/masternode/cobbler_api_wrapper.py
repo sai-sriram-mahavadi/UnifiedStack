@@ -19,9 +19,9 @@ class Build_Server():
     def create_distro(self):
         name = "RHELx86_64"  # Config.get_distro_field("distro_name")
         # Config.get_distro_field("vmlinuz_path")
-        vmlinuz_path = "/root/rhel_mount/images/pxeboot/vmlinuz"
+        vmlinuz_path = "/var/www/cobbler/images/RHEL/images/pxeboot/vmlinuz"
         # Config.get_distro_field("initrd_path")
-        initrd_path = "/root/rhel_mount/images/pxeboot/initrd.img"
+        initrd_path = "/var/www/cobbler/images/RHEL/images/pxeboot/initrd.img"
         handle = dist.New_distro(
             name,
             kernel=vmlinuz_path,
@@ -53,21 +53,25 @@ class Build_Server():
             power_pass=system.power_password
             power_addr=system.power_address
             name = '' + hostname + "-" + purpose
-            handle = syst.New_system( name=name,
+	    
+            handle = syst.New_system(name=name,
 				      hostname=hostname, 
            			      mac_addr=mac_addr,
 				      ipaddr=ipaddress,
 				      interface=interface,
-         			      profile=profile,
-				      power_management_id=power_id,
+         			      profile=profile, 
             			      power_management_username=power_user,
 				      power_management_type=power_type,
             			      power_management_password=power_pass,
 				      power_management_addr=power_addr)            
-            handle.save_system()
+           
+	    
+	    handle.save_system()
+	    
 
     def power_on_systems(self):
-	    handle=System_operate()
+	    handle=syst.System_operate()
+	    systems = Config.get_systems_data()
 	    for system in systems:
 		purpose = system.purpose
                 hostname = system.hostname
@@ -84,4 +88,5 @@ class Build_Server():
 	    
 if __name__ == "__main__":
     handle = Build_Server()
+
     handle.create_distro()

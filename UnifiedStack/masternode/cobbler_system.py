@@ -24,8 +24,7 @@ from general_utils import is_basestring
 
 class New_system():
 
-    def __init__(
-            self,
+    def __init__(self,
             name=None,
             owners=None,
             profile=None,
@@ -99,23 +98,23 @@ class New_system():
                     self.virt_bridge):
                 raise Exception("Virtual bridge must be of string ")
             if self.power_management_type is not None and not is_basestring(
-                    self.self.power_management_type):
+                    self.power_management_type):
                 raise Exception(
                     "self.power_management_type must be of string ")
             if self.power_management_addr is not None and not is_basestring(
-                    self.self.power_management_addr):
+                    self.power_management_addr):
                 raise Exception(
                     "self.power_management_addr must be of string ")
             if self.power_management_username is not None and not is_basestring(
-                    self.self.power_management_username):
+                    self.power_management_username):
                 raise Exception(
                     "self.power_management_username must be of string ")
             if self.power_management_password is not None and not is_basestring(
-                    self.self.power_management_password):
+                    self.power_management_password):
                 raise Exception(
                     "self.power_management_password must be of string ")
             if self.power_management_id is not None and not is_basestring(
-                    self.self.power_management_id):
+                    self.power_management_id):
                 raise Exception("self.power_management_id must be of string ")
             if self.name is None or self.profile is None or self.status is None:
                 raise Exception("Name, Profile status are required")
@@ -163,6 +162,7 @@ class New_system():
 		cobbler_system.set_proxy(self.proxy)
 	    cobbler_system.set_kickstart(self.kickstart)
             cobbler_api_handle.add_system(cobbler_system)
+	    print "here2"
         except Exception as e:
             print str(e)
             return False

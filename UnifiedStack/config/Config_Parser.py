@@ -20,6 +20,7 @@ import ConfigParser
 class SystemNode:
     
     def __init__(self):
+       
         self.purpose = ""
         self.hostname = ""
         self.mac_address = ""
@@ -27,7 +28,12 @@ class SystemNode:
         self.interface = ""
         self.profile_name = ""
         self.port = ""
-        
+        self.proxy = ""
+	self.power_type = ""
+        self.power_user = ""
+	self.power_password = ""
+	self.power_address = ""
+
     def __str__(self):
         str_node = ""
         str_node += "Purpose:       " + self.purpose + "\r\n"
@@ -36,7 +42,8 @@ class SystemNode:
         str_node += "IP address:    " + self.ip_address + "\r\n"
         str_node += "Interface:     " + self.interface + "\r\n"
         str_node += "Profile Name:  " + self.profile_name + "\r\n"
-        str_node += "Port:          " + self.port + "\r\n"
+        str_node += "Port:          " + self.port + "\r\n"  
+	str_node += "Power Type:    " + self.power_type + "\r\n"
         return str_node
 
     
@@ -97,6 +104,11 @@ class Config:
             sys_node.port = other_fields[2]
             sys_node.interface = other_fields[3]
             sys_node.profile_name = other_fields[4]
+	    sys_node.power_user = other_fields[5]
+	    sys_node.power_password = other_fields[6]
+	    sys_node.power_address = other_fields[7]
+	    sys_node.power_type = Config.get_cobbler_field("power_type")
+	    sys_node.power_proxy = Config.get_cobbler_field("proxy")
             sys_nodes.append(sys_node)
 
         str_nodes = Config.get_field("Cobbler-Configuration", "network-hosts")
@@ -113,6 +125,11 @@ class Config:
             sys_node.port = other_fields[2]
             sys_node.interface = other_fields[3]
             sys_node.profile_name = other_fields[4]
+	    sys_node.power_user = other_fields[5]
+            sys_node.power_password = other_fields[6]
+            sys_node.power_address = other_fields[7]
+            sys_node.power_type = Config.get_cobbler_field("power_type")
+            sys_node.power_proxy = Config.get_cobbler_field("proxy")
             sys_nodes.append(sys_node)
         return sys_nodes
 

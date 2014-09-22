@@ -30,7 +30,6 @@ MAX_TRIES = 5
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from UnifiedStack.masternode import cobbler_integrator as cobb
 from UnifiedStack.packstack import Packstack_Setup as pst
-from UnifiedStack.netswitch import Switch_Setup as sw
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
@@ -69,7 +68,7 @@ class Integrator:
                 write_bash.write(line)
         # write_bash.writelines([item for item in lines[:-1]])
         write_bash.close()
-        
+
     def configure_packstack(self, shell, console):
         packstack_config = pst.PackStackConfigurator()
         packstack_config.configure_packstack(console)

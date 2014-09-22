@@ -40,6 +40,7 @@ class Cobbler_Integrator():
         redhat_username = Config.get_cobbler_field("redhat_username")
         redhat_password = Config.get_cobbler_field("redhat_password")
         redhat_pool = Config.get_cobbler_field("redhat_pool")
+        name-server = Config.get_general_field("name-server")	
         for line in lines:
             towrite.append(line)
             if '%post' in line:
@@ -52,9 +53,11 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool +
                     "\n")
+		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
+                towrite.append("/usr/bin/echo \"nameserver " + name-server + "\" 2>> /etc/resolv.conf\n")
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
-        for line in towrite:
-            file.write(line)
+        file.writelines(towrite)
         file.close()
         #cobbler_setup.create_install_server(console)
         console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)

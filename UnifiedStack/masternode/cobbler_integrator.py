@@ -1,13 +1,12 @@
 import cobbler_preInstall
 import cobbler_setup
 import os,inspect
-import sys
+import sys,time
 import shutil
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 from UnifiedStack.config.Config_Parser import Config
-from cobbler_api_wrapper import Build_Server 
 
 class Cobbler_Integrator():
 
@@ -34,13 +33,14 @@ class Cobbler_Integrator():
         cobbler_setup.sync(console)
         cobbler_setup.mount(console)
         towrite = []
-        file = open(self.cur+ "/../data_static/rhel7-osp5.ks", "r")
+        file = open(self.cur+ "/../data_static/rhe7-osp5.ks", "r")
         lines = file.readlines()
         file.close()
         towrite = []
         redhat_username = Config.get_cobbler_field("redhat_username")
         redhat_password = Config.get_cobbler_field("redhat_password")
         redhat_pool = Config.get_cobbler_field("redhat_pool")
+        name_server = Config.get_general_field("name-server")	
         for line in lines:
             towrite.append(line)
             if '%post' in line:
@@ -53,14 +53,28 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool +
                     "\n")
-        file = open("/var/lib/cobbler/kickstarts/rhel7-osp5.ks", "w")
-        for line in towrite:
-            file.write(line)
+		#TO DO REMOVE HARD CODING
+		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
+	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" 2>> /root/.bashrc\n")
+                towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" 2>> /etc/resolv.conf\n")
+		
+        file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
+        file.writelines(towrite)
         file.close()
         #cobbler_setup.create_install_server(console)
-        Build_Server.create_distro()
-        Build_Server.create_profile()        
-        Build_Server.create_system()
+        console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)
+        from cobbler_api_wrapper import Build_Server
+        handle=Build_Server()
+        handle.create_distro()
+        handle.create_profile()        
+        handle.create_system()
+	time.sleep(360)
+	handle.disable_netboot_systems()
+        #handle.power_on_systems()
+        console.cprint_progress_bar("Task Completed",100)
+
+    def  
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

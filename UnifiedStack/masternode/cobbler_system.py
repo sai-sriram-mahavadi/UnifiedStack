@@ -24,18 +24,19 @@ from general_utils import is_basestring
 
 class New_system():
 
-    def __init__(
-            self,
+    def __init__(self,
             name=None,
             owners=None,
             profile=None,
-            status=None,
-            netboot_enabled=False,
+            status="testing",
+            netboot_enabled=True,
             hostname=None,
             interface=None,
             mac_addr=None,
+ 	    proxy=None,
             ipaddr=None,
             virt_bridge=None,
+	    kickstart="/var/lib/cobbler/kickstarts/rhe7-osp5.ks",
             power_management_type=None,
             power_management_addr=None,
             power_management_username=None,
@@ -63,6 +64,8 @@ class New_system():
         # ip address of this interface
         self.ipaddr = ipaddr
         # Below parameters are less used.
+        self.proxy=proxy
+	self.kickstart=kickstart
         self.virt_bridge = virt_bridge
         self.power_management_type = power_management_type
         self.power_management_addr = power_management_addr
@@ -78,7 +81,7 @@ class New_system():
                 raise Exception("Owners must be comma separated string ")
             if not is_basestring(self.profile):
                 raise Exception("Profile must be of string ")
-            if not is_basestring(self.status):
+            if self.status is not None and not is_basestring(self.status):
                 raise Exception("Status must be of string ")
             if self.hostname is not None and not is_basestring(self.hostname):
                 raise Exception("Hostname must be string")
@@ -95,26 +98,26 @@ class New_system():
                     self.virt_bridge):
                 raise Exception("Virtual bridge must be of string ")
             if self.power_management_type is not None and not is_basestring(
-                    self.self.power_management_type):
+                    self.power_management_type):
                 raise Exception(
                     "self.power_management_type must be of string ")
             if self.power_management_addr is not None and not is_basestring(
-                    self.self.power_management_addr):
+                    self.power_management_addr):
                 raise Exception(
                     "self.power_management_addr must be of string ")
             if self.power_management_username is not None and not is_basestring(
-                    self.self.power_management_username):
+                    self.power_management_username):
                 raise Exception(
                     "self.power_management_username must be of string ")
             if self.power_management_password is not None and not is_basestring(
-                    self.self.power_management_password):
+                    self.power_management_password):
                 raise Exception(
                     "self.power_management_password must be of string ")
             if self.power_management_id is not None and not is_basestring(
-                    self.self.power_management_id):
+                    self.power_management_id):
                 raise Exception("self.power_management_id must be of string ")
             if self.name is None or self.profile is None or self.status is None:
-                raise Exception("Name, Profile and status are required")
+                raise Exception("Name, Profile status are required")
         except Exception as e:
             print str(e)
             return False
@@ -132,9 +135,9 @@ class New_system():
                 cobbler_system.set_interface_type('na', self.interface)
             cobbler_system.set_netboot_enabled(self.netboot_enabled)
             if self.mac_addr is not None:
-                cobbler_system.set_mac_address(self.mac_addr, interface)
+                cobbler_system.set_mac_address(self.mac_addr,self.interface)
             if self.ipaddr is not None:
-                cobbler_system.set_ip_address(self.ipaddr, interface)
+                cobbler_system.set_ip_address(self.ipaddr, self.interface)
             if self.owners is not None:
                 cobbler_system.set_owners(self.owners)
             else:
@@ -155,7 +158,11 @@ class New_system():
                 cobbler_system.set_power_id(self.power_management_id)
             if self.power_management_addr is not None:
                 cobbler_system.set_power_address(self.power_management_addr)
+	    if self.proxy is not None:
+		cobbler_system.set_proxy(self.proxy)
+	    cobbler_system.set_kickstart(self.kickstart)
             cobbler_api_handle.add_system(cobbler_system)
+	    print "here2"
         except Exception as e:
             print str(e)
             return False
@@ -335,7 +342,24 @@ class System_operate():
             print str(e)
             return False
         return True
+    
+    def power_on(self,sys_name):
+	cobbler_api_handle = cobapi.BootAPI()
+        try:
+            reference = cobbler_api_handle.find_system(sys_name)
+            if reference is None:
+                raise Exception(
+                    "system with name " +
+                    sysname +
+                    " does not exists")
+            cobbler_api_handle.power_on(reference)
+	    return True
+        except Exception,e:
+            print "Not able to power on system",e
+	    return False
 
+   
+	    
 
 if __name__ == "__main__":
     """

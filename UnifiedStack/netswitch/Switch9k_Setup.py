@@ -66,7 +66,7 @@ class Switch9kConfigurator:
         output = remote_conn.recv(1000)
         # print output
         # sending configuration commands to switch from a text file as input
-        for line in open('sw9k_commands.txt'):
+        for line in open('netswitch/sw9k_commands.txt'):
             # error check for ssh connection and send function and retry 3
             # times if fail
             success = False

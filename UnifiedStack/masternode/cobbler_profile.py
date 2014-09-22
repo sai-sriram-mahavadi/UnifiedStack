@@ -142,6 +142,7 @@ class New_profile():
                 cobbler_profile.set_repos(self.repos)
             if self.proxy is not None:
                 cobbler.set_proxy(self.proxy)
+            
             if self.kickstart_file is not None:
                 cobbler_profile.set_kickstart(self.kickstart_file)
             if self.owners is not None:

@@ -42,13 +42,19 @@ Config = Config_Parser.Config
 
 
 class Integrator:
-
+    
+    @staticmethod
+    def get_cobbler_integrator_path():
+        integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        return 'bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -cobbler-postboot"'
+         
     def configure_cobbler_preboot(self, shell, console):
         cobbler_config.cobbler_preInstall(console)
         #Write the path of integrator.py in .bashrc
         read_bash = open("/root/.bashrc", "a")
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -cobbler-postboot"')
+        read_bash.write(Integrator.get_cobbler_integrator_path())
+        # read_bash.write('bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -cobbler-postboot"')
         read_bash.close()
         shell.execute_command("reboot")
         
@@ -58,7 +64,10 @@ class Integrator:
         lines = read_bash.readlines()
         read_bash.close()
         write_bash = open("/root/.bashrc","w")
-        write_bash.writelines([item for item in lines[:-1]])
+        for line in lines:
+             if line!=Integrator.get_cobbler_integrator_path()+"\n":
+                write_bash.write(line)
+        # write_bash.writelines([item for item in lines[:-1]])
         write_bash.close()
         
     def configure_packstack(self, shell, console):
@@ -120,7 +129,7 @@ class Integrator:
             return False
         except Exception:
             return False
-        return true
+        return True
     
     def poll_all_nodes(self):
         overall_poll_result = True        

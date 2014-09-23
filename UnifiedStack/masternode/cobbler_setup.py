@@ -126,7 +126,7 @@ def enable_services(console):
     shell_command("systemctl start dhcpd.service")
     shell_command("systemctl enable dhcpd.service")
     shell_command("systemctl status dhcpd.service")
-
+    shell_command("chkconfig NetworkManager off")
 def sync(console):
     console.cprint_progress_bar("Cobbler Get-loaders and Sync",80)
     shell_command("cobbler get-loaders --force")

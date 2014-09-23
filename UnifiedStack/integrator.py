@@ -16,7 +16,6 @@
 import sys
 import os
 import inspect
-import paramiko
 import time
 
 root_path = os.path.abspath(r"..")
@@ -33,6 +32,7 @@ from UnifiedStack.packstack import Packstack_Setup as pst
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
+
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -48,7 +48,8 @@ class Integrator:
         return 'bash -c "cd ' + integrator_path + ' && /usr/bin/python ' + integrator_path + '/integrator.py -switch"'
          
     def configure_cobbler_preboot(self, shell, console):
-        cobbler_config.cobbler_preInstall(console)
+        cobbler_config = cobb.Cobbler_Integrator()
+	cobbler_config.cobbler_preInstall(console)
         #Write the path of integrator.py in .bashrc
         read_bash = open("/root/.bashrc", "a")
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -58,7 +59,8 @@ class Integrator:
         shell.execute_command("reboot")
         
     def configure_cobbler_postboot(self, shell, console):
-        cobbler_config.cobbler_postInstall(console)
+        cobbler_config = cobb.Cobbler_Integrator()
+	cobbler_config.cobbler_postInstall(console)
         read_bash = open("/root/.bashrc","r")
         lines = read_bash.readlines()
         read_bash.close()
@@ -74,6 +76,7 @@ class Integrator:
         packstack_config.configure_packstack(console)
         
     def configure_switch(self, shell, console):
+	from UnifiedStack.netswitch import Switch_Setup as sw
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
         
@@ -92,8 +95,10 @@ class Integrator:
         if(runstatus <= 0):  # Configuring Cobbler pre-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
             self.configure_cobbler_preboot(shell, console)
-        if(runstatus <= 1):  # Switch
-            console.cprint_progress_bar("Started Configuration of Switch", 0)
+        if(runstatus <= 1):  # Switchi
+	    shell.execute_command("yum install python-devel python-paramiko -y")
+            import paramiko
+	    console.cprint_progress_bar("Started Configuration of Switch", 0)
             self.configure_switch(shell, console)
         if(runstatus <= 2):  # Congiguing Cobbler post-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)

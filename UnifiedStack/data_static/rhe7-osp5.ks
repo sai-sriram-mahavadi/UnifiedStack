@@ -1,5 +1,4 @@
 # Set Log level
-loglevel=debug
 # System authorization information
 auth  --useshadow  --enablemd5
 # System bootloader configuration
@@ -15,14 +14,14 @@ keyboard us
 # System language
 lang en_US
 # Use network installation
-url --url=http://192.168.3.31/cblr/links/rhel-server-7.0-x86_64
+url --url=http://19.19.15/cblr/links/rhel-server-7.0-x86_64
 # If any cobbler repo definitions were referenced in the kickstart profile, include them here.
 
 # Network information
 network --bootproto=dhcp --device=enp1s0f0 --onboot=on  
 
 # Reboot after installation
-#reboot
+reboot
 
 #Root password
 rootpw --iscrypted $1$wXrga6Zv$XeJri29DN5WODwQNytnFy0

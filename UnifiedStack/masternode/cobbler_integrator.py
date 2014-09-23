@@ -7,6 +7,7 @@ root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 from UnifiedStack.config.Config_Parser import Config
+from general_utils import shell_command
 
 class Cobbler_Integrator():
 
@@ -41,24 +42,29 @@ class Cobbler_Integrator():
         redhat_password = Config.get_cobbler_field("redhat_password")
         redhat_pool = Config.get_cobbler_field("redhat_pool")
         name_server = Config.get_general_field("name-server")	
+        ipaddress=Config.get_cobbler_field("cobbler_ipaddress")
         for line in lines:
+	    if 'url --url' in line:
+		towrite.append("url --url=http://" + ipaddress + "/cobbler/images/RHEL")
+		continue
             towrite.append(line)
             if '%post' in line:
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
                     " --password=" +
-                    redhat_password)
+                    redhat_password + "--server.proxy_hostname=19.19.0.253 --server.proxy_port=80")
                 towrite.append(
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool +
-                    "\n")
+                    "--server.proxy_hostname=19.19.0.253 --server.proxy_port=80 \n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
-                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /root/.bashrc\n")
-	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" 2>> /root/.bashrc\n")
+		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /etc/bashrc\n")
+	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" 2>> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" 2>> /etc/resolv.conf\n")
-		
+            
+	    	
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         file.writelines(towrite)
         file.close()
@@ -66,15 +72,18 @@ class Cobbler_Integrator():
         console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)
         from cobbler_api_wrapper import Build_Server
         handle=Build_Server()
-        handle.create_distro()
+        handle.create_distro()	
         handle.create_profile()        
         handle.create_system()
+	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
+	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
+	shell_command("cobbler sync")
+	shell_command("systemctl cobblerd restart")
 	time.sleep(360)
 	handle.disable_netboot_systems()
         #handle.power_on_systems()
         console.cprint_progress_bar("Task Completed",100)
 
-    def  
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

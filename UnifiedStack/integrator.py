@@ -30,6 +30,7 @@ MAX_TRIES = 5
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from UnifiedStack.masternode import cobbler_integrator as cobb
 from UnifiedStack.packstack import Packstack_Setup as pst
+from UnifiedStack.netswitch import Switch_Setup as sw
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
@@ -68,7 +69,7 @@ class Integrator:
                 write_bash.write(line)
         # write_bash.writelines([item for item in lines[:-1]])
         write_bash.close()
-
+        
     def configure_packstack(self, shell, console):
         packstack_config = pst.PackStackConfigurator()
         packstack_config.configure_packstack(console)
@@ -110,6 +111,7 @@ class Integrator:
             if not self.poll_all_nodes():
                 console.cprint("Not all systems could boot!!!")
                 exit(0)
+            self.conigure_nodes(console)
             console.cprint_progress_bar("Started Configuration of Packstack", 0)
             self.configure_packstack(shell, console)
         
@@ -120,7 +122,49 @@ class Integrator:
         cimc_config.configure_cimc()
         '''
 
+    def establish_connection(self, ipaddress, username, password):
+        import paramiko
+        remote_conn_pre = paramiko.SSHClient()
+        remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        remote_conn_pre.connect(
+            ipaddress,
+            username=username,
+            password=password)
+        # print "SSH connection established to %s" % ipaddress
+        # print "Interactive SSH session established"
+        return remote_conn_pre
+    
+    def configure_nodes(self, console):
+        for system in Config.get_systems_data():
+            # Calling the function to make the ssh co
+            remote_conn_client = self.establish_connection(
+                        ipaddress=system.ip_address,
+                        username=username,
+                        password=password)
+            remote_conn = remote_conn_client.invoke_shell()
+            redhat_username = Config.get_cobbler_field('redhat_username') 
+            redhat_password = Config.get_cobbler_field('redhat_password')   
+            redhat_pool = Config.get_cobbler_field('redhat_pool')
+            remote_conn.send(
+                "subscription-manager register --username=" +
+                redhat_username +
+                " --password=" +
+                redhat_password)
+            time.sleep(30)
+            console.cprint("Subscribed a node.")
+            remote_conn.send("subscription-manager attach --pool=" + redhat_pool)
+            time.sleep(30)
+            console.cprint("Attached pool")
+          
+            time.sleep(30)
+            remote_conn.send(
+                "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
+            time.sleep(10)
+            output = remote_conn.recv(5000)
+            console.cprint(output)
+
     def poll_node(self, ipaddress, username, password):
+        import paramiko
         remote_conn_pre = paramiko.SSHClient()
         remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:

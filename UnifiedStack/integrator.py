@@ -32,7 +32,7 @@ from UnifiedStack.packstack import Packstack_Setup as pst
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
-from UnifiedStack.netswitch import Switch_Setup as sw
+
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -76,6 +76,7 @@ class Integrator:
         packstack_config.configure_packstack(console)
         
     def configure_switch(self, shell, console):
+	from UnifiedStack.netswitch import Switch_Setup as sw
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
         

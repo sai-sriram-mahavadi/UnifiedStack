@@ -32,7 +32,7 @@ class Cobbler_Integrator():
             "/../data_static/rsync",
             "/etc/xinetd.d/rsync")
         cobbler_setup.sync(console)
-        #cobbler_setup.mount(console)
+        cobbler_setup.mount(console)
         towrite = []
         file = open(self.cur+ "/../data_static/rhe7-osp5.ks", "r")
         lines = file.readlines()
@@ -42,7 +42,7 @@ class Cobbler_Integrator():
         redhat_password = Config.get_cobbler_field("redhat_password")
         redhat_pool = Config.get_cobbler_field("redhat_pool")
         name_server = Config.get_general_field("name-server")	
-        ipaddress=Config.get_cobbler_field("ipaddress")
+        ipaddress=Config.get_cobbler_field("cobbler_ipaddress")
         for line in lines:
 	    if 'url --url' in line:
 		towrite.append("url --url=http://" + ipaddress + "/cobbler/images/RHEL")
@@ -72,13 +72,13 @@ class Cobbler_Integrator():
         console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)
         from cobbler_api_wrapper import Build_Server
         handle=Build_Server()
-        handle.create_distro()
-	shell_command("systemctl cobblerd restart")
+        handle.create_distro()	
         handle.create_profile()        
         handle.create_system()
-	shell_command("rm /var/lib/dhcpd/dhcpd.leases")
+	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
 	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
 	shell_command("cobbler sync")
+	shell_command("systemctl cobblerd restart")
 	time.sleep(360)
 	handle.disable_netboot_systems()
         #handle.power_on_systems()

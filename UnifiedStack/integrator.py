@@ -115,7 +115,7 @@ class Integrator:
             if not self.poll_all_nodes():
                 console.cprint("Not all systems could boot!!!")
                 exit(0)
-            self.conigure_nodes(console)
+            self.configure_nodes(console)
             console.cprint_progress_bar("Started Configuration of Packstack", 0)
             self.configure_packstack(shell, console)
         

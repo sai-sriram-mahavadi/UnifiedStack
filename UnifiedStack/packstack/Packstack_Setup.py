@@ -46,6 +46,7 @@ class PackStackConfigurator:
         shell.execute_command(
             "/usr/bin/packstack --gen-answer-file=packstack.cfg")
         PackStackConfigurator.packstack_config.read(r'packstack.cfg')
+	#shell.execute_command("cp packstack.cfg packstack_result.cfg")
 
     def setup_packstack(self):
         shell = shi.ShellInterpretter()
@@ -162,7 +163,8 @@ class PackStackConfigurator:
         self.disable_packstack_field("general", "CONFIG_PROVISION_DEMO")
         console.cprint_progress_bar("Setting up/Configuring packstack", 80)
         
-        self.setup_packstack()
+       # self.setup_packstack()
+	self.setup_packstack()
         console.cprint_progress_bar("Completed packstack setup", 100)
 
 if __name__ == "__main__":

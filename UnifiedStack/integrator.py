@@ -50,7 +50,7 @@ class Integrator:
          
     def configure_cobbler_preboot(self, shell, console):
         cobbler_config = cobb.Cobbler_Integrator()
-	cobbler_config.cobbler_preInstall(console)
+        cobbler_config.cobbler_preInstall(console)
         #Write the path of integrator.py in .bashrc
         read_bash = open("/root/.bashrc", "a")
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -61,7 +61,7 @@ class Integrator:
         
     def configure_cobbler_postboot(self, shell, console):
         cobbler_config = cobb.Cobbler_Integrator()
-	cobbler_config.cobbler_postInstall(console)
+        cobbler_config.cobbler_postInstall(console)
         read_bash = open("/root/.bashrc","r")
         lines = read_bash.readlines()
         read_bash.close()
@@ -77,7 +77,7 @@ class Integrator:
         packstack_config.configure_packstack(console)
         
     def configure_switch(self, shell, console):
-	from UnifiedStack.netswitch import Switch_Setup as sw
+        from UnifiedStack.netswitch import Switch_Setup as sw
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
         
@@ -97,9 +97,9 @@ class Integrator:
             console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
             self.configure_cobbler_preboot(shell, console)
         if(runstatus <= 1):  # Switchi
-	    shell.execute_command("yum install python-devel python-paramiko -y")
+            shell.execute_command("yum install python-devel python-paramiko -y")
             import paramiko
-	    console.cprint_progress_bar("Started Configuration of Switch", 0)
+            console.cprint_progress_bar("Started Configuration of Switch", 0)
             self.configure_switch(shell, console)
         if(runstatus <= 2):  # Congiguing Cobbler post-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)

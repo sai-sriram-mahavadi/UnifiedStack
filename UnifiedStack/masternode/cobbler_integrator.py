@@ -75,7 +75,7 @@ class Cobbler_Integrator():
         handle.create_distro()	
         handle.create_profile()        
         handle.create_system()
-        shell_command("systemctl cobblerd restart")
+        shell_command("systemctl restart cobblerd.service")
 	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
 	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
 	shell_command("cobbler sync")

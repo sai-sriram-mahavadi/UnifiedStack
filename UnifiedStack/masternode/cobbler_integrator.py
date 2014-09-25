@@ -49,20 +49,21 @@ class Cobbler_Integrator():
 		continue
             towrite.append(line)
             if '%post' in line:
+		towrite.append(
+		    "subscription-manager config --server.proxy_hostname=19.19.0.253 --server.proxy_port=80")
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
                     " --password=" +
-                    redhat_password + "--server.proxy_hostname=19.19.0.253 --server.proxy_port=80")
+                    redhat_password )
                 towrite.append(
                     "\nsubscription-manager subscribe --pool=" +
-                    redhat_pool +
-                    "--server.proxy_hostname=19.19.0.253 --server.proxy_port=80 \n")
+                    redhat_pool + "\n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" 2>> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" 2>> /etc/bashrc\n")
-	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" 2>> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" 2>> /etc/resolv.conf\n")
+		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
+	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" >> /etc/resolv.conf\n")
             
 	    	
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
@@ -75,10 +76,10 @@ class Cobbler_Integrator():
         handle.create_distro()	
         handle.create_profile()        
         handle.create_system()
+        shell_command("systemctl restart cobblerd.service")
 	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
 	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
 	shell_command("cobbler sync")
-	shell_command("systemctl cobblerd restart")
 	time.sleep(360)
 	handle.disable_netboot_systems()
         #handle.power_on_systems()

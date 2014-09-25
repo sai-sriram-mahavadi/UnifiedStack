@@ -102,7 +102,7 @@ def cobbler_setup(console):
     shell_command_true(
         "sed -i 's/option subnet-mask         255.255.255.0;/option subnet-mask         " +
         option_subnet +
-        ";/' /etc/cobbler/dhcp.template"
+        ";/' /etc/cobbler/dhcp.template")
     # Add CIMC addresses to DHCP
     shell_command("touch /tmp/dhcpd.CIMC.conf")
     shell_command("cp /tmp/dhcpd.CIMC.conf /etc/dhcp/")

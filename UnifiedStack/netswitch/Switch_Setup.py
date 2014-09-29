@@ -1,6 +1,3 @@
-#import Switch2960_Setup as sw_2960
-import Switch3750_Setup as sw_3750
-import Switch9k_Setup as n9k
 #import TS_Setup as TS
 
 
@@ -10,7 +7,7 @@ class SwitchConfigurator:
     # a command and recieve it's output
     def establish_connection(self, ipaddress, username, password):
         remote_conn_pre = paramiko.SSHClient()
-        # Automatically add untrusted hosts (make sure okay for security policy
+        # Automatically add untrusted hosts
         remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         remote_conn_pre.connect(
             ipaddress,
@@ -29,8 +26,6 @@ class SwitchConfigurator:
         # Use invoke_shell to establish an 'interactive session'
         remote_conn = remote_conn_client.invoke_shell()
         output = remote_conn.recv(1000)
-        # print output
-        # sending configuration commands to switch from a text file as input
         for line in open(commands_file):
             # error check for ssh connection and send function and retry 3
             # times if fail
@@ -44,14 +39,21 @@ class SwitchConfigurator:
                 except socket.error as e:
                     # print "Connection is not established : " + e.strerror
                     attempts += 1
-        # Adding a delay to let the commands work. Add at the end of all
-        # commands
         output = remote_conn.recv(5000)
 
     def configure_switch(self, console):
         #sw3750_config = sw_3750.Switch3750Configurator()
         #sw3750_config.configure_3750switch(console)
         #console.cprint_progress_bar("Configured the 3750 switch", 50)
+        
+        # Configuring 3750 Switch
+        ip_address_9k = Config.get_switch_field("3750-ip-address")
+        username_9k = Config.get_switch_field("3750-username")
+        password_9k = Config.get_switch_field("3750-password")
+        self.configure_switch(ipaddress = ip_address_9k,
+                              username = username_9k,
+                              password = password_9,
+                              commands_file = 'netswitch/sw3750_commands.txt')
         
         # Configuring 9k Switch
         ip_address_9k = Config.get_switch_field("9k-ip-address")

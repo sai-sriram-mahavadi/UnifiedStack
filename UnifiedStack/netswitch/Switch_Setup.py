@@ -1,4 +1,16 @@
 
+import sys
+import os
+
+root_path = os.path.abspath(r"../..")
+sys.path.append(root_path)
+
+from UnifiedStack.cli import Console_Output as con
+from Switch_Config_Generator import SwitchConfigGenerator
+from UnifiedStack.config import Config_Parser as cfg
+
+# Alias for config parser
+Config = cfg.Config
 
 class SwitchConfigurator:
     # Returns SSH connection through which terminal needs to be invoked to send
@@ -17,7 +29,7 @@ class SwitchConfigurator:
     # Used to configure any switch with reference to the topology provided from
     # config file.
     # TODO - Commonds file is later auto-generated and not sent as a parameter
-    def configure_switch(self, ip_address, username, password, commands_file):
+    def configure_device_with_file(self, ip_address, username, password, commands_file):
         remote_conn_client = self.establish_connection(
             ipaddress=ip_address,
             username=username,
@@ -41,28 +53,34 @@ class SwitchConfigurator:
         output = remote_conn.recv(5000)
 
     def configure_switch(self, console):
+        sw_gen = SwitchConfigGenerator()
+        sw_gen.generate_config_file("switch-3750")
+        sw_gen.generate_config_file("switch-9k")
+        console.cprint_progress_bar("Generated config files for switches", 10)
+
         # Configuring 3750 Switch
-        ip_address_9k = Config.get_switch_field("3750-ip-address")
-        username_9k = Config.get_switch_field("3750-username")
-        password_9k = Config.get_switch_field("3750-password")
-        self.configure_switch(ipaddress=ip_address_9k,
-                              username=username_9k,
-                              password=password_9,
-                              commands_file='netswitch/sw3750_commands.txt')
+        ip_address_3750 = Config.get_switch_field("3750-ip-address")
+        username_3750 = Config.get_switch_field("3750-username")
+        password_3750 = Config.get_switch_field("3750-password")
+        self.configure_device_with_file(ip_address=ip_address_3750,
+                              username=username_3750,
+                              password=password_3750,
+                              commands_file='netswitch/sw-3750_commands.txt')
         console.cprint_progress_bar("Configured the 3750 switch", 50)
-        
+
+        sw_gen = SwitchConfigGenerator()
         # Configuring 9k Switch
         ip_address_9k = Config.get_switch_field("9k-ip-address")
         username_9k = Config.get_switch_field("9k-username")
         password_9k = Config.get_switch_field("9k-password")
-        self.configure_switch(ipaddress=ip_address_9k,
+        self.configure_device_with_file(ip_address=ip_address_9k,
                               username=username_9k,
-                              password=password_9,
+                              password=password_9k,
                               commands_file='netswitch/sw9k_commands.txt')
 
         console.cprint_progress_bar("Configured the N9K switch", 100)
 
 
 if __name__ == "__main__":
-    sw_config = sw.SwitchConfigurator()
-    sw_config.configure_switch()
+    sw_config = SwitchConfigurator()
+    sw_config.configure_switch(con.ConsoleOutput())

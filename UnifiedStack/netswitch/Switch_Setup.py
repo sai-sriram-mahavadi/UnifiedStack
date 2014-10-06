@@ -8,7 +8,7 @@ sys.path.append(root_path)
 from UnifiedStack.cli import Console_Output as con
 from Switch_Config_Generator import SwitchConfigGenerator
 from UnifiedStack.config import Config_Parser as cfg
-
+import paramiko
 # Alias for config parser
 Config = cfg.Config
 
@@ -59,9 +59,9 @@ class SwitchConfigurator:
         console.cprint_progress_bar("Generated config files for switches", 10)
 
         # Configuring 3750 Switch
-        ip_address_3750 = Config.get_switch_field("3750-ip-address")
-        username_3750 = Config.get_switch_field("3750-username")
-        password_3750 = Config.get_switch_field("3750-password")
+        ip_address_3750 = Config.get_switch_field("3750-ip-address").strip()
+        username_3750 = Config.get_switch_field("3750-username").strip()
+        password_3750 = Config.get_switch_field("3750-password").strip()
         self.configure_device_with_file(ip_address=ip_address_3750,
                               username=username_3750,
                               password=password_3750,
@@ -70,9 +70,10 @@ class SwitchConfigurator:
 
         sw_gen = SwitchConfigGenerator()
         # Configuring 9k Switch
-        ip_address_9k = Config.get_switch_field("9k-ip-address")
-        username_9k = Config.get_switch_field("9k-username")
-        password_9k = Config.get_switch_field("9k-password")
+        ip_address_9k = Config.get_switch_field("9k-ip-address").strip()
+        username_9k = Config.get_switch_field("9k-username").strip()
+        password_9k = Config.get_switch_field("9k-password").strip()
+        print username_9k, password_9k
         self.configure_device_with_file(ip_address=ip_address_9k,
                               username=username_9k,
                               password=password_9k,
@@ -83,4 +84,5 @@ class SwitchConfigurator:
 
 if __name__ == "__main__":
     sw_config = SwitchConfigurator()
-    sw_config.configure_switch(con.ConsoleOutput())
+    #sw_config.configure_switch(con.ConsoleOutput
+    sw_config.establish_connection("10.106.16.253", "sdu", "1@#$sDu%^7")

@@ -63,7 +63,7 @@ class Profile:
 class Config:
     
     config = ConfigParser.ConfigParser()
-    config.read(r'../data_static/unified_stack.cfg')
+    config.read(r'data_static/unified_stack.cfg')
     
     @staticmethod
     def get_field(section, field):

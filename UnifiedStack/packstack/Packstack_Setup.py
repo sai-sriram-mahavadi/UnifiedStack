@@ -145,7 +145,7 @@ class PackStackConfigurator:
         if Config.get_packstack_field("ENABLE-OPENVSWITCH") in AffirmativeList:
             drivers_str += ("openvswitch" if drivers_str == "" else ",openvswitch")
         if Config.get_packstack_field("ENABLE-CISCONEXUS") in AffirmativeList:
-            drivers_str += ("ciso_nexus" if drivers_str == "" else ",cisconexus")
+            drivers_str += ("cisco_nexus" if drivers_str == "" else ",cisco_nexus")
         # Any of the drivers are enabled
         if drivers_str != "":
             self.set_packstack_field(
@@ -162,7 +162,7 @@ class PackStackConfigurator:
         console.cprint_progress_bar("Setting up/Configuring packstack", 80)
         
        # self.setup_packstack()
-	self.setup_packstack()
+        self.setup_packstack()
         console.cprint_progress_bar("Completed packstack setup", 100)
 
 if __name__ == "__main__":

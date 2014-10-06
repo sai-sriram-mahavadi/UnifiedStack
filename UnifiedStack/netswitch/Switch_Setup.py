@@ -84,5 +84,5 @@ class SwitchConfigurator:
 
 if __name__ == "__main__":
     sw_config = SwitchConfigurator()
-    #sw_config.configure_switch(con.ConsoleOutput
-    sw_config.establish_connection("10.106.16.253", "sdu", "1@#$sDu%^7")
+    sw_config.configure_switch(con.ConsoleOutput
+    # sw_config.establish_connection("10.106.16.253", "sdu", "1@#$sDu%^7")

@@ -143,11 +143,9 @@ class PackStackConfigurator:
             "vlan")
         drivers_str = ""
         if Config.get_packstack_field("ENABLE-OPENVSWITCH") in AffirmativeList:
-            drivers_str += (", " +
-                            "openvswitch" if drivers_str == "" else "openvswitch")
+            drivers_str += ("openvswitch" if drivers_str == "" else ",openvswitch")
         if Config.get_packstack_field("ENABLE-CISCONEXUS") in AffirmativeList:
-            drivers_str += (", " +
-                            "ciso_nexus" if drivers_str == "" else "cisconexus")
+            drivers_str += ("ciso_nexus" if drivers_str == "" else ",cisconexus")
         # Any of the drivers are enabled
         if drivers_str != "":
             self.set_packstack_field(

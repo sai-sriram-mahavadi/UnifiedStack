@@ -162,7 +162,7 @@ class New_system():
 		cobbler_system.set_proxy(self.proxy)
 	    cobbler_system.set_kickstart(self.kickstart)
             cobbler_api_handle.add_system(cobbler_system)
-	    print "here2"
+	    
         except Exception as e:
             print str(e)
             return False
@@ -336,7 +336,7 @@ class System_operate():
                 reference.set_power_id(power_management_id)
             if power_management_addr is not None:
                 reference.set_power_address(power_management_addr)
-            print "here"
+     
             cobbler_api_handle.add_system(reference)
         except Exception as e:
             print str(e)

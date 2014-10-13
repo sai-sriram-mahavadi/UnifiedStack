@@ -47,7 +47,7 @@ class SwitchConfigurator:
                     remote_conn.send(line)
                     time.sleep(1)
                     success = True
-                except socket.error as e:
+                except Exception as e:
                     # print "Connection is not established : " + e.strerror
                     attempts += 1
         output = remote_conn.recv(5000)
@@ -65,7 +65,7 @@ class SwitchConfigurator:
         self.configure_device_with_file(ip_address=ip_address_3750,
                               username=username_3750,
                               password=password_3750,
-                              commands_file='netswitch/sw-3750_commands.txt')
+                              commands_file='switch-3750_commands.cmds')
         console.cprint_progress_bar("Configured the 3750 switch", 50)
 
         sw_gen = SwitchConfigGenerator()
@@ -77,12 +77,12 @@ class SwitchConfigurator:
         self.configure_device_with_file(ip_address=ip_address_9k,
                               username=username_9k,
                               password=password_9k,
-                              commands_file='netswitch/sw9k_commands.txt')
+                              commands_file='switch-9k_commands.cmds')
 
         console.cprint_progress_bar("Configured the N9K switch", 100)
 
 
 if __name__ == "__main__":
     sw_config = SwitchConfigurator()
-    sw_config.configure_switch(con.ConsoleOutput
+    # sw_config.configure_switch(con.ConsoleOutput())
     # sw_config.establish_connection("10.106.16.253", "sdu", "1@#$sDu%^7")

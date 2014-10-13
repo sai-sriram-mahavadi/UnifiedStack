@@ -176,7 +176,7 @@ class Integrator:
             ipaddress,
             username=username,
             password=password)
-        except socket.error:
+        except Exception :
             return False
         except Exception:
             return False
@@ -206,7 +206,13 @@ class Integrator:
         else: pass
                 # UnSuccessful
         
+def shell_command(fully_qualified_command):
+    shell=shi.ShellInterpretter()
+    shell.execute_command(fully_qualified_command)
+
 if __name__ == "__main__":
     integrator = Integrator()
     integrator.configure_unifiedstack()
-    integrator.test_poll()
+    integrator.test_poll()  
+   
+

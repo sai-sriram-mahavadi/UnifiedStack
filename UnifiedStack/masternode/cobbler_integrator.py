@@ -70,7 +70,7 @@ class Cobbler_Integrator():
         file.writelines(towrite)
         file.close()
         #cobbler_setup.create_install_server(console)
-        console.cprint_progress_bar("Creating Distro, Profiles, Systems and restarting Cobbler service",98)
+        console.cprint_progress_bar("Creating Distro, Profiles, Systems and restarting Cobbler service. Power Cycle the systems after this",98)
         from cobbler_api_wrapper import Build_Server
         handle=Build_Server()
         handle.create_distro()	
@@ -81,13 +81,19 @@ class Cobbler_Integrator():
 	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
 	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
 	shell_command("cobbler sync")
-	time.sleep(10)
+	time.sleep(5)
 	shell_command("systemctl restart xinetd.service")
-	time.sleep(700)
+	time.sleep(400)
 	handle.disable_netboot_systems()
         #handle.power_on_systems()
         console.cprint_progress_bar("Task Completed",100)
 
+
+def test():
+    from cobbler_api_wrapper import Build_Server
+    handle=Build_Server()
+    #handle.create_system()
+    handle.disable_netboot_systems()
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

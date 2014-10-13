@@ -91,17 +91,19 @@ class Build_Server():
                 name = '' + hostname + "-" + purpose
 	        handle.edit_system(name,netboot_enabled=False)
 
-    def enable_netboot_systems(_self,name):
+    def enable_netboot_systems(self):
             handle=syst.System_operate()
             systems = Config.get_systems_data()
             for system in systems:
                 purpose = system.purpose
                 hostname = system.hostname
                 name = '' + hostname + "-" + purpose
-            handle.edit_system(name,netboot_enabled=True)
+                handle.edit_system(name,netboot_enabled=True)
 
 	    
 if __name__ == "__main__":
-    handle = Build_Server()
+    handle=Build_Server()
+    handle.enable_netboot_systems()
+    #handle = Build_Server()
 
-    handle.create_distro()
+    #handle.create_distro()

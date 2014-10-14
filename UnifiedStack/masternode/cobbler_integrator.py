@@ -50,7 +50,7 @@ class Cobbler_Integrator():
             towrite.append(line)
             if '%post' in line:
 		towrite.append(
-		    "subscription-manager config --server.proxy_hostname=19.19.0.253 --server.proxy_port=80")
+		    "subscription-manager config --server.proxy_hostname=19.19.0.253 --server.proxy_port=80\n")
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
@@ -60,11 +60,13 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool + "\n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
-	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" >> /etc/bashrc\n")
+		towrite.append("/usr/bin/echo \"export http_proxy=http://19.19.0.253:80\" >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https://19.19.0.253:80\" >> /etc/bashrc\n")
+	        towrite.append("/usr/bin/echo \"printf -v no_proxy '%s,' 10.1.{1..255}.{1..255}\" >> /etc/bashrc\n")
+		towrite.append("/usr/bin/echo \"export no_proxy=\"${no_proxy%,}\"\" >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" >> /etc/resolv.conf\n")
-            
+		towrite.append("chkconfig NetworkManager stop\n")
+                towrite.append("chkconfig NetworkManager off\n") 
 	    	
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         file.writelines(towrite)

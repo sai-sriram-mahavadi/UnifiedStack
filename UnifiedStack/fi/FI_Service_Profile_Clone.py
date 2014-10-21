@@ -13,13 +13,13 @@
 # Clones Service Profiles.
 
 
-import UcsSdk
+import UcsSdk as ucs
+from FI_Config_Base import FIConfiguratorBase
 
-class FICloneConfigurator:
+class FICloneConfigurator(FIConfiguratorBase):
   # Cloning Service Profile
     def clone_profile(self, name):
-        handle = UcsHandle()
-        hasndle.Login("19.19.102.10", "admin", "Cisco12345")
+        handle = self.handle
         handle.StartTransaction()
         handle.LsClone(
             dn="org-root/ls-testLS1",
@@ -29,6 +29,7 @@ class FICloneConfigurator:
             dumpXml=None)
         handle.CompleteTransaction()
 
-ficonfig = FICloneConfigurator()
-for i in range(3, 9):
-    ficonfig.clone_profile("testLS" + str(i))
+if __name__== "__main__":
+    ficonfig = FICloneConfigurator()
+    for i in range(3, 9):
+        ficonfig.clone_profile("testLS" + str(i))

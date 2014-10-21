@@ -15,6 +15,7 @@
 
 import UcsSdk as ucs
 from FI_Config_Base import FIConfiguratorBase
+from FI_Utils import FIUtils
 
 FI_FABRIC_SERVER = "fabric/server/"
 FI_FABRIC_LAN = "fabric/lan/"
@@ -30,22 +31,21 @@ class FIPortConfigurator(FIConfiguratorBase):
         obj = handle.GetManagedObject(None, ucs.FabricDceSwSrv.ClassId(),
                                       {ucs.FabricDceSwSrv.DN:
                                        FI_FABRIC_SERVER + switch})
-        handle.AddManagedObject(obj, ucs.FabricDceSwSrvEp.ClassId(),
+        handle.CompleteTransaction()
+        FIUtils.addOrOverrideMO(obj, ucs.FabricDceSwSrvEp.ClassId(),
                                 {ucs.FabricDceSwSrvEp.ADMIN_STATE: "enabled",
                                 ucs.FabricDceSwSrvEp.SLOT_ID: slot_id,
                                 ucs.FabricDceSwSrvEp.DN:
                                  FI_FABRIC_SERVER + switch + "/slot-"+
                                  slot_id + "-port-" + server_port,
                                 ucs.FabricDceSwSrvEp.PORT_ID: server_port})
-        handle.CompleteTransaction()
 
     # Configure Uplink Port
     # will take params port_id, slot_id
     def configure_uplink_port(self, uplink_port, switch, slot_id):
         handle = self.handle
-        handle.StartTransaction()
         obj = handle.GetManagedObject(None, None, {"dn": "fabric/lan/A"})
-        handle.AddManagedObject(obj, ucs.FabricEthLanEp.ClassId(),
+        FIUtils.addOrOverrideMO(obj, ucs.FabricEthLanEp.ClassId(),
                                 {ucs.FabricEthLanEp.DN:
                                  FI_FABRIC_LAN + "phys-slot-" + slot_id +
                                  "-port-" + uplink_port,
@@ -53,7 +53,6 @@ class FIPortConfigurator(FIConfiguratorBase):
                                 ucs.FabricEthLanEp.SLOT_ID: slot_id,
                                 ucs.FabricEthLanEp.ADMIN_STATE: "enabled",
                                 ucs.FabricEthLanEp.PORT_ID: uplink_port})
-        handle.CompleteTransaction()
 
 if __name__ == '__main__':
     fi_conf = FIPortConfigurator()

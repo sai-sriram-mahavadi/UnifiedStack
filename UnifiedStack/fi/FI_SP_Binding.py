@@ -13,13 +13,13 @@
 # Binding the service profiles with servers (compute blades)
 
 import UcsSdk as ucs
+from FI_Config_Base import FIConfiguratorBase
 
 
-class FIBindingConfigurator:
+class FIBindingConfigurator(FIConfiguratorBase):
 
     def configure_bindings(self, service_profile, bladeDn):
-        handle = ucs.UcsHandle()
-        handle.Login("19.19.102.10", "admin", "Cisco12345")
+        handle = self.handle
         handle.StartTransaction()
         orgObj = handle.GetManagedObject(None, ucs.OrgOrg.ClassId(),
                                          {ucs.OrgOrg.DN: "org-root"})
@@ -35,12 +35,13 @@ class FIBindingConfigurator:
                                              ucs.LsBinding.RESTRICT_MIGRATION: ucs.YesOrNo.NO},
                                             ucs.YesOrNo.TRUE)
         handle.CompleteTransaction()
-
-ficonfig = FIBindingConfigurator()
-for i in range(1, 9):
-    p_service_profile = "testLS" + str(i)
-    p_bladeDn = "sys/chassis-1/blade-" + str(i)
-    ficonfig.configure_bindings(
-        service_profile=p_service_profile,
-        bladeDn=p_bladeDn)
-    print "Completed - " + str(i)
+        
+if __name__ == "__main__":
+    ficonfig = FIBindingConfigurator()
+    for i in range(1, 9):
+        p_service_profile = "testLS" + str(i)
+        p_bladeDn = "sys/chassis-1/blade-" + str(i)
+        ficonfig.configure_bindings(
+            service_profile=p_service_profile,
+            bladeDn=p_bladeDn)
+        print "Completed - " + str(i)

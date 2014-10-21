@@ -25,8 +25,10 @@ class FIConfiguratorBase:
     @staticmethod
     def login(fi_ip, username, password):
         handle.Login(fi_ip, username, password)
+        
     @staticmethod
     def get_handle():
         return handle
+    
     # Any methods/attributes used commonly accross all the 
     # FIConfigurator classes need to be here.

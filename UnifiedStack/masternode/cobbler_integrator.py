@@ -50,7 +50,7 @@ class Cobbler_Integrator():
             towrite.append(line)
             if '%post' in line:
 		towrite.append(
-		    "subscription-manager config --server.proxy_hostname=19.19.0.253 --server.proxy_port=80")
+		    "subscription-manager config --server.proxy_hostname=19.19.0.253 --server.proxy_port=80\n")
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
@@ -60,31 +60,42 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool + "\n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo \"export http_proxy=http_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo \"export https_proxy=https_proxy:19.19.0.253:80\" >> /etc/bashrc\n")
-	        towrite.append("/usr/bin/echo \"export no_proxy=127.0.0.1,localhost,19.19.100.102,19.*\" >> /etc/bashrc\n")
+		towrite.append("/usr/bin/echo \"export http_proxy=http://19.19.0.253:80\" >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo \"export https_proxy=https://19.19.0.253:80\" >> /etc/bashrc\n")
+	        towrite.append("/usr/bin/echo \"printf -v no_proxy '%s,' 10.1.{1..255}.{1..255}\" >> /etc/bashrc\n")
+		towrite.append("/usr/bin/echo \"export no_proxy=\"${no_proxy%,}\"\" >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo \"nameserver " + name_server + "\" >> /etc/resolv.conf\n")
-            
+		towrite.append("chkconfig NetworkManager stop\n")
+                towrite.append("chkconfig NetworkManager off\n") 
 	    	
         file = open("/var/lib/cobbler/kickstarts/rhe7-osp5.ks", "w")
         file.writelines(towrite)
         file.close()
         #cobbler_setup.create_install_server(console)
-        console.cprint_progress_bar("Creating Distro, Profiles, Systems",98)
+        console.cprint_progress_bar("Creating Distro, Profiles, Systems and restarting Cobbler service. Power Cycle the systems after this",98)
         from cobbler_api_wrapper import Build_Server
         handle=Build_Server()
         handle.create_distro()	
         handle.create_profile()        
         handle.create_system()
-        shell_command("systemctl restart cobblerd.service")
+        shell_command("/bin/systemctl restart cobblerd.service")
+	time.sleep(10)
 	shell_command("rm -f /var/lib/dhcpd/dhcpd.leases")
 	shell_command("touch /var/lib/dhcpd/dhcpd.leases")
 	shell_command("cobbler sync")
-	time.sleep(360)
+	time.sleep(5)
+	shell_command("systemctl restart xinetd.service")
+	time.sleep(400)
 	handle.disable_netboot_systems()
         #handle.power_on_systems()
         console.cprint_progress_bar("Task Completed",100)
 
+
+def test():
+    from cobbler_api_wrapper import Build_Server
+    handle=Build_Server()
+    #handle.create_system()
+    handle.disable_netboot_systems()
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

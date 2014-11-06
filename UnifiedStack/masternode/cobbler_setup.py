@@ -149,7 +149,7 @@ def mount(console):
     shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
         "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
-    shell_command("cp -r /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")
+    shell_command("cp -rf /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")
     #shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
 
 

@@ -82,7 +82,7 @@ class Config:
     @staticmethod
     def get_switch_field(field):
         return Config.get_field("Switch-Configuration", field)
-
+    
     @staticmethod
     def get_cimc_field(field):
         return Config.get_field("CIMC-Configuration", field)

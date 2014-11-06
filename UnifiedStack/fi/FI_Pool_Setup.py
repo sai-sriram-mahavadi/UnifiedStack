@@ -15,7 +15,7 @@
 
 import UcsSdk as ucs
 from FI_Config_Base import FIConfiguratorBase
-
+from FI_Utils import FIUtils
 
 class FIPoolConfigurator(FIConfiguratorBase):
     
@@ -26,13 +26,14 @@ class FIPoolConfigurator(FIConfiguratorBase):
         obj = handle.GetManagedObject(
             None, ucs.OrgOrg.ClassId(), {
                 ucs.OrgOrg.DN: "org-root"})
-        mo = handle.AddManagedObject(obj,
+        
+        mo = FIUtils.addOrOverrideMO(obj,
                                      ucs.UuidpoolPool.ClassId(),
                                      {ucs.UuidpoolPool.NAME: uuid_pool,
                                       ucs.UuidpoolPool.PREFIX: "derived",
                                       ucs.UuidpoolPool.DN: "org-root/uuid-pool-" + uuid_pool,
                                       ucs.UuidpoolPool.ASSIGNMENT_ORDER: "sequential"})
-        mo_1 = handle.AddManagedObject(
+        mo_1 = FIUtils.addOrOverrideMO(
             mo,
             ucs.UuidpoolBlock.ClassId(),
             {
@@ -40,25 +41,22 @@ class FIPoolConfigurator(FIConfiguratorBase):
                 ucs.UuidpoolBlock.TO: uuid_end,
                 ucs.UuidpoolBlock.DN: "org-root/uuid-pool-" + uuid_pool + "/block-from-" +
                                     uuid_start + "-to-" + uuid_end})
-        handle.CompleteTransaction()
 
     # Configure MAC Pool
     def configure_mac_pool(self, mac_pool, mac_start, mac_end):
-        handle = self.handle()
-        handle.StartTransaction()
+        handle = self.handle
         obj = handle.GetManagedObject(
             None, ucs.OrgOrg.ClassId(), {
                 ucs.OrgOrg.DN: "org-root"})
-        mo = handle.AddManagedObject(obj,
+        mo = FIUtils.addOrOverrideMO(obj,
                                      ucs.MacpoolPool.ClassId(),
                                      {ucs.MacpoolPool.NAME: mac_pool,
                                       ucs.MacpoolPool.DN: "org-root/mac-pool-" + mac_pool,
                                       ucs.MacpoolPool.ASSIGNMENT_ORDER: "sequential"})
-        mo_1 = handle.AddManagedObject(
+        mo_1 = FIUtils.addOrOverrideMO(
             mo,
             ucs.MacpoolBlock.ClassId(),
             {
                 ucs.MacpoolBlock.FROM: mac_start,
                 ucs.MacpoolBlock.TO: mac_end,
                 ucs.MacpoolBlock.DN: "org-root/mac-pool-"+ mac_pool + "/block-" + mac_start + "-" + mac_end})
-        handle.CompleteTransaction()

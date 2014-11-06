@@ -15,6 +15,7 @@
 
 import UcsSdk as ucs
 from FI_Config_Base import FIConfiguratorBase
+from FI_Utils import FIUtils
 
 FI_FABRIC_SERVER = "fabric/server/"
 FI_FABRIC_LAN = "fabric/lan/"
@@ -25,15 +26,13 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
     # Create VLAN
     def add_vlan(self, vlan_id, vlan_name):
         handle = self.handle
-        handle.StartTransaction()
         obj = handle.GetManagedObject(
             None, ucs.FabricLanCloud.ClassId(), {
                 ucs.FabricLanCloud.DN: FI_FABRIC_LAN})
-        handle.AddManagedObject(obj, ucs.FabricVlan.ClassId(),
-                                {ucs.FabricVlan.DN: FI_FABRIC_LAN + "/net-" + vlan_name,
+        FIUtils.addOrOverrideMO(obj, ucs.FabricVlan.ClassId(),
+                                {ucs.FabricVlan.DN: FI_FABRIC_LAN + "net-" + vlan_name,
                                  ucs.FabricVlan.ID: vlan_id,
                                  ucs.FabricVlan.NAME: vlan_name})
-        handle.CompleteTransaction()
 
     def associate_vlan_vnic(self, vlan_name, uuid_name, mac_name, vnic_name, service_profile_name, switch_id):
         # Create Service Profile
@@ -42,29 +41,26 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
         obj = handle.GetManagedObject(
             None, ucs.OrgOrg.ClassId(), {
                 ucs.OrgOrg.DN: "org-root"})
-        mo = handle.AddManagedObject(obj,
+        mo = FIUtils.addOrOverrideMO(obj,
                                      ucs.LsServer.ClassId(),
                                      {ucs.LsServer.NAME: service_profile_name,
                                       ucs.LsServer.UUID: "0",
                                       ucs.LsServer.IDENT_POOL_NAME: uuid_name,
-                                      ucs.LsServer.DN: "org-root/ls-" + service_profile_name},
-                                     True)
-        mo_1 = handle.AddManagedObject(mo,
+                                      ucs.LsServer.DN: "org-root/ls-" + service_profile_name}, True) 
+        mo_1 = FIUtils.addOrOverrideMO(mo,
                                        ucs.VnicEther.ClassId(),
                                        {ucs.VnicEther.SWITCH_ID: switch_id,
                                         ucs.VnicEther.DN: "org-root/ls-"+service_profile_name + "/ether-" + vnic_name,
                                         ucs.VnicEther.NAME: vnic_name,
-                                        ucs.VnicEther.IDENT_POOL_NAME: mac_name},
-                                       True)
-        mo_1_1 = handle.AddManagedObject(
+                                        ucs.VnicEther.IDENT_POOL_NAME: mac_name}, True)
+        mo_1_1 = FIUtils.addOrOverrideMO(
             mo_1,
             ucs.VnicEtherIf.ClassId(),
             {
                 ucs.VnicEtherIf.DN: "org-root/ls-" + service_profile_name + "/ether-"+ vnic_name +
                                     "/if-" + vlan_name,
                 ucs.VnicEtherIf.NAME: vlan_name,
-                ucs.VnicEtherIf.DEFAULT_NET: "no"},
-                True)
+                ucs.VnicEtherIf.DEFAULT_NET: "no"}, True) 
         handle.CompleteTransaction()
 
 if __name__ == "__main__":

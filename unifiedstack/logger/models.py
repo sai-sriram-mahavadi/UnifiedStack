@@ -10,7 +10,7 @@ class Device(models.Model):
     device_title = models.charField(max_length=50)
     device_desc = models.CharField(max_length=200)
     def __str__(self):
-        return self.device_desc
+        return self.title + ": " + self.device_desc
     
 class Log(models.Model):
     INFO_TYPE = 'I'

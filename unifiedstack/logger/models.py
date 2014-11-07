@@ -7,7 +7,7 @@ from django.db import models
 class Device(models.Model):
     # TODO: Set constants for device title to choose only from
     # a set of networking devices
-    device_title = models.charField(max_length=50)
+    device_title = models.CharField(max_length=50)
     device_desc = models.CharField(max_length=200)
     def __str__(self):
         return self.title + ": " + self.device_desc

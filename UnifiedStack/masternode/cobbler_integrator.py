@@ -27,7 +27,7 @@ class Cobbler_Integrator():
 
     def cobbler_postInstall(self,console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
-		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy,http_port,https_proxy,https_port,\
+		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
 		,nameserver,distro_name,profiles,systems):
 
         cobbler_setup.cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
@@ -51,7 +51,7 @@ class Cobbler_Integrator():
             towrite.append(line)
             if '%post' in line:
 		towrite.append(
-		    "subscription-manager config --server.proxy_hostname=" + http_proxy + " --server.proxy_port=80\n")
+		    "subscription-manager config --server.proxy_hostname=" + http_proxy_ip + " --server.proxy_port=80 \n")
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
@@ -61,8 +61,8 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool + "\n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo 'export http_proxy=http://" + http_proxy + ":" + http_port + "' >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy + ":" + https_port + "' >> /etc/bashrc\n")
+		towrite.append("/usr/bin/echo 'export http_proxy=http://" + http_proxy_ip + ":80' >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":443' >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo \"export no_proxy=`echo 19.19.{0..255}.{0..255} | sed 's/ /,/g'`\" >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'printf -v no_proxy '%s,' 19.19.{0..255}.{0..255}' >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'export no_proxy=${no_proxy%,}' >> /etc/bashrc\n")

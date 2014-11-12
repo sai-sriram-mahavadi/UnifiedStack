@@ -1,9 +1,6 @@
 from django.db import models
 
 # Create your models here.
-from django.db import models
-
-# Create your models here.
 class Device(models.Model):
     # TODO: Set constants for device title to choose only from
     # a set of networking devices

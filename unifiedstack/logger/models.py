@@ -7,32 +7,32 @@ from django.db import models
 class Device(models.Model):
     # TODO: Set constants for device title to choose only from
     # a set of networking devices
-    device_title = models.CharField(max_length=50)
-    device_desc = models.CharField(max_length=200)
+    title = models.CharField(max_length=50)
+    desc = models.CharField(max_length=200, blank=True)
     def __str__(self):
-        return self.title + ": " + self.device_desc
+        return self.title + ": " + self.desc
     
 class Log(models.Model):
-    INFO_TYPE = 'I'
-    COMMIT_TYPE = 'C'
-    WARNING_TYPE = 'W'
-    ERROR_TYPE = 'E'
-    LOG_TYPE_CHOICES = (
-        (INFO_TYPE, 'Info'),
-        (COMMIT_TYPE, 'Commit'),
-        (WARNING_TYPE, 'Warning'),
-        (ERROR_TYPE, 'Error'),
+    INFO_LEVEL = 'I'
+    COMMIT_LEVEL = 'C'
+    WARNING_LEVEL = 'W'
+    ERROR_LEVEL = 'E'
+    LOG_LEVEL_CHOICES = (
+        (INFO_LEVEL, 'Info'),
+        (COMMIT_LEVEL, 'Commit'),
+        (WARNING_LEVEL, 'Warning'),
+        (ERROR_LEVEL, 'Error'),
     )
-    log_type = models.CharField(max_length=1, choices=LOG_TYPE_CHOICES,
-                                    default=INFO_TYPE)
+    level = models.CharField(max_length=1, choices=LOG_LEVEL_CHOICES,
+                                    default=INFO_LEVEL)
     device = models.ForeignKey(Device, related_name="logs")
-    log_timestamp = models.DateTimeField("Log Time", auto_now=True)
-    log_message = models.CharField(max_length=200)
+    timestamp = models.DateTimeField("Log Time", auto_now=True)
+    message = models.CharField(max_length=200)
     def __str__(self):
-        return str(self.log_timestamp) + self.log_message
+        return str(self.timestamp) + self.message
     def was_logged_recently(self):
-        return self.log_timestamp >= timezone.now() - datetime.timedelta(days=1)
+        return self.timestamp >= timezone.now() - datetime.timedelta(days=1)
     def __unicode__(self):
-        return '%s' % (self.log_message)
+        return '%s' % (self.message)
     class Meta:
-        ordering =  ('log_timestamp',)
+        ordering =  ('timestamp',)

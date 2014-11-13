@@ -63,7 +63,8 @@ def cobbler_setup(console):
         "/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
-
+    shell_command_true(
+        "sed -i 's/^port: 80/port: 8080/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
     console.cprint_progress_bar("Installing pre-requistes for cobbler--",65)
@@ -104,6 +105,7 @@ def cobbler_setup(console):
     # Add CIMC addresses to DHCP
     shell_command("touch /tmp/dhcpd.CIMC.conf")
     shell_command("cp /tmp/dhcpd.CIMC.conf /etc/dhcp/")
+    shell_command("echo lanplus >> /etc/cobbler/power/fence_ipmilan.template")
 
 def enable_services(console):
     # Turn on cobbler

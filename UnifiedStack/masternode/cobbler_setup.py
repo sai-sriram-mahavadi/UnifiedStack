@@ -64,7 +64,7 @@ def cobbler_setup(console):
     shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
     shell_command_true(
-        "sed -i 's/^port: 80/port: 8080/' /etc/cobbler/settings")
+        "sed -i 's/^http_port: 80$/http_port: 8080/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
     console.cprint_progress_bar("Installing pre-requistes for cobbler--",65)

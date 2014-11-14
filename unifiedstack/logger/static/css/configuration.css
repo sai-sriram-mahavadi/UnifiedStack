@@ -1,0 +1,29 @@
+
+
+/* ==========================================================================
+   Author's custom styles - Only Specific to the file which inputs configuration
+   ========================================================================== */
+.input-group{
+    width: 100%;
+}
+.input-group-addon{
+    width: 200px;
+    background-color: White;
+    color: Brown;
+    font-style: oblique;
+    font-weight: 500;
+}
+.input-group-addon .form-control{
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+

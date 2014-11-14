@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	{% load staticfiles %}
+	<style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+	
+	
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/configuration.css' %}">
+
+        <script src="{% static 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
+    </head>
+    <body>
+    {% verbatim %} <!-- -->
+
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">UnifiedStack - Installer</a>
+        </div>
+	
+        <div class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+	      <li><a href="#">Import</a></li>
+              <li><a href="#">About Us</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Configuration Details</a></li>
+                  <li><a href="#">Project Summary</a></li>
+                  <li class="divider"></li>
+                  <li class="dropdown-header">Problem?</li>
+                  <li><a href="#">Raise an Issue</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">Auto Configure</a></li>
+              <li><a href="../navbar-static-top/">Troubleshoot</a></li>
+              <li><a href="../navbar-fixed-top/">Topology</a></li>
+            </ul>
+        </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    
+    <div class="container" ng-controller="panelController">
+    <form action="results" method="post">
+	{% csrf_token %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+	Enter the configurations as necessary. Any simple suggestions/header content can be written here.
+      </div>
+    </div>
+    <div class="panel panel-primary">
+	<div class="panel-heading">General Configuration</div>
+	{% for general_setting in SETTINGS.GENERAL_SETTINGS.items %}
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >{{ general_setting.0 }}</span>
+		<input type="text" class="form-control" style="width:100%" name="general_{{ general_setting.1.0 }}" placeholder="{{ general_setting.1.1 }}" />
+	    </div>
+	{% endfor %}
+    </div>
+    <div class="panel panel-success">
+	<div class="panel-heading">Cobbler Configuration</div>
+	{% for cobbler_setting in SETTINGS.COBBLER_SETTINGS.items %}
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >{{ cobbler_setting.0 }}</span>
+		<input type="text" class="form-control" style="width:100%" name="cobbler_{{ cobbler_setting.1.0 }}" placeholder="{{ cobbler_setting.1.1 }}" />
+	    </div>
+	{% endfor %}
+    </div>
+    <div class="panel panel-info">
+	<div class="panel-heading"><input ng-model="is_fi_settings" type="checkbox">FI Configuration</input></div>
+	<div ng-show="is_fi_settings">
+	    {% for fi_setting in SETTINGS.FI_SETTINGS.items %}
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >{{ fi_setting.0 }}</span>
+		<input type="text" class="form-control" style="width:100%" name="fi_{{ fi_setting.1.0 }}" placeholder="{{ fi_setting.1.1 }}" />
+	    </div>
+	    {% endfor %}
+	</div>
+    </div>
+    <div class="panel panel-default">
+	<div class="panel-heading">Switch Configuration</div>
+	{% for fi_setting in SETTINGS.SWITCH_SETTINGS.items %}
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >{{ fi_setting.0 }}</span>
+		<input type="text" class="form-control" style="width:100%" name="fi_{{ fi_setting.1.0 }}" placeholder="{{ fi_setting.1.1 }}" />
+	    </div>
+	{% endfor %}
+    </div>
+    <center><button type="submit" class="btn btn-primary btn-lg">Configure</button></center>
+    </form>
+    </div>
+      <hr>
+
+      <footer>
+        <p>&copy; Cloud System Development - India, Cisco Systems 2014</p>
+      </footer>
+    </div> <!-- /container -->
+	<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+	<script src="{% static 'js/vendor/angular.min.js' %}"></script>
+        <script>window.jQuery || document.write('<script src={% static "js/vendor/jquery-1.11.1.min.js" %}><\/script>')</script>
+        <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/plugins.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/config-controller.js' %}"></script>
+
+    </body>
+</html>

@@ -54,11 +54,11 @@ class SwitchConfigurator:
 
     def configure_switch(self, console):
         sw_gen = SwitchConfigGenerator()
-        sw_gen.generate_config_file("switch-3750")
+        #sw_gen.generate_config_file("switch-3750")
         sw_gen.generate_config_file("switch-9k")
         console.cprint_progress_bar("Generated config files for switches", 10)
 
-        # Configuring 3750 Switch
+        """# Configuring 3750 Switch
         ip_address_3750 = Config.get_switch_field("3750-ip-address").strip()
         username_3750 = Config.get_switch_field("3750-username").strip()
         password_3750 = Config.get_switch_field("3750-password").strip()
@@ -67,13 +67,11 @@ class SwitchConfigurator:
                               password=password_3750,
                               commands_file='switch-3750_commands.cmds')
         console.cprint_progress_bar("Configured the 3750 switch", 50)
-
-        sw_gen = SwitchConfigGenerator()
+        sw_gen = SwitchConfigGenerator()"""
         # Configuring 9k Switch
         ip_address_9k = Config.get_switch_field("9k-ip-address").strip()
         username_9k = Config.get_switch_field("9k-username").strip()
         password_9k = Config.get_switch_field("9k-password").strip()
-        print username_9k, password_9k
         self.configure_device_with_file(ip_address=ip_address_9k,
                               username=username_9k,
                               password=password_9k,

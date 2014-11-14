@@ -354,9 +354,22 @@ class System_operate():
                     " does not exists")
             cobbler_api_handle.power_on(reference)
 	    return True
-        except Exception,e:
-            print "Not able to power on system",e
+        except Exception,e: 
 	    return False
+
+    def power_off(self,sys_name):
+        cobbler_api_handle = cobapi.BootAPI()
+        try:
+            reference = cobbler_api_handle.find_system(sys_name)
+            if reference is None:
+                raise Exception(
+                    "system with name " +
+                    sysname +
+                    " does not exists")
+            cobbler_api_handle.power_off(reference)
+            return True
+        except Exception,e:
+            return False
 
    
 	    

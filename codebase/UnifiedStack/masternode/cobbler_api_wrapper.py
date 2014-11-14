@@ -16,8 +16,7 @@ class Build_Server():
     def __init__(self):
         pass
 
-    def create_distro(self):
-        name = "RHELx86_64"  # Config.get_distro_field("distro_name")
+    def create_distro(self,name):    
         # Config.get_distro_field("vmlinuz_path")
         vmlinuz_path = "/var/www/cobbler/images/RHEL/images/pxeboot/vmlinuz"
         # Config.get_distro_field("initrd_path")
@@ -28,8 +27,7 @@ class Build_Server():
             initrd=initrd_path)
         handle.save_distro()
 
-    def create_profile(self):
-        profiles = Config.get_profiles_data()
+    def create_profile(self,profiles): 
         for profile in profiles:
             name = profile.profile_name
             distro = profile.distro_name
@@ -37,8 +35,7 @@ class Build_Server():
             handle.save_profile()
            
 
-    def create_system(self):
-        systems = Config.get_systems_data()
+    def create_system(self,systems): 
         for system in systems:
             purpose = system.purpose
             hostname = system.hostname
@@ -67,9 +64,8 @@ class Build_Server():
 	    handle.save_system()
 	    
 
-    def power_on_systems(self):
-	    handle=syst.System_operate()
-	    systems = Config.get_systems_data()
+    def power_on_systems(self,systems):
+	    handle=syst.System_operate() 
 	    for system in systems:
 		purpose = system.purpose
                 hostname = system.hostname
@@ -81,19 +77,50 @@ class Build_Server():
 			raise Exception("Not able to power on System " + name )
 		except Exception,e:
 		    print e
+
+    def power_off_systems(self,systems):
+            handle=syst.System_operate() 
+            for system in systems:
+                purpose = system.purpose
+                hostname = system.hostname
+                name = '' + hostname + "-" + purpose
+                try:
+                    if handle.power_off(name):
+                        print "System " + name + " powered off"
+                    else:
+                        raise Exception("Not able to power off System " + name )
+                except Exception,e:
+                    print e
+
+    def power_cycle_systems(self,systems):
+            handle=syst.System_operate() 
+            for system in systems:
+                purpose = system.purpose
+                hostname = system.hostname
+                name = '' + hostname + "-" + purpose
+                try:
+                    if handle.power_off(name):
+                        pass
+                    else:
+                        raise Exception("Not able to power off System " + name )
+                    if handle.power_on(name):
+                        pass
+                    else:
+                        raise Exception("Not able to power on System " + name )
+                except Exception,e:
+                    return False
+
 		
-    def disable_netboot_systems(self):
-	    handle=syst.System_operate()
-            systems = Config.get_systems_data()
+    def disable_netboot_systems(self,systems):
+	    handle=syst.System_operate()     
             for system in systems:
                 purpose = system.purpose
                 hostname = system.hostname
                 name = '' + hostname + "-" + purpose
 	        handle.edit_system(name,netboot_enabled=False)
 
-    def enable_netboot_systems(self):
-            handle=syst.System_operate()
-            systems = Config.get_systems_data()
+    def enable_netboot_systems(self,systems):
+            handle=syst.System_operate()  
             for system in systems:
                 purpose = system.purpose
                 hostname = system.hostname

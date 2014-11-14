@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" ng-app> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app="configurator"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app="configurator"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app="configurator"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app="configurator"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -27,8 +27,6 @@
         <script src="{% static 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
     </head>
     <body>
-    {% verbatim %} <!-- -->
-
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -71,14 +69,15 @@
     </div>
 
     
-    <div class="container" ng-controller="panelController">
-    <form action="results" method="post">
-	{% csrf_token %}
+    <div class="container" ng-controller="serverConfigController">
+    {% csrf_token %}
     <div class="panel panel-default">
       <div class="panel-body">
 	Enter the configurations as necessary. Any simple suggestions/header content can be written here.
+	{% verbatim %} <div> {{ result_message }} </div> {% endverbatim %}
       </div>
     </div>
+    <!--
     <div class="panel panel-primary">
 	<div class="panel-heading">General Configuration</div>
 	{% for general_setting in SETTINGS.GENERAL_SETTINGS.items %}
@@ -117,8 +116,16 @@
 	    </div>
 	{% endfor %}
     </div>
-    <center><button type="submit" class="btn btn-primary btn-lg">Configure</button></center>
-    </form>
+    -->
+    <div class="panel panel-primary">
+	<div class="panel-heading">General Configuration</div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Pool Id</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_pool_id" name="general_pool_id" placeholder="{{ general_setting.1.1 }}" />
+	    </div>
+    </div>
+    <center><button data-ng-click="configure()" class="btn btn-primary btn-lg">Configure</button></center>
+    {% verbatim %} {{general_pool_id}} {{result_message}}{% endverbatim %}
     </div>
       <hr>
 
@@ -126,13 +133,12 @@
         <p>&copy; Cloud System Development - India, Cisco Systems 2014</p>
       </footer>
     </div> <!-- /container -->
-	<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
-	<script src="{% static 'js/vendor/angular.min.js' %}"></script>
+		<script src="{% static 'configurator/js/vendor/angular.min.js' %}"></script>
+	<script src="{% static 'configurator/js/vendor/angular-resource.js' %}"></script>
+	<script src="{% static 'configurator/js/server-config-controller.js' %}"></script>
         <script>window.jQuery || document.write('<script src={% static "js/vendor/jquery-1.11.1.min.js" %}><\/script>')</script>
-        <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
-        <script src="{% static 'js/plugins.js' %}"></script>
-        <script src="{% static 'js/main.js' %}"></script>
-        <script src="{% static 'js/config-controller.js' %}"></script>
-
+        <script src="{% static 'configurator/js/vendor/bootstrap.min.js' %}"></script>
+        <script src="{% static 'configurator/js/plugins.js' %}"></script>
+        <script src="{% static 'configurator/js/main.js' %}"></script>
     </body>
 </html>

@@ -29,8 +29,7 @@ from UnifiedStack.config.Config_Parser import Config
 
 
 def cobbler_setup(console):
-    cobbler_interface = Config.get_cobbler_field('cobbler_interface')
-    cobbler_ipaddress = Config.get_cobbler_field('cobbler_ipaddress')
+    cobbler_interface = Config.get_cobbler_field('cobbler_interface') 
     cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
     cobbler_server = Config.get_cobbler_field('cobbler_server')
     cobbler_next_server = Config.get_cobbler_field('cobbler_next_server')
@@ -39,13 +38,12 @@ def cobbler_setup(console):
     cobbler_DNS = Config.get_cobbler_field('cobbler_DNS')
     cobbler_hostname = Config.get_cobbler_field('cobbler_hostname')
     cobbler_web_username = Config.get_cobbler_field('cobbler_web_username')
-    cobbler_web_password = Config.get_cobbler_field('cobbler_web_password')
-    cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
+    cobbler_web_password = Config.get_cobbler_field('cobbler_web_password') 
 
     shell_command(
         "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
     shell_command_true(
-        "/usr/bin/yum -y install tftp-server cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd python-devel python-paramiko")
+        "/usr/bin/yum -y install tftp-server cobbler cobbler-web screen which wget curl pykickstart fence-agents dhcp bind-chroot xinetd ")
     console.cprint_progress_bar("Writing in the necessary files",60)
     shell_command("hostname " + cobbler_hostname)
     # setup cobbler
@@ -65,7 +63,8 @@ def cobbler_setup(console):
         "/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
-
+    shell_command_true(
+        "sed -i 's/^http_port: 80$/http_port: 8080/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
     console.cprint_progress_bar("Installing pre-requistes for cobbler--",65)
@@ -106,6 +105,7 @@ def cobbler_setup(console):
     # Add CIMC addresses to DHCP
     shell_command("touch /tmp/dhcpd.CIMC.conf")
     shell_command("cp /tmp/dhcpd.CIMC.conf /etc/dhcp/")
+    shell_command("echo lanplus >> /etc/cobbler/power/fence_ipmilan.template")
 
 def enable_services(console):
     # Turn on cobbler
@@ -143,20 +143,11 @@ def sync(console):
 
 def mount(console):
     """Here goes the code to wget the rhel image in the /root directory"""
-    shell_command("mkdir /var/www/cobbler/images/RHEL")
+    shell_command("mkdir -p /var/www/cobbler/images/RHEL")
     #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",95)
     rhel_image_url=Config.get_general_field("rhel-image-url")
     shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
         "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
     shell_command("cp -rf /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")
-    #shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
-
-
-def create_install_server(console):
-    
-    shell_command(
-        "cobbler import --name=RHEL7 --arch=x86_64 --path=" +
-        root_path +
-        "/UnifiedStack/masternode/rhel_mount")
-    
+    shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")

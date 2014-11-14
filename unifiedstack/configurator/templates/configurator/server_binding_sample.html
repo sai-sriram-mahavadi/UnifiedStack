@@ -121,9 +121,268 @@
 	<div class="panel-heading">General Configuration</div>
 	    <div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >Pool Id</span>
-		<input type="text" class="form-control" style="width:100%" ng-model="general_pool_id" name="general_pool_id" placeholder="{{ general_setting.1.1 }}" />
+		<input type="text" class="form-control" style="width:100%" ng-model="general_pool_id" name="general_pool_id" placeholder="Enter your pool_id" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >name-server</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_name_server" name="general_name_server" placeholder="Enter name_server" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >enable-fi</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_enable_fi" name="general_enable_fi" placeholder="True/False" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >hostname-port-mapping-1</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_hostname_port_mapping_1" name="general_hostname_port_mapping_1" placeholder="" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >hostname-port-mapping-2</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_hostname_port_mapping_2" name="general_hostname_port_mapping_2" placeholder="" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >hostname-port-mapping-3</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_hostname_port_mapping_3" name="general_hostname_port_mapping_3" placeholder="" />
+	    </div>
+	    <div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >rhel-image-url</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="general_rhel_image_url" name="general_rhel_image_url" placeholder="Provide Complete Path" />
 	    </div>
     </div>
+    <div class="panel panel-primary">
+	<div class="panel-heading">Cobbler Configuration</div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >compute-hosts</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_compute_hosts" name="cobbler_compute_hosts" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >network-hosts</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_network_hosts" name="cobbler_network_hosts" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >profiles</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_profiles" name="cobbler_profiles" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_interface</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_interface" name="cobbler_interface" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_ipaddress</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_ipaddress" name="cobbler_ipaddress" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_netmask</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_netmask" name="cobbler_netmask" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_server</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_server" name="cobbler_server" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_next_server</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_next_server" name="cobbler_next_server" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_subnet</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_subnet" name="cobbler_subnet" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_option_router</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_option_router" name="cobbler_option_router" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_DNS</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_DNS" name="cobbler_DNS" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_hostname</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_hostname" name="cobbler_hostname" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_web_username</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_web_username" name="cobbler_web_username" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_web_password</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_web_password" name="cobbler_web_password" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >redhat_username</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="redhat_username" name="redhat_username" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >redhat_password</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="redhat_password" name="redhat_password" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >redhat_pool</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="redhat_pool" name="redhat_pool" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_netmask</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_netmask" name="cobbler_netmask" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_proxy</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_proxy" name="cobbler_proxy" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >cobbler_power_type</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_power_type" name="cobbler_power_type" placeholder="" />
+	    </div>
+     </div>
+    <div class="panel panel-primary">
+	<div class="panel-heading">FI Configuration</div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Cluster IP</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Cluster_IP" name="FI_Cluster_IP" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Cluster Username </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Cluster_Username" name="FI_Cluster_Username" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Cluster Password </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Cluster_Password" name="FI_Cluster_Password" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Server Ports </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Server_Ports" name="FI_Server_Ports" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Uplink Ports </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Uplink_Ports" name="FI_Uplink_Ports" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Slot Id </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Slot_Id" name="FI_Slot_Id" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Slot 1 ports </span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Slot_1_ports" name="FI_Slot_1_ports" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI UUID Pool name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_UUID_pool_name" name="FI_UUID_pool_name" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI UUID Pool Start</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_UUID_pool_start" name="FI_UUID_pool_start" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI UUID Pool End</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_UUID_pool_end" name="FI_UUID_pool_end" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI MAC Pool name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_MAC_pool_name" name="FI_MAC_pool_name" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI MAC Pool start</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_MAC_pool_start" name="FI_MAC_pool_start" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI MAC Pool end</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_MAC_pool_end" name="FI_MAC_pool_end" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 1 name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_1_name" name="FI_vnic_1_name" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 1 Vlan range</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_1_vlan_range" name="FI_vnic_1_vlan_range" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 2 name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_2_name" name="FI_vnic_2_name" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 2 Vlan range</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_2_vlan_range" name="FI_vnic_2_vlan_range" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 3 name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_3_name" name="FI_vnic_3_name" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI VNIC 3 Vlan range</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_vnic_3_vlan_range" name="FI_vnic_3_vlan_range" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >FI Service Profile name</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="FI_Service_profile_name" name="FI_Service_profile_name" placeholder="" />
+	    </div>
+    </div>
+    <div class="panel panel-primary">
+	<div class="panel-heading">Switch Configuration</div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Available Switches</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_available_switches" name="Switch_available_switches" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 Ip address</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_Ip_address" name="Switch_1_Ip_address" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 Username</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_username" name="Switch_1_username" placeholder="" />
+	    </div>
+	
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 Password</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_password" name="Switch_1_password" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 VLANs</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_vlan" name="Switch_1_vlan" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 trunk interfaces</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_trunk_interfaces" name="Switch_1_trunk_interfaces" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 VRF</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_VRF" name="Switch_1_VRF" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Switch 1 Mgmt interface</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Switch_1_Mgmt_interface" name="Switch_1_Mgmt_interface" placeholder="" />
+	    </div>
+	
+    </div>
+    <div class="panel panel-primary">
+	<div class="panel-heading">Packstack Configuration</div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Compute hosts</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_compute_hosts" name="Packstack_compute_hosts" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Network hosts</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_network_hosts" name="Packstack_network_hosts" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >keystone admin pw</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_admin_pw" name="Packstack_admin_pw" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >enable-openvswitch</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_enable_openswitch" name="Packstack_enable_openswitch" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >enable-cisconexus</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_enable_cisconexus" name="Packstack_enable_cisconexus" placeholder="" />
+	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >VLAN mapping ranges</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_vlan_mapping_ranges" name="Packstack_vlan_mapping_ranges" placeholder="" />
+	    </div>
+	
+	
+    </div>
+	
+    
+	
     <center><button data-ng-click="configure()" class="btn btn-primary btn-lg">Configure</button></center>
     {% verbatim %} {{general_pool_id}} {{result_message}}{% endverbatim %}
     </div>

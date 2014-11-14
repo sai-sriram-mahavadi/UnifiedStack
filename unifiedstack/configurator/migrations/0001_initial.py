@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('logger', '0004_auto_20141111_1206'),
+        ('logger', '0001_initial'),
     ]
 
     operations = [
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('stype', models.CharField(default=b'AN', max_length=2, choices=[(b'A', b'Aphabetic'), (b'N', b'Numeric'), (b'AN', b'Alpha Numeric'), (b'P', b'Password'), (b'IP', b'IPv4 Address'), (b'MI', b'Multiple IP Addresses'), (b'C', b'Compound Setting'), (b'E', b'Email'), (b'CU', b'Custom')])),
                 ('standard_label', models.CharField(default=b'', max_length=50, blank=True)),
                 ('value', models.CharField(default=b'', max_length=200, blank=True)),
-                ('device', models.ForeignKey(related_name=b'settings', to='logger.Device')),
+                ('device', models.ForeignKey(related_name='settings', to='logger.Device')),
             ],
             options={
             },

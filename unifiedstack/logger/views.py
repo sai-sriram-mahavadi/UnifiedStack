@@ -13,8 +13,8 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-from logger.models import Log, Device
-from logger.serializers import LogSerializer, DeviceSerializer
+from logger.models import Log, Device, ConsoleLog
+from logger.serializers import LogSerializer, DeviceSerializer, ConsoleLogSerializer
 
 
 class JSONResponse(HttpResponse):
@@ -124,12 +124,23 @@ def device_detail(request, pk):
     elif request.method == 'DELETE':
         device.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@csrf_exempt
+def list_n_console_logs(request):
+    console_logs = ConsoleLog.objects.all()
+    serializer = ConsoleLogSerializer(console_logs, many=True)
+    return JSONResponse(serializer.data)
     
 # ViewSets define the view behavior.
 class LogViewSet(viewsets.ModelViewSet):
     queryset = Log.objects.all()
     serializer_class = LogSerializer
     
+class ConsoleLogViewSet(viewsets.ModelViewSet):
+    queryset = ConsoleLog.objects.all()
+    serializer_class = ConsoleLogSerializer
+    
 class DeviceViewSet(viewsets.ModelViewSet):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
+    

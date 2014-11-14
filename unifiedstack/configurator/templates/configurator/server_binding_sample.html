@@ -125,7 +125,13 @@
 	    </div>
     </div>
     <center><button data-ng-click="configure()" class="btn btn-primary btn-lg">Configure</button></center>
-    {% verbatim %} {{general_pool_id}} {{result_message}}{% endverbatim %}
+    {% verbatim %}
+	{{general_pool_id}} {{result_message}} 
+	<input type="text" ng-model="count"/>
+	<div ng-repeat="console_log in console_logs">
+	    <div class="bg-active">{{console_log.console_summary}}</div>
+	</div>
+    {% endverbatim %}
     </div>
       <hr>
 

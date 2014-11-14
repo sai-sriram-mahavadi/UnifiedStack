@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from logger.models import Log, Device
+from logger.models import Log, Device, ConsoleLog
 from configurator.models import DeviceSetting
 
 # Serializers define the API representation.
@@ -16,3 +16,8 @@ class DeviceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Device
         fields = ('id', 'title', 'desc', 'logs', 'settings')
+        
+class ConsoleLogSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+            model = ConsoleLog
+            fields = ('id', 'console_summary', 'console_message')

@@ -33,3 +33,7 @@ class Log(models.Model):
         return '%s' % (self.message)
     class Meta:
         ordering =  ('timestamp',)
+
+class ConsoleLog(models.Model):
+    console_message = models.CharField(max_length=100, blank=True, default="")
+    console_summary = models.CharField(max_length=50)

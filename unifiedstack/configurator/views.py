@@ -13,7 +13,7 @@ from rest_framework.parsers import JSONParser
 from configurator.models import DeviceSetting
 from configurator.serializers import DeviceSettingSerializer
 from logger.serializers import LogSerializer
-from logger.models import Log   
+from logger.models import ConsoleLog   
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -99,4 +99,10 @@ def server_binding_sample(request):
 @csrf_exempt
 def server_binding_post(request):
     print "post came from server_binding"
-    
+    data = JSONParser().parse(request)
+    print "Data: ", data
+    print data["general_pool_id"]
+    cl = ConsoleLog(console_summary="Posted Genaral_Pool_ID:" + data["general_pool_id"])
+    cl.save()
+    return HttpResponse(status=201)
+

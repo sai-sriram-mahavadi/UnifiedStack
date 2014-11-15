@@ -48,7 +48,7 @@ def cobbler_setup(console):
     shell_command("hostname " + cobbler_hostname)
     # setup cobbler
     shell_command_true(
-        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$yxb/WepJ$Bd1Iy7Pm71CuErWcdnBlh.\"/' /etc/cobbler/settings")
+        "sed -i 's/^default_password_crypted.*/default_password_crypted: \"$1$KDf/n9sU$rrhJzS0hE5Wq3CaUi/84M0\"/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^manage_dhcp:.*/manage_dhcp: 1/' /etc/cobbler/settings")
     shell_command_true(

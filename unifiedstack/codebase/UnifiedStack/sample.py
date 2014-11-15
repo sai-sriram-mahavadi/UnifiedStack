@@ -1,6 +1,6 @@
 # Sample to check
-class Integrator:
+class SampleIntegrator:
     
     @staticmethod
     def print_hello():
-        print "hello"
+        print "HEY IM CALLED>>>> SIMPLE INTEGRATOR"

@@ -106,7 +106,6 @@ class Integrator:
         if(runstatus <= 3):  # Packstack
             # Test if all the nodes are active; else wait for the same even to occur
             tries = 0
-	    
             while not self.poll_all_nodes():
                 time.sleep(120)
                 if tries < MAX_TRIES:
@@ -140,12 +139,15 @@ class Integrator:
         return remote_conn_pre
     
     def configure_nodes(self, console):
+        self.setup_ssh_key()
         for system in Config.get_systems_data():
             # Calling the function to make the ssh co
+            self.ssh_key_exchange(system.ip_address, username, password)
             remote_conn_client = self.establish_connection(
                         ipaddress=system.ip_address,
                         username=username,
                         password=password)
+            
             remote_conn = remote_conn_client.invoke_shell()
             redhat_username = Config.get_cobbler_field('redhat_username') 
             redhat_password = Config.get_cobbler_field('redhat_password')   

@@ -14,11 +14,12 @@
 # Provides any additional config details as necessary.
 
 import ConfigParser
-
+import os
+import inspect
 
 class FIConfig:
     config = ConfigParser.ConfigParser()
-    config.read(r'..\config\unified_stack.cfg')
+    config.read(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '\..\config\unified_stack.cfg')
     
     @staticmethod
     def get_field(field):
@@ -104,6 +105,7 @@ class FIConfig:
         return FIConfig.get_field('fi-service-profile-name')
     
 if __name__ == '__main__':
+    
     print FIConfig.get_cluster_ipaddress()
     print FIConfig.get_cluster_username()
     print FIConfig.get_cluster_password()
@@ -113,4 +115,5 @@ if __name__ == '__main__':
     print FIConfig.get_vlans(1)
     print FIConfig.get_vlans(2)
     print FIConfig.get_vlans(3)
+    
     

@@ -13,7 +13,8 @@ from rest_framework.parsers import JSONParser
 from configurator.models import DeviceSetting
 from configurator.serializers import DeviceSettingSerializer
 from logger.serializers import LogSerializer
-from logger.models import ConsoleLog   
+from logger.models import ConsoleLog
+from codebase.UnifiedStack.sample import SampleIntegrator
 import ConfigParser
 
 class JSONResponse(HttpResponse):
@@ -108,6 +109,7 @@ def set_config_field(section, field, value):
 @csrf_exempt
 def server_binding_post(request):
     print "post came from server_binding"
+    SampleIntegrator.print_hello()
     print "HEY BOSS IM HERE"
     print "JUST FOR FUN"
     data = JSONParser().parse(request)
@@ -127,6 +129,7 @@ def server_binding_post(request):
     set_config_field("Cobbler-Configuration", "compute-hosts", data["cobbler_compute_hosts"])
     set_config_field("Cobbler-Configuration", "network-hosts", data["cobbler_network_hosts"])
     set_config_field("Cobbler-Configuration", "profiles", data["cobbler_profiles"])
+    set_config_field("Cobbler-Configuration", "distro_name", data["cobbler_distro_name"])
     set_config_field("Cobbler-Configuration", "cobbler_interface", data["cobbler_interface"])
     set_config_field("Cobbler-Configuration", "cobbler_ipaddress", data["cobbler_ipaddress"])
     set_config_field("Cobbler-Configuration", "cobbler_netmask", data["cobbler_netmask"])
@@ -141,8 +144,9 @@ def server_binding_post(request):
     set_config_field("Cobbler-Configuration", "redhat_username", data["redhat_username"])
     set_config_field("Cobbler-Configuration", "redhat_password", data["redhat_password"])
     set_config_field("Cobbler-Configuration", "redhat_pool", data["redhat_pool"])
-    set_config_field("Cobbler-Configuration", "cobbler_netmask", data["cobbler_netmask"])
-    set_config_field("Cobbler-Configuration", "proxy", data["cobbler_proxy"])
+    set_config_field("Cobbler-Configuration", "http_proxy_ip", data["http_proxy_ip"])
+    set_config_field("Cobbler-Configuration", "https_proxy_ip", data["https_port"])
+    set_config_field("Cobbler-Configuration", "https_port", data["https_proxy_ip"])
     set_config_field("Cobbler-Configuration", "power_type", data["cobbler_power_type"])
     set_config_field("FI-Configuration", "fi-cluster-ip-address", data["FI_Cluster_IP"])
     set_config_field("FI-Configuration", "fi-cluster-username", data["FI_Cluster_Username"])

@@ -74,12 +74,47 @@ container{
       padding-top:0;
     }
 }
+/*
+#server_container{
+    position: relative;
+}
+#output_div{
+    padding:10px;
+    display:block;
+    position:absolute;
+    top:0;left:0;
+    height:160px;
+    width:500px;
+    background-color: White;
+    z-index: 5;
+}
 
 
-
-
-
-
+.popup 
+    {
+        position:fixed;
+        border:solid 1px black;
+        width:200px;
+        height:200px;
+        left:100px;
+        top:100px;
+        margin:-100px 0 0 -100px;
+        display:none;
+        background-color:red;
+    	z-index:2000;
+    }
+ 
+    .cover 
+    {
+        background-color:black;
+        width:100%;
+        height:100%;
+      	display:none;
+        position:fixed;
+    	z-index:5000;
+ 
+    }
+*/
 
 
 

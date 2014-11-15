@@ -32,7 +32,7 @@ from UnifiedStack.packstack import Packstack_Setup as pst
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
-
+from unifiedstack.fi import FI_Configurator
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -87,23 +87,27 @@ class Integrator:
 
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
         runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
-        RUNSTATUSCODE = {"-cobbler-preboot":0, "-cobbler-postboot":2, "-switch":1, "-packstack":3}
+        RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
         try:
             runstatus = RUNSTATUSCODE[runstatusmsg]
         except Exception:
-            print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -switch, -packstack ]"
+            print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
+        
         if(runstatus <= 0):  # Configuring Cobbler pre-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
             self.configure_cobbler_preboot(shell, console)
-        if(runstatus <= 1):  # Switchi
+        if(runstatus <= 1):
+            ficonfig = FIConfigurator()
+            ficonfig.configure_fi_components()
+        if(runstatus <= 2):  # Switch
             shell.execute_command("yum install python-devel python-paramiko -y")
             import paramiko
             console.cprint_progress_bar("Started Configuration of Switch", 0)
             self.configure_switch(shell, console)
-        if(runstatus <= 2):  # Congiguing Cobbler post-boot
+        if(runstatus <= 3):  # Congiguing Cobbler post-boot
             console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
             self.configure_cobbler_postboot(shell, console)
-        if(runstatus <= 3):  # Packstack
+        if(runstatus <= 4):  # Packstack
             # Test if all the nodes are active; else wait for the same even to occur
             tries = 0
             while not self.poll_all_nodes():

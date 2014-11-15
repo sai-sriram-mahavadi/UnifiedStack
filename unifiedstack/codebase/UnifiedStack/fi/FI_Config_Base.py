@@ -20,7 +20,7 @@ class FIConfiguratorBase:
    
     # Handle used to login and access FI
     handle = ucs.UcsHandle()
-    handle.Login("19.19.102.10", "admin", "Cisco12345")
+    handle.Login("192.168.131.65", "satroutr", "S6T8UB1i")
     
     @staticmethod
     def login(fi_ip, username, password):

@@ -74,6 +74,7 @@
 		conf.FI_vnic_3_vlan_range = $scope.FI_vnic_3_vlan_range;
 		conf.FI_Service_profile_name = $scope.FI_Service_profile_name;
 		conf.Switch_available_switches = $scope.Switch_available_switches;
+		conf.Switch_1_Hostname = $scope.Switch_1_Hostname;
 		conf.Switch_1_Ip_address = $scope.Switch_1_Ip_address;
 		conf.Switch_1_username = $scope.Switch_1_username;
 		conf.Switch_1_password = $scope.Switch_1_password;

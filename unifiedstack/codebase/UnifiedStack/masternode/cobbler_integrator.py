@@ -20,8 +20,8 @@ class Cobbler_Integrator():
         redhat_pool = Config.get_cobbler_field('redhat_pool')
 	nameserver=Config.get_cobbler_field('cobbler_DNS')
 	self.cobbler_preInstall(console,redhat_username,redhat_password,redhat_pool,nameserver)
-
-    def cobbler_postInstaller_adapter(self,console):
+        
+    def cobbler_postInstall_adapter(self,console):
         cobbler_interface = Config.get_cobbler_field('cobbler_interface')
         cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
         cobbler_server = Config.get_cobbler_field('cobbler_server')
@@ -45,7 +45,7 @@ class Cobbler_Integrator():
 	nameserver=Config.get_cobbler_field('cobbler_DNS')
 	
         self.cobbler_postInstall(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
-                cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
+                cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
                 rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
                 nameserver,distro_name,profiles,systems)
 		
@@ -55,17 +55,18 @@ class Cobbler_Integrator():
             "/../data_static/cobbler.repo",
             "/etc/yum.repos.d/cobbler.repo")
         cobbler_preInstall.enable_repos(console,redhat_username,redhat_password,redhat_pool)
+        cobbler_preInstall.install_prerequistes()  
         cobbler_preInstall.disable_SELinux(console)
         #cobbler_preInstall.enable_networking(console)
         #cobbler_preInstall.add_name_server(console)
 
     def cobbler_postInstall(self,console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
-                cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
+                cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
 		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
 		nameserver,distro_name,profiles,systems):
 
         cobbler_setup.cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
-		cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password)
+		cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,cobbler_option_router)
         cobbler_setup.enable_services(console)
         shutil.copyfile(
             self.cur +

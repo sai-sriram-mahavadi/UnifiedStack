@@ -32,7 +32,7 @@ class FIPortConfigurator(FIConfiguratorBase):
                                       {ucs.FabricDceSwSrv.DN:
                                        FI_FABRIC_SERVER + switch})
         handle.CompleteTransaction()
-        FIUtils.addOrOverrideMO(obj, ucs.FabricDceSwSrvEp.ClassId(),
+        FIUtils.addOrIgnoreMO(obj, ucs.FabricDceSwSrvEp.ClassId(),
                                 {ucs.FabricDceSwSrvEp.ADMIN_STATE: "enabled",
                                 ucs.FabricDceSwSrvEp.SLOT_ID: slot_id,
                                 ucs.FabricDceSwSrvEp.DN:
@@ -45,7 +45,7 @@ class FIPortConfigurator(FIConfiguratorBase):
     def configure_uplink_port(self, uplink_port, switch, slot_id):
         handle = self.handle
         obj = handle.GetManagedObject(None, None, {"dn": "fabric/lan/A"})
-        FIUtils.addOrOverrideMO(obj, ucs.FabricEthLanEp.ClassId(),
+        FIUtils.addOrIgnoreMO(obj, ucs.FabricEthLanEp.ClassId(),
                                 {ucs.FabricEthLanEp.DN:
                                  FI_FABRIC_LAN + "phys-slot-" + slot_id +
                                  "-port-" + uplink_port,

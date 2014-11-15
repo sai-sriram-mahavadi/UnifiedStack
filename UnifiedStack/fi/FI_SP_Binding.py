@@ -14,6 +14,7 @@
 
 import UcsSdk as ucs
 from FI_Config_Base import FIConfiguratorBase
+from FI_Utils import FIUtils
 
 
 class FIBindingConfigurator(FIConfiguratorBase):
@@ -29,7 +30,7 @@ class FIBindingConfigurator(FIConfiguratorBase):
         lsServerObj = handle.SetManagedObject(
             lsServerObj, ucs.LsServer.ClassId(), {
                 ucs.LsServer.STATUS: ucs.Status.MODIFIED})
-        lsBindObj = handle.AddManagedObject(lsServerObj,
+        lsBindObj = FIUtils.addOrIgnoreMO(lsServerObj,
                                             ucs.LsBinding.ClassId(),
                                             {ucs.LsBinding.PN_DN: bladeDn,
                                              ucs.LsBinding.RESTRICT_MIGRATION: ucs.YesOrNo.NO},

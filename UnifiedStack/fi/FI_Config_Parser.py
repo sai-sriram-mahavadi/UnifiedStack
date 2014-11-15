@@ -18,7 +18,7 @@ import ConfigParser
 
 class FIConfig:
     config = ConfigParser.ConfigParser()
-    config.read(r'..\config\unified_stack.cfg')
+    config.read('unified_stack.cfg')
     
     @staticmethod
     def get_field(field):

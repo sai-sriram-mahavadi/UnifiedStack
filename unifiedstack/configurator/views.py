@@ -14,8 +14,10 @@ from configurator.models import DeviceSetting
 from configurator.serializers import DeviceSettingSerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
-from codebase.UnifiedStack.sample import SampleIntegrator
+from codebase.UnifiedStack.sample import Integrator
 import ConfigParser
+import os
+import inspect
 
 class JSONResponse(HttpResponse):
     """
@@ -109,11 +111,6 @@ def set_config_field(section, field, value):
 @csrf_exempt
 def server_binding_post(request):
     global unified_config
-    print "post came from server_binding"
-    SampleIntegrator.print_hello()
-    
-    print "HEY BOSS IM HERE"
-    print "JUST FOR FUN"
     data = JSONParser().parse(request)
     unified_config = ConfigParser.ConfigParser()
     unified_config.add_section("General")
@@ -121,12 +118,8 @@ def server_binding_post(request):
     unified_config.add_section("FI-Configuration")
     unified_config.add_section("Switch-Configuration")
     unified_config.add_section("Switch-9k")
-    unified_config.add_section("Packstack-Configuration")
-    print "kkooooooooooooooooooooooooooooooooooooo"
-    print data["cobbler_power_type"]
-    print data["general_pool_id"]
+    unified_config.add_section("Packstack-Configuration") 
     set_config_field("General", "pool-id", data["general_pool_id"])
-    print "kkkkkkkkkkkkkkkkkkkkkkkk"
     set_config_field("General", "name-server", data["general_name_server"])
     set_config_field("General", "enable-fi", data["general_enable_fi"])
     set_config_field("General", "hostname-port-mapping-1", data["general_hostname_port_mapping_1"])
@@ -196,12 +189,10 @@ def server_binding_post(request):
     with open('config.cfg', 'wb') as configfile:
         unified_config.write(configfile)
     
-    
-    
-    print "Data: ", data
-    print data["general_pool_id"]
-    print data["general_name_server"]
-    cl = ConsoleLog(console_summary="Posted Genaral_Pool_ID:" + data["general_pool_id"])
-    cl.save()
+    file_containing_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    with open(file_containing_dir + '../codebase/UnifiedStack/data_static/unified_stack2.cfg' ,'wb') as configfile:
+        unified_config.write(configfile) 
+    Integrator.Integrator().configure_unifiedstack()
     return HttpResponse(status=201)
+     
 

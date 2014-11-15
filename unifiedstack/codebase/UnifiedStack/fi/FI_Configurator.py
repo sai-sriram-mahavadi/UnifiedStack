@@ -17,13 +17,15 @@ from FI_Config_Parser import FIConfig
 from FI_Port_setup import FIPortConfigurator
 from FI_Pool_Setup import FIPoolConfigurator
 from FI_Service_Profile_Setup import FIServiceProfileConfigurator
+from FI_Service_Profile_Clone import FICloneConfigurator
+from  FI_SP_Binding import FIBindingConfigurator 
 
 class FIConfigurator:
     
     def configure_fi_components(self):    
         # Configuring Server and Uplink ports
         port_config = FIPortConfigurator()
-        '''
+       
         server_ports = FIConfig.get_server_ports()
         for server_port in server_ports:
             port_config.configure_server_port(str(server_port), 'sw-A', str(1))
@@ -41,7 +43,7 @@ class FIConfigurator:
         pool_config.configure_mac_pool( FIConfig.get_mac_pool_name(),
                                         FIConfig.get_mac_pool_start(),
                                         FIConfig.get_mac_pool_end())
-        '''
+       
         # Configuring service profiles
         sp_config = FIServiceProfileConfigurator()
         vnic_names = FIConfig.get_vnic_names()
@@ -53,6 +55,19 @@ class FIConfigurator:
                 sp_config.associate_vlan_vnic("vlan-"+str(vlan_id), FIConfig.get_uuid_pool_name(),
                                               FIConfig.get_mac_pool_name(), vnic_names[vnic_id-1],
                                               FIConfig.get_service_profile_name(), "A")
+    	clone_config = FICloneConfigurator()
+	for i in range(1, 9):
+       	    clone_config.clone_profile(FIConfig.get_service_profile_name() + str(i), FIConfig.get_service_profile_name())
+
+	bindconfig = FIBindingConfigurator()
+	for i in range(1, 9):
+	    p_service_profile = FIConfig.get_service_profile_name() + str(i)
+            p_bladeDn = "sys/rack-unit-" + str(i)
+            bindconfig.configure_bindings(
+                service_profile=p_service_profile,
+                bladeDn=p_bladeDn)
+        print "Completed"
+
 ficonfig = FIConfigurator()
 ficonfig.configure_fi_components()
     

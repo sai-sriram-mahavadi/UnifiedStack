@@ -63,8 +63,8 @@ def cobbler_setup(console):
         "/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^pxe_just_once:.*/pxe_just_once: 1/' /etc/cobbler/settings")
-    shell_command_true(
-        "sed -i 's/^http_port: 80$/http_port: 8080/' /etc/cobbler/settings")
+    #shell_command_true(
+    #    "sed -i 's/^http_port: 80$/http_port: 8080/' /etc/cobbler/settings")
     shell_command_true(
         "sed -i 's/^module = authn_denyall/module = authn_configfile/' /etc/cobbler/modules.conf")
     console.cprint_progress_bar("Installing pre-requistes for cobbler--",65)
@@ -144,7 +144,7 @@ def sync(console):
 def mount(console):
     """Here goes the code to wget the rhel image in the /root directory"""
     shell_command("mkdir -p /var/www/cobbler/images/RHEL")
-    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",95)
+    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85)
     rhel_image_url=Config.get_general_field("rhel-image-url")
     shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(

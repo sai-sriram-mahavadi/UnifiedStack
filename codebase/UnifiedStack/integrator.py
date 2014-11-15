@@ -106,6 +106,7 @@ class Integrator:
         if(runstatus <= 3):  # Packstack
             # Test if all the nodes are active; else wait for the same even to occur
             tries = 0
+	    
             while not self.poll_all_nodes():
                 time.sleep(120)
                 if tries < MAX_TRIES:
@@ -205,6 +206,23 @@ class Integrator:
                 # Successful
         else: pass
                 # UnSuccessful
+  
+    def setup_ssh_key(self):
+	shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+	shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
+	shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
+	shell_command("pip install pysftp")
+	shell_command('ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa')
+
+    def ssh_key_exchange(self,host,username,password):
+	import pysftp
+	conObj=pysftp.Connection(host,port=22,username=username,password=password)
+	conObj.execute("mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys")
+	conObj.put("/root/.ssh/id_rsa.pub","/root/.ssh/authorized_keys")
+	conObj.close()
+	shell_command("ssh -o StrictHostKeyChecking=no " + username + "@" + host + "echo")	
+	
+	
         
 def shell_command(fully_qualified_command):
     shell=shi.ShellInterpretter()

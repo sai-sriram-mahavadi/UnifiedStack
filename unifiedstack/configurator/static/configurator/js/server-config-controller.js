@@ -36,6 +36,7 @@
 		conf.cobbler_compute_hosts = $scope.cobbler_compute_hosts;
 		conf.cobbler_network_hosts = $scope.cobbler_network_hosts;
 		conf.cobbler_profiles = $scope.cobbler_profiles;
+		conf.cobbler_distro_name = $scope.cobbler_distro_name;
 		conf.cobbler_interface = $scope.cobbler_interface;
 		conf.cobbler_ipaddress = $scope.cobbler_ipaddress;
 		conf.cobbler_netmask = $scope.cobbler_netmask;
@@ -50,8 +51,9 @@
 		conf.redhat_username = $scope.redhat_username;
 		conf.redhat_password = $scope.redhat_password;
 		conf.redhat_pool = $scope.redhat_pool;
-		conf.cobbler_netmask = $scope.cobbler_netmask;
-		conf.cobbler_proxy = $scope.cobbler_proxy;
+		conf.http_proxy_ip = $scope.http_proxy_ip;
+		conf.https_proxy_ip = $scope.https_proxy_ip;
+		conf.https_port = $scope.https_port;
 		conf.cobbler_power_type = $scope.cobbler_power_type;
 		conf.FI_Cluster_IP = $scope.FI_Cluster_IP;
 		conf.FI_Cluster_Username = $scope.FI_Cluster_Username;

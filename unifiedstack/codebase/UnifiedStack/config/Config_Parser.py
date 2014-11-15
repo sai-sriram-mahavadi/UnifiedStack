@@ -15,7 +15,8 @@
 # Provides any additional config details as necessary.
 
 import ConfigParser
-
+import os
+import inspect
 
 class SystemNode:
     
@@ -63,7 +64,7 @@ class Profile:
 class Config:
     
     config = ConfigParser.ConfigParser()
-    config.read(r'data_static/unified_stack.cfg')
+    config.read(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '\..\config\unified_stack.cfg')
     
     @staticmethod
     def get_field(section, field):

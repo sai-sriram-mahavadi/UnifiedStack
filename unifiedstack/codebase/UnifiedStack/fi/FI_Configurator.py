@@ -67,7 +67,7 @@ class FIConfigurator:
                 service_profile=p_service_profile,
                 bladeDn=p_bladeDn)
         print "Completed"
-
-ficonfig = FIConfigurator()
-ficonfig.configure_fi_components()
+if __name__ == '__main__':
+    ficonfig = FIConfigurator()
+    ficonfig.configure_fi_components()
     

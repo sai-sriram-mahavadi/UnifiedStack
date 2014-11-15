@@ -103,23 +103,30 @@ def server_binding_sample(request):
 unified_config = ConfigParser.ConfigParser(allow_no_value=True)
 
 def set_config_field(section, field, value):
-    unified_config.set(section, field, value)
     print section, field, value, "\n"
+    unified_config.set(section, field, value)
     
 @csrf_exempt
 def server_binding_post(request):
+    global unified_config
     print "post came from server_binding"
     SampleIntegrator.print_hello()
+    
     print "HEY BOSS IM HERE"
     print "JUST FOR FUN"
     data = JSONParser().parse(request)
+    unified_config = ConfigParser.ConfigParser()
     unified_config.add_section("General")
     unified_config.add_section("Cobbler-Configuration")
     unified_config.add_section("FI-Configuration")
     unified_config.add_section("Switch-Configuration")
     unified_config.add_section("Switch-9k")
     unified_config.add_section("Packstack-Configuration")
+    print "kkooooooooooooooooooooooooooooooooooooo"
+    print data["cobbler_power_type"]
+    print data["general_pool_id"]
     set_config_field("General", "pool-id", data["general_pool_id"])
+    print "kkkkkkkkkkkkkkkkkkkkkkkk"
     set_config_field("General", "name-server", data["general_name_server"])
     set_config_field("General", "enable-fi", data["general_enable_fi"])
     set_config_field("General", "hostname-port-mapping-1", data["general_hostname_port_mapping_1"])
@@ -145,8 +152,8 @@ def server_binding_post(request):
     set_config_field("Cobbler-Configuration", "redhat_password", data["redhat_password"])
     set_config_field("Cobbler-Configuration", "redhat_pool", data["redhat_pool"])
     set_config_field("Cobbler-Configuration", "http_proxy_ip", data["http_proxy_ip"])
-    set_config_field("Cobbler-Configuration", "https_proxy_ip", data["https_port"])
-    set_config_field("Cobbler-Configuration", "https_port", data["https_proxy_ip"])
+    set_config_field("Cobbler-Configuration", "https_proxy_ip", data["https_proxy_ip"])
+    set_config_field("Cobbler-Configuration", "https_port", data["https_port"])
     set_config_field("Cobbler-Configuration", "power_type", data["cobbler_power_type"])
     set_config_field("FI-Configuration", "fi-cluster-ip-address", data["FI_Cluster_IP"])
     set_config_field("FI-Configuration", "fi-cluster-username", data["FI_Cluster_Username"])
@@ -188,7 +195,9 @@ def server_binding_post(request):
     
     with open('config.cfg', 'wb') as configfile:
         unified_config.write(configfile)
-        
+    
+    
+    
     print "Data: ", data
     print data["general_pool_id"]
     print data["general_name_server"]

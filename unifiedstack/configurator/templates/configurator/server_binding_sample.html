@@ -69,7 +69,7 @@
     </div>
 
     
-    <div class="container" ng-controller="serverConfigController">
+    <div class="container" ng-controller="serverConfigController" id="server_container">
     {% csrf_token %}
     <div class="panel panel-default">
       <div class="panel-body">
@@ -234,7 +234,13 @@
 		<span class="input-group-addon" style="background:White;width: 200px" >HTTPS Proxy Port</span>
 		<input type="text" class="form-control" style="width:100%" ng-model="https_port" name="https_port" placeholder="" />
 	    </div>
+	<div class="input-group" style="width: 100%">
+		<span class="input-group-addon" style="background:White;width: 200px" >Cobbler Power Type</span>
+		<input type="text" class="form-control" style="width:100%" ng-model="cobbler_power_type" name="cobbler_power_type" placeholder="" />
+	    </div>
+	
      </div>
+    
     <div class="panel panel-primary">
 	<div class="panel-heading">FI Configuration</div>
 	<div class="input-group" style="width: 100%">
@@ -385,15 +391,15 @@
 		<span class="input-group-addon" style="background:White;width: 200px" >VLAN mapping ranges</span>
 		<input type="text" class="form-control" style="width:100%" ng-model="Packstack_vlan_mapping_ranges" name="Packstack_vlan_mapping_ranges" placeholder="" />
 	    </div>
-	
-	
     </div>
-	
+
+
     
 	
     <center><button data-ng-click="configure()" class="btn btn-primary btn-lg">Configure</button></center>
     {% verbatim %}
-	{{general_pool_id}} {{result_message}} 
+	{{general_pool_id}} {{result_message}}
+	
 	<input type="text" ng-model="count"/>
 	<div ng-repeat="console_log in console_logs">
 	    <div class="bg-active">{{console_log.console_summary}}</div>
@@ -401,11 +407,19 @@
     {% endverbatim %}
     </div>
       <hr>
+	    {% verbatim %}
+	    <div ng-repeat="console_log in console_logs">
+		<div class="bg-active">{{console_log.console_summary}}</div>
+	    </div>
+	    {% endverbatim %}
+	
+
 
       <footer>
         <p>&copy; Cloud System Development - India, Cisco Systems 2014</p>
       </footer>
     </div> <!-- /container -->
+    	
 		<script src="{% static 'configurator/js/vendor/angular.min.js' %}"></script>
 	<script src="{% static 'configurator/js/vendor/angular-resource.js' %}"></script>
 	<script src="{% static 'configurator/js/server-config-controller.js' %}"></script>

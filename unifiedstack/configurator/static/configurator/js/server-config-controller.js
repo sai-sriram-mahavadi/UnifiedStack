@@ -136,5 +136,31 @@
 	    $interval($scope.load_console_messages, 1000)
 	    //poollingFactory.callFnOnInterval($scope.load_console_messages);
 	    
-	     
+	    
+	    // Tab functionality temporarily
+	    $scope.is_general_configuration = true;
+	    $scope.is_cobbler_configuration = false;
+	    $scope.is_packstack_configuration = false;
+	    $scope.is_fi_configuration = false;
+	    $scope.is_switch_configuration = false;
+	    
+	    $scope.ShowSettings = function(panel){
+		$scope.is_general_configuration = false;
+		$scope.is_cobbler_configuration = false;
+		$scope.is_packstack_configuration = false;
+		$scope.is_fi_configuration = false;
+		$scope.is_switch_configuration = false;
+		if (panel=='general') {
+		    $scope.is_general_configuration = true;
+		} else if (panel=='cobbler') {
+		    $scope.is_cobbler_configuration = true;
+		} else if (panel=='FI') {
+		    $scope.is_fi_configuration = true;
+		} else if (panel=='switch') {
+		    $scope.is_switch_configuration = true;
+		} else if (panel=='packstack') {
+		    $scope.is_packstack_configuration = true;
+		}
+	    }	    
+	    
 	});

@@ -34,7 +34,7 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -72,15 +72,29 @@
     </div>
 
     
-    <div class="container" ng-controller="serverConfigController" id="server_container">
-    {% csrf_token %}
-
+    <div class="container_fluid" ng-controller="serverConfigController">
+    <div class="row row-offcanvas row-offcanvas-left">
+    <!-- sidebar -->
+        <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" role="navigation" style="background-color: #d9edf7;height: 900px;">
+	    <img src="{% static 'configurator/img/cisco-transparent-logo.jpeg'  %}" width="100%"/>
+            <div class="bg-primary" style="text-align: center;"><b>Menu</b></div>
+	    <ul class="nav">
+              <li><button style="width:100%" type="button" data-ng-click="ShowSettings('general')" class="btn btn-success">Add General Settings</button></li>
+              <li><button style="width:100%" type="button" data-ng-click="ShowSettings('cobbler')" class="btn btn-success">Add Cobbler Settings</button></li>
+              <li><button style="width:100%" type="button" data-ng-click="ShowSettings('FI')" class="btn btn-success">Add FI Settings</button></li>
+              <li><button style="width:100%" type="button" data-ng-click="ShowSettings('switch')" class="btn btn-success">Add Switch Settings</button></li>
+              <li><button style="width:100%" type="button" data-ng-click="ShowSettings('packstack')" class="btn btn-success">Add Packstack Settings</button></li>              
+            </ul>
+        </div>
+    
+    <!-- main area -->
+    <div class="col-xs-12 col-sm-10" >
     <div class="panel panel-default">
       <div class="panel-body">
 	Enter the configurations as necessary. Topolgy is derived from the fields below.
       </div>
     </div>
-    <div class="panel panel-default">
+    <div class="panel panel-info" ng-show="is_general_configuration">
 	<div class="panel-heading">General Configuration</div>
 	    <div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >Pool Id</span>
@@ -111,7 +125,7 @@
 		<input type="text" class="form-control" style="width:100%" ng-model="general_rhel_image_url" name="general_rhel_image_url" placeholder="Provide Complete Path" />
 	    </div>
     </div>
-    <div class="panel panel-info">
+    <div class="panel panel-info" ng-show="is_cobbler_configuration">
 	<div class="panel-heading">Cobbler Configuration</div>
 	<div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >compute-hosts</span>
@@ -204,7 +218,7 @@
 	
      </div>
     
-    <div class="panel panel-warning">
+    <div class="panel panel-info" ng-show="is_fi_configuration">
 	<div class="panel-heading">FI Configuration</div>
 	<div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >FI Cluster IP</span>
@@ -287,7 +301,7 @@
 		<input type="text" class="form-control" style="width:100%" ng-model="FI_Service_profile_name" name="FI_Service_profile_name" placeholder="" />
 	    </div>
     </div>
-    <div class="panel panel-default">
+    <div class="panel panel-info" ng-show="is_switch_configuration">
 	<div class="panel-heading">Switch Configuration</div>
 	<div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >Available Switches</span>
@@ -328,7 +342,7 @@
 	    </div>
 	
     </div>
-    <div class="panel panel-info">
+    <div class="panel panel-info" ng-show="is_packstack_configuration">
 	<div class="panel-heading">Packstack Configuration</div>
 	<div class="input-group" style="width: 100%">
 		<span class="input-group-addon" style="background:White;width: 200px" >Compute hosts</span>
@@ -364,7 +378,8 @@
     </div> <!-- Controller -->
    
     
-      <hr>
+    </div>
+    <hr>
 	    
 	
 

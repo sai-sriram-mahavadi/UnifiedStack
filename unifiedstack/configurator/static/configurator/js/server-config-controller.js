@@ -1,4 +1,4 @@
-	var log_services = angular.module("logger_services", ['ngResource']);
+	var log_services = angular.module("logger_services", ['ngResource', 'ngDialog', 'ui.bootstrap']);
 	log_services.factory('Log', ['$resource',
 	    function($resource){
 		return $resource('loglist', {}, {
@@ -7,20 +7,17 @@
 	}]);
 	  
 	var log_app = angular.module("configurator", ['logger_services']);
-	log_app.factory("poollingFactory", function($interval) {
-	    var timeIntervalInSec = 5;
-	    function callFnOnInterval(fn, timeInterval) {
-		return $interval(fn, 1000 * timeIntervalInSec);        
+	
+	log_app.filter('reverse', function() {
+	    return function(items) {
+	      return items.slice().reverse();
 	    };
-	    return {
-		callFnOnInterval: callFnOnInterval
-	    };
-	});
-        log_app.controller("serverConfigController", function($scope,$http,$window,$resource, $interval){
+	  });
+	
+        log_app.controller("serverConfigController", function($scope,$http,$window,$resource, $interval, ngDialog){
 	    $scope.result_message = "Initial Result Message";
 	
 	    $scope.configure = function(){
-		$window.alert("Congiguration started. Please donot interrupt in between");
 		var Configuration = $resource('http://localhost:8000/configuration',
 		{}, {
 		 charge: {method:'POST', params:{charge:true}}
@@ -94,7 +91,8 @@
 		conf.$save(conf,
 		    //success
 		    function( value ){
-			$window.alert("Configuration Completed")
+			//$scope.progress_value = 100;
+			$window.alert("Configuration Completed");
 		    },
 		    //error
 		    function( error ){
@@ -103,18 +101,40 @@
 		 )
 	    };
 	    $scope.count = 0;
+	    $scope.progress_value = 0;
 	    $scope.load_console_messages = function(){
-
 		var console_url = 'http://localhost:8000/console';
 		$http.get(console_url).then(function (response) {
 		    $scope.console_logs = response.data; 
 		});
-	    
+		if ($scope.progress_value!=0) {
+		    $scope.progress_value += .1;
+		} 
+		
 		$scope.count++;
 	    };
 	    
-	    
+	    $scope.ShowNgDialog = function () {
+		$scope.progress_value = 1;
+		ngDialog.open({            
+		    template: '<div ><br/>' +
+				'<b "style="color:Green">Unified Stack Configurator in Progress.<br/> Please donot Interrupt.</b><br/>' + 
+				'<progressbar class="progress-striped active" max="100" value="progress_value" type="info"></progressbar>' + 
+				'<div style="width:430px; height:400px;overflow-y:auto;overflow-x:auto;">' +
+				    '<div ng-repeat="console_log in console_logs | reverse">' + 
+					'<div><i>{{console_log.console_summary}}</i></div>' +
+				    '</div>' +
+				'</div>' +
+			      '</div>',
+		    plain: true,
+		    scope:$scope
+		   
+		});
+		$scope.configure()
+	    }  
+
 	    $interval($scope.load_console_messages, 1000)
 	    //poollingFactory.callFnOnInterval($scope.load_console_messages);
-
+	    
+	     
 	});

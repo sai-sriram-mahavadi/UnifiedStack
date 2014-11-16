@@ -28,17 +28,8 @@ sys.path.append(root_path)
 from UnifiedStack.config.Config_Parser import Config
 
 
-def cobbler_setup(console):
-    cobbler_interface = Config.get_cobbler_field('cobbler_interface') 
-    cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
-    cobbler_server = Config.get_cobbler_field('cobbler_server')
-    cobbler_next_server = Config.get_cobbler_field('cobbler_next_server')
-    cobbler_subnet = Config.get_cobbler_field('cobbler_subnet')
-    cobbler_option_router = Config.get_cobbler_field('cobbler_option_router')
-    cobbler_DNS = Config.get_cobbler_field('cobbler_DNS')
-    cobbler_hostname = Config.get_cobbler_field('cobbler_hostname')
-    cobbler_web_username = Config.get_cobbler_field('cobbler_web_username')
-    cobbler_web_password = Config.get_cobbler_field('cobbler_web_password') 
+def cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
+                cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,cobbler_option_router):
 
     shell_command(
         "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
@@ -132,6 +123,7 @@ def enable_services(console):
     shell_command("systemctl enable dhcpd.service")
     shell_command("systemctl status dhcpd.service")
     shell_command("chkconfig NetworkManager off")
+
 def sync(console):
     console.cprint_progress_bar("Cobbler Get-loaders and Sync",80)
     shell_command("cobbler get-loaders --force")
@@ -141,11 +133,10 @@ def sync(console):
     handle.sync()
    
 
-def mount(console):
+def mount(console,rhel_image_url):
     """Here goes the code to wget the rhel image in the /root directory"""
     shell_command("mkdir -p /var/www/cobbler/images/RHEL")
-    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85)
-    rhel_image_url=Config.get_general_field("rhel-image-url")
+    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85) 
     shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
         "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")

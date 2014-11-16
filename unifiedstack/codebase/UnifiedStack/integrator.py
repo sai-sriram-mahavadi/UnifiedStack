@@ -32,7 +32,7 @@ from UnifiedStack.packstack import Packstack_Setup as pst
 from UnifiedStack.cli import Shell_Interpretter as shi
 from UnifiedStack.cli import Console_Output as cli
 from UnifiedStack.config import Config_Parser
-from unifiedstack.fi import FI_Configurator
+from UnifiedStack.fi import FI_Configurator
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -86,42 +86,42 @@ class Integrator:
         shell = shi.ShellInterpretter()
 
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
-        runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
-        RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
-        try:
-            runstatus = RUNSTATUSCODE[runstatusmsg]
-        except Exception:
-            print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
+        #runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
+        #RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
+        #try:
+        #    runstatus = RUNSTATUSCODE[runstatusmsg]
+        #except Exception:
+        #    print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
         
-        if(runstatus <= 0):  # Configuring Cobbler pre-boot
-            console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
-            self.configure_cobbler_preboot(shell, console)
-        if(runstatus <= 1):
-            ficonfig = FIConfigurator()
-            ficonfig.configure_fi_components()
-        if(runstatus <= 2):  # Switch
-            shell.execute_command("yum install python-devel python-paramiko -y")
-            import paramiko
-            console.cprint_progress_bar("Started Configuration of Switch", 0)
-            self.configure_switch(shell, console)
-        if(runstatus <= 3):  # Congiguing Cobbler post-boot
-            console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
-            self.configure_cobbler_postboot(shell, console)
-        if(runstatus <= 4):  # Packstack
-            # Test if all the nodes are active; else wait for the same even to occur
-            tries = 0
-            while not self.poll_all_nodes():
-                time.sleep(120)
-                if tries < MAX_TRIES:
-                    tries += 1
-                else:
-                    break
-            if not self.poll_all_nodes():
-                console.cprint("Not all systems could boot!!!")
-                exit(0)
-            self.configure_nodes(console)
-            console.cprint_progress_bar("Started Configuration of Packstack", 0)
-            self.configure_packstack(shell, console)
+        #if(runstatus <= 0):  # Configuring Cobbler pre-boot
+        #    console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
+        #    self.configure_cobbler_preboot(shell, console)
+        #if(runstatus <= 1):
+        
+	ficonfig = FIConfigurator()
+        ficonfig.configure_fi_components() 
+        
+        shell.execute_command("yum install python-devel python-paramiko -y")
+        import paramiko
+        console.cprint_progress_bar("Started Configuration of Switch", 0)
+        self.configure_switch(shell, console)
+       
+        console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
+        cobbler_config = cobb.Cobbler_Integrator()
+        cobbler_config.cobbler_postInstall_adapter(console) 
+        tries = 0
+        while not self.poll_all_nodes():
+            time.sleep(120)
+            if tries < MAX_TRIES:
+                tries += 1
+            else:
+                break
+        if not self.poll_all_nodes():
+            console.cprint("Not all systems could boot!!!")
+            exit(0)
+        self.configure_nodes(console)
+        console.cprint_progress_bar("Started Configuration of Packstack", 0)
+        self.configure_packstack(shell, console)
         
         '''           
         # Configuring CIMC
@@ -214,9 +214,9 @@ class Integrator:
                 # UnSuccessful
   
     def setup_ssh_key(self):
-	shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
-	shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
-	shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
+	#shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+	#shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
+	#shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
 	shell_command("pip install pysftp")
 	shell_command('ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa')
 

@@ -43,7 +43,7 @@ class Build_Server():
             ipaddress = system.ip_address
             interface = system.interface
             profile = system.profile_name
-	    proxy=system.proxy
+	    proxy=system.http_proxy_ip + '80'
             #power_id= system.power_id
             power_type=system.power_type
             power_user=system.power_user

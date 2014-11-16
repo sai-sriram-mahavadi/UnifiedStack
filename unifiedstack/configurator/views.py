@@ -113,11 +113,6 @@ def set_config_field(section, field, value):
 @csrf_exempt
 def server_binding_post(request):
     global unified_config
-    
-    for i in range (1, 10):
-        SampleIntegrator.write_console("just logged " + str(i))
-        time.sleep(1)
-    
     data = JSONParser().parse(request)
     unified_config = ConfigParser.ConfigParser()
     unified_config.add_section("General")
@@ -126,7 +121,6 @@ def server_binding_post(request):
     unified_config.add_section("Switch-Configuration")
     unified_config.add_section("Switch-9k")
     unified_config.add_section("Packstack-Configuration") 
-
     set_config_field("General", "pool-id", data["general_pool_id"])
     set_config_field("General", "name-server", data["general_name_server"])
     set_config_field("General", "enable-fi", data["general_enable_fi"])

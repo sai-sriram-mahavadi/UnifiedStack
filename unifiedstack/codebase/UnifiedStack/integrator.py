@@ -49,7 +49,7 @@ class Integrator:
          
     def configure_cobbler_preboot(self, shell, console):
         cobbler_config = cobb.Cobbler_Integrator()
-        cobbler_config.cobbler_preInstall(console)
+        cobbler_config.cobbler_preInstall_adapter(console)
         #Write the path of integrator.py in .bashrc
         read_bash = open("/root/.bashrc", "a")
         integrator_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -60,7 +60,7 @@ class Integrator:
         
     def configure_cobbler_postboot(self, shell, console):
         cobbler_config = cobb.Cobbler_Integrator()
-        cobbler_config.cobbler_postInstall(console)
+        cobbler_config.cobbler_postInstall_adapter(console)
         read_bash = open("/root/.bashrc","r")
         lines = read_bash.readlines()
         read_bash.close()

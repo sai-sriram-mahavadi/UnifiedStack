@@ -6,7 +6,7 @@ import shutil
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from UnifiedStack.config.Config_Parser import Config
+from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
 
 class Cobbler_Integrator():
@@ -57,6 +57,7 @@ class Cobbler_Integrator():
         cobbler_preInstall.enable_repos(console,redhat_username,redhat_password,redhat_pool)
         cobbler_preInstall.install_prerequistes()  
         cobbler_preInstall.disable_SELinux(console)
+	shell_command("reboot")
         #cobbler_preInstall.enable_networking(console)
         #cobbler_preInstall.add_name_server(console)
 
@@ -85,8 +86,9 @@ class Cobbler_Integrator():
 		continue
             towrite.append(line)
             if '%post' in line:
-		towrite.append(
-		    "subscription-manager config --server.proxy_hostname=" + http_proxy_ip + " --server.proxy_port=80 \n")
+            	if http_proxy_ip!='':
+		    towrite.append(
+		        "subscription-manager config --server.proxy_hostname=" + http_proxy_ip + " --server.proxy_port=80 \n")
                 towrite.append(
                     "subscription-manager register --username=" +
                     redhat_username +
@@ -96,9 +98,12 @@ class Cobbler_Integrator():
                     "\nsubscription-manager subscribe --pool=" +
                     redhat_pool + "\n")
 		#TO DO REMOVE HARD CODING
-		towrite.append("/usr/bin/echo 'export http_proxy=http://" + http_proxy_ip + ":80' >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":" + https_port + "' >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo \"export no_proxy=`echo " + get_no_proxy_string(cobbler_subnet,cobbler_netmask) + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
+		if http_proxy_ip!='':
+		    towrite.append("/usr/bin/echo 'export http_proxy=http://" + http_proxy_ip + ":80' >> /etc/bashrc\n")
+		if https_proxy_ip!='':
+                    towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":" + https_port + "' >> /etc/bashrc\n")
+                if http_proxy_ip!='':
+                    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + get_no_proxy_string(cobbler_subnet,cobbler_netmask) + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'printf -v no_proxy '%s,' 19.19.{0..255}.{0..255}' >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'export no_proxy=${no_proxy%,}' >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo 'nameserver " + nameserver + "' >> /etc/resolv.conf\n") 
@@ -121,7 +126,10 @@ class Cobbler_Integrator():
 	shell_command("cobbler sync")
 	time.sleep(5)
 	shell_command("systemctl restart xinetd.service")
-	result=handle.power_cycle_systems(systems=systems)
+	#If C-series the this 
+	#result=handle.power_cycle_systems(systems=systems)
+	#else if B-series 
+	#call fi- module to power cycle
 	time.sleep(400)
 	handle.disable_netboot_systems(systems=systems)  
         console.cprint_progress_bar("Task Completed",100)

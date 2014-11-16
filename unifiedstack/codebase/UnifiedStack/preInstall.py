@@ -12,8 +12,7 @@ def configure_cobbler_preboot():
         console = cli.ConsoleOutput()
         cobbler_config = cobb.Cobbler_Integrator()
         cobbler_config.cobbler_preInstall(console,redhat_username,redhat_password,redhat_pool,nameserver) 
-        read_bash = open("/root/.bashrc", "a")  
-        shell.execute_command("reboot")
+
 
 if __name__=="__main__":
     configure_cobbler_preboot()

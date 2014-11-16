@@ -25,7 +25,7 @@ root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 
-from UnifiedStack.config.Config_Parser import Config
+from codebase.UnifiedStack.config.Config_Parser import Config
 
 
 def cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
@@ -137,7 +137,7 @@ def mount(console,rhel_image_url):
     """Here goes the code to wget the rhel image in the /root directory"""
     shell_command("mkdir -p /var/www/cobbler/images/RHEL")
     #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85) 
-    shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
+    #shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
         "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
     shell_command("cp -rf /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")

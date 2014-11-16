@@ -22,7 +22,7 @@ import os
 import sys
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-from UnifiedStack.cli import Shell_Interpretter as shi
+from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 
 class bcolors:
     HEADER = '\033[95m'

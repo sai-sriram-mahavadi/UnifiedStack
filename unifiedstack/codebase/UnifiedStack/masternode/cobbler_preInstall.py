@@ -22,7 +22,7 @@ import sys
 
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-from UnifiedStack.config.Config_Parser import Config
+from codebase.UnifiedStack.config.Config_Parser import Config
 
 
 def enable_repos(console,redhat_username,redhat_password,redhat_pool):
@@ -51,9 +51,10 @@ def install_prerequistes():
     shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
     shell_command("pip install django==1.7")
     shell_command("pip install djangorestframework")
-    shell_command("wget https://communities.cisco.com/servlet/JiveServlet/download/36899-13-76835/UcsSdk-0.8.3.tar.gz -O /root/UcsSdk-0.8.3.tar.gz")
-    shell_command("tar -zxvf /root/UcsSdk-0.8.3.tar.gz -C /root/")
-    shell_command("pushd /root/UcsSdk-0.8.3; python setup.py install; popd")
+    shell_command("wget https://communities.cisco.com/servlet/JiveServlet/download/36899-13-76835/UcsSdk-0.8.2.tar.gz -O /root/UcsSdk-0.8.3.tar.gz")
+    shell_command("tar -zxvf /root/UcsSdk-0.8.2.tar.gz -C /root/")
+    shell_command("pushd /root/UcsSdk-0.8.2; python setup.py install; popd")
+
         
 
 def disable_SELinux(console):

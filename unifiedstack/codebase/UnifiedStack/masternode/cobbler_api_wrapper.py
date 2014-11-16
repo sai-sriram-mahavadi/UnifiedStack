@@ -5,10 +5,10 @@ import inspect
 import os
 import sys
 
-root_path = os.path.abspath(r"../..")
-sys.path.append(root_path)
+#root_path = os.path.abspath(r"../../../..")
+#sys.path.append(root_path)
 
-from UnifiedStack.config.Config_Parser import Config
+from codebase.UnifiedStack.config.Config_Parser import Config
 
 
 class Build_Server():
@@ -43,12 +43,12 @@ class Build_Server():
             ipaddress = system.ip_address
             interface = system.interface
             profile = system.profile_name
-	    proxy=system.http_proxy_ip + '80'
+	    proxy=None #system.http_proxy_ip + '80'
             #power_id= system.power_id
-            power_type=system.power_type
-            power_user=system.power_user
-            power_pass=system.power_password
-            power_addr=system.power_address
+            power_type=None #system.power_type
+            power_user=None #system.power_user
+            power_pass=None #system.power_password
+            power_addr=None #system.power_address
             name = '' + hostname + "-" + purpose
 	    
             handle = syst.New_system(name=name,

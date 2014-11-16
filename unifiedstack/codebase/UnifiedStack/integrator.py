@@ -18,7 +18,7 @@ import os
 import inspect
 import time
 
-root_path = os.path.abspath(r"..")
+root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
 # Hardcoded Values
@@ -27,12 +27,12 @@ password = "Cisco12345"
 MAX_TRIES = 5
 
 #from UnifiedStack.cimc import CIMC_Setup as cimc
-from UnifiedStack.masternode import cobbler_integrator as cobb
-from UnifiedStack.packstack import Packstack_Setup as pst
-from UnifiedStack.cli import Shell_Interpretter as shi
-from UnifiedStack.cli import Console_Output as cli
-from UnifiedStack.config import Config_Parser
-from UnifiedStack.fi import FI_Configurator
+from codebase.UnifiedStack.masternode import cobbler_integrator as cobb
+from codebase.UnifiedStack.packstack import Packstack_Setup as pst
+from codebase.UnifiedStack.cli import Shell_Interpretter as shi
+from codebase.UnifiedStack.cli import Console_Output as cli
+from codebase.UnifiedStack.config import Config_Parser
+from codebase.UnifiedStack.fi import FI_Configurator
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -76,7 +76,7 @@ class Integrator:
         packstack_config.configure_packstack(console)
         
     def configure_switch(self, shell, console):
-        from UnifiedStack.netswitch import Switch_Setup as sw
+        from codebase.UnifiedStack.netswitch import Switch_Setup as sw
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
         
@@ -98,7 +98,7 @@ class Integrator:
         #    self.configure_cobbler_preboot(shell, console)
         #if(runstatus <= 1):
         
-	ficonfig = FIConfigurator()
+	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
         
         shell.execute_command("yum install python-devel python-paramiko -y")

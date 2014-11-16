@@ -18,7 +18,7 @@ from FI_Port_setup import FIPortConfigurator
 from FI_Pool_Setup import FIPoolConfigurator
 from FI_Service_Profile_Setup import FIServiceProfileConfigurator
 from FI_Service_Profile_Clone import FICloneConfigurator
-from  FI_SP_Binding import FIBindingConfigurator 
+from FI_SP_Binding import FIBindingConfigurator 
 
 class FIConfigurator:
     

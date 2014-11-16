@@ -96,7 +96,7 @@
 		    },
 		    //error
 		    function( error ){
-			//$window.alert("Some trouble adding device")
+			$window.alert("Some trouble adding device")
 		    }
 		 )
 	    };
@@ -107,7 +107,10 @@
 		$http.get(console_url).then(function (response) {
 		    $scope.console_logs = response.data; 
 		});
-		$scope.progress_value *= 105/100;
+		if ($scope.progress_value!=0) {
+		    $scope.progress_value += .1;
+		} 
+		
 		$scope.count++;
 	    };
 	    

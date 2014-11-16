@@ -55,7 +55,7 @@ class FIConfigurator:
                 sp_config.associate_vlan_vnic("vlan-"+str(vlan_id), FIConfig.get_uuid_pool_name(),
                                               FIConfig.get_mac_pool_name(), vnic_names[vnic_id-1],
                                               FIConfig.get_service_profile_name(), "A")
-    	clone_config = FICloneConfigurator()
+	clone_config = FICloneConfigurator()
 	for i in range(1, 9):
        	    clone_config.clone_profile(FIConfig.get_service_profile_name() + str(i), FIConfig.get_service_profile_name())
 
@@ -67,6 +67,7 @@ class FIConfigurator:
                 service_profile=p_service_profile,
                 bladeDn=p_bladeDn)
         print "Completed"
+
 if __name__ == '__main__':
     ficonfig = FIConfigurator()
     ficonfig.configure_fi_components()

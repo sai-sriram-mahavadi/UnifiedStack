@@ -109,11 +109,7 @@ def set_config_field(section, field, value):
 @csrf_exempt
 def server_binding_post(request):
     global unified_config
-    print "post came from server_binding"
-    SampleIntegrator.print_hello()
-    
-    print "HEY BOSS IM HERE"
-    print "JUST FOR FUN"
+
     data = JSONParser().parse(request)
     unified_config = ConfigParser.ConfigParser()
     unified_config.add_section("General")
@@ -122,7 +118,6 @@ def server_binding_post(request):
     unified_config.add_section("Switch-Configuration")
     unified_config.add_section("Switch-9k")
     unified_config.add_section("Packstack-Configuration")
-    print "kkooooooooooooooooooooooooooooooooooooo"
     print data["cobbler_power_type"]
     print data["general_pool_id"]
     set_config_field("General", "pool-id", data["general_pool_id"])

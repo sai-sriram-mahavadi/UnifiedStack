@@ -25,11 +25,7 @@ sys.path.append(root_path)
 from UnifiedStack.config.Config_Parser import Config
 
 
-def enable_repos(console):
-
-    redhat_username = Config.get_cobbler_field('redhat_username') 
-    redhat_password = Config.get_cobbler_field('redhat_password')   
-    redhat_pool = Config.get_cobbler_field('redhat_pool')
+def enable_repos(console,redhat_username,redhat_password,redhat_pool):
     # Subscription
     console.cprint_progress_bar("Running Subscription manager",1)
     shell_command_true(
@@ -47,9 +43,18 @@ def enable_repos(console):
     shell_command(
         "sudo yum-config-manager --enable home_libertas-ict_cobbler26")
     console.cprint_progress_bar("Cleaing the repositories list and populating",60)
-    shell_command("yum clean all")
-    shell_command("yum repolist all")
+   
 
+def install_prerequistes(): 
+    shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+    shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
+    shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
+    shell_command("pip install django==1.7")
+    shell_command("pip install djangorestframework")
+    shell_command("wget https://communities.cisco.com/servlet/JiveServlet/download/36899-13-76835/UcsSdk-0.8.3.tar.gz -O /root/UcsSdk-0.8.3.tar.gz")
+    shell_command("tar -zxvf /root/UcsSdk-0.8.3.tar.gz -C /root/")
+    shell_command("pushd /root/UcsSdk-0.8.3; python setup.py install; popd")
+        
 
 def disable_SELinux(console):
     # disable SELinux and reboot

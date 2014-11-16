@@ -101,7 +101,7 @@
 		 )
 	    };
 	    $scope.count = 0;
-	    $scope.progress_value = 100;
+	    $scope.progress_value = 0;
 	    $scope.load_console_messages = function(){
 		var console_url = 'http://localhost:8000/console';
 		$http.get(console_url).then(function (response) {

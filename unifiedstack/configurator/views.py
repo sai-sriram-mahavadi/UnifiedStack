@@ -14,7 +14,7 @@ from configurator.models import DeviceSetting
 from configurator.serializers import DeviceSettingSerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
-from codebase.UnifiedStack.sample import SampleIntegrator
+from codebase.UnifiedStack.integrator import Integrator
 
 import ConfigParser
 import os
@@ -113,7 +113,8 @@ def set_config_field(section, field, value):
 @csrf_exempt
 def server_binding_post(request):
     global unified_config
-    
+    print "I did come inside"
+    """"    
     for i in range (1, 10):
         SampleIntegrator.write_console("just logged " + str(i))
         time.sleep(1)
@@ -200,7 +201,8 @@ def server_binding_post(request):
     file_containing_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     with open(file_containing_dir + '../codebase/UnifiedStack/data_static/unified_stack2.cfg' ,'wb') as configfile:
         unified_config.write(configfile) 
-    Integrator.Integrator().configure_unifiedstack()
+    """
+    Integrator().get_output()
     return HttpResponse(status=201)
      
 

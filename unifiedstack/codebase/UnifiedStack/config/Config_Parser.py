@@ -105,11 +105,11 @@ class Config:
             sys_node.port = other_fields[2]
             sys_node.interface = other_fields[3]
             sys_node.profile_name = other_fields[4]
-	    sys_node.power_user = other_fields[5]
-	    sys_node.power_password = other_fields[6]
-	    sys_node.power_address = other_fields[7]
-	    sys_node.power_type = Config.get_cobbler_field("power_type")
-	    sys_node.power_proxy = Config.get_cobbler_field("http_proxy_ip")
+	    #sys_node.power_user = other_fields[5]
+	    #sys_node.power_password = other_fields[6]
+	    #sys_node.power_address = other_fields[7]
+	    #sys_node.power_type = Config.get_cobbler_field("power_type")
+	    #sys_node.power_proxy = Config.get_cobbler_field("http_proxy_ip")
             sys_nodes.append(sys_node)
 
         str_nodes = Config.get_field("Cobbler-Configuration", "network-hosts")
@@ -126,11 +126,11 @@ class Config:
             sys_node.port = other_fields[2]
             sys_node.interface = other_fields[3]
             sys_node.profile_name = other_fields[4]
-	    sys_node.power_user = other_fields[5]
-            sys_node.power_password = other_fields[6]
-            sys_node.power_address = other_fields[7]
-            sys_node.power_type = Config.get_cobbler_field("power_type")
-            sys_node.power_proxy = Config.get_cobbler_field("http_proxy_ip")
+	    #sys_node.power_user = other_fields[5]
+            #sys_node.power_password = other_fields[6]
+            #sys_node.power_address = other_fields[7]
+            #sys_node.power_type = Config.get_cobbler_field("power_type")
+            #sys_node.power_proxy = Config.get_cobbler_field("http_proxy_ip")
             sys_nodes.append(sys_node)
         return sys_nodes
 

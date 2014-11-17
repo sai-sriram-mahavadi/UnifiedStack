@@ -36,4 +36,4 @@ class Log(models.Model):
 
 class ConsoleLog(models.Model):
     console_message = models.CharField(max_length=100, blank=True, default="")
-    console_summary = models.CharField(max_length=50)
+    console_summary = models.CharField(max_length=100)

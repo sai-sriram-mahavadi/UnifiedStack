@@ -5,7 +5,7 @@ import os
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from UnifiedStack.config import Config_Parser
+from codebase.UnifiedStack.config import Config_Parser
 # Alias for simple usage of Config parser
 Config = Config_Parser.Config
 

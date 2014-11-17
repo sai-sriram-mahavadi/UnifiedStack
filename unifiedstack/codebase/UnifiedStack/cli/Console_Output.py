@@ -16,7 +16,6 @@
 
 import sys
 import time
-from logger.models import ConsoleLog 
 
 # Presentation Section: Colorful presentation of output
 class PrintColors:
@@ -68,7 +67,6 @@ class ConsoleOutput:
         self.simple_print("`" * len(message))
 
     def cprint_progress_bar(self, message, percentage):
-        ConsoleLog(console_summary=message).save()
         if not self.ISPROGRESSBAR:
             self.ISPROGRESSBAR = True
         else:

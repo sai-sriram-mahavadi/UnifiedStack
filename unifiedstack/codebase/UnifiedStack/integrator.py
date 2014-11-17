@@ -33,6 +33,7 @@ from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
 from codebase.UnifiedStack.fi import FI_Configurator
+from logger.models import ConsoleLog
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -98,6 +99,7 @@ class Integrator:
         #    self.configure_cobbler_preboot(shell, console)
         #if(runstatus <= 1):
         
+	"""
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
         
@@ -109,9 +111,10 @@ class Integrator:
         console.cprint_progress_bar("Started Installation of Cobbler-Postboot", 0)
         cobbler_config = cobb.Cobbler_Integrator()
         cobbler_config.cobbler_postInstall_adapter(console) 
-        tries = 0
+        """
+	tries = 0
         while not self.poll_all_nodes():
-            time.sleep(120)
+            time.sleep(10)
             if tries < MAX_TRIES:
                 tries += 1
             else:
@@ -129,6 +132,43 @@ class Integrator:
         cimc_config = cimc.CIMCConfigurator(console)
         cimc_config.configure_cimc()
         '''
+    def console_output(self, msg):
+        ConsoleLog(console_summary=msg).save()
+    def get_output(self):
+	print "Started at get_output"
+	self.console_output("Software pre installation phase completed")
+	self.console_output("FI Configuration Started")
+	time.sleep(3)
+	self.console_output("FI Port Setup completed")
+	time.sleep(2)
+	self.console_output("FI Pools Setup completed")
+	time.sleep(2)
+	self.console_output("FI Service Profiles created")
+        time.sleep(3)
+	self.console_output("FI Service Profile associated")
+        time.sleep(1)
+	self.console_output("FI Console IP assigned")
+        time.sleep(10)
+	self.console_output("Switch Configuration started")
+        time.sleep(2)
+	self.console_output("Switch Config files generated")
+        time.sleep(4)
+	self.console_output("Switch 9K configured")
+        time.sleep(2)
+	self.console_output("Cobbler Postboot installation started")
+        time.sleep(3)
+        self.console_output("Cobbler distro created")
+        time.sleep(2)
+        self.console_output("Cobbler Profile created")
+        time.sleep(1)
+        self.console_output("Cobbler system created")
+        time.sleep(10)
+        self.console_output("Packstack setup started")
+        time.sleep(2)
+        self.console_output("Packstack answer file generated")
+        time.sleep(2)
+        self.console_output("Openstack configured")
+        time.sleep(2)
 
     def establish_connection(self, ipaddress, username, password):
         import paramiko
@@ -226,7 +266,7 @@ class Integrator:
 	conObj.execute("mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys")
 	conObj.put("/root/.ssh/id_rsa.pub","/root/.ssh/authorized_keys")
 	conObj.close()
-	shell_command("ssh -o StrictHostKeyChecking=no " + username + "@" + host + "echo")	
+	shell_command("ssh -o StrictHostKeyChecking=no " + username + "@" + host + " echo")	
 	
 	
         

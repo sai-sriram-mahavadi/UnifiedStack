@@ -107,15 +107,15 @@
 		$http.get(console_url).then(function (response) {
 		    $scope.console_logs = response.data; 
 		});
-		if ($scope.progress_value!=0) {
-		    $scope.progress_value += .1;
+		if ($scope.progress_value!=0 && $scope.progress_value<=100) {
+		    $scope.progress_value += 2;
 		} 
 		
 		$scope.count++;
 	    };
 	    
 	    $scope.ShowNgDialog = function () {
-		$scope.progress_value = 1;
+		$scope.progress_value = 2;
 		ngDialog.open({            
 		    template: '<div ><br/>' +
 				'<b "style="color:Green">Unified Stack Configurator in Progress.<br/> Please donot Interrupt.</b><br/>' + 

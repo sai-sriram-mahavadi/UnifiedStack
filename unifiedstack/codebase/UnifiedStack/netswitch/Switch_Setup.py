@@ -5,9 +5,9 @@ import os
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from UnifiedStack.cli import Console_Output as con
+from codebase.UnifiedStack.cli import Console_Output as con
 from Switch_Config_Generator import SwitchConfigGenerator
-from UnifiedStack.config import Config_Parser as cfg
+from codebase.UnifiedStack.config import Config_Parser as cfg
 import paramiko
 # Alias for config parser
 Config = cfg.Config

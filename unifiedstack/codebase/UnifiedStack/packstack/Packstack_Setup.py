@@ -20,9 +20,9 @@ import subprocess
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from UnifiedStack.cli import Shell_Interpretter as shi
-from UnifiedStack.cli import Console_Output as cono
-from UnifiedStack.config import Config_Parser
+from codebase.UnifiedStack.cli import Shell_Interpretter as shi
+from codebase.UnifiedStack.cli import Console_Output as cono
+from codebase.UnifiedStack.config import Config_Parser
 
 AffirmativeList = ['true', 'True', 'TRUE', True, 'yes', 'Yes', 'YES']
 Config = Config_Parser.Config

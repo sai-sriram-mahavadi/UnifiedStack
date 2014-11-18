@@ -3,6 +3,7 @@ import cobbler_setup
 import os,inspect
 import sys,time
 import shutil
+import netaddr
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 

@@ -47,7 +47,7 @@ class Cobbler_Integrator():
         self.cobbler_postInstall(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
                 rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
-                nameserver,distro_name,profiles,systems)
+                https_port,nameserver,distro_name,profiles,systems)
 		
     def cobbler_preInstall(self,console,redhat_username,redhat_password,redhat_pool,nameserver): 
         shutil.copyfile(
@@ -64,7 +64,7 @@ class Cobbler_Integrator():
     def cobbler_postInstall(self,console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
 		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
-		nameserver,distro_name,profiles,systems):
+		https_port,nameserver,distro_name,profiles,systems):
 
         cobbler_setup.cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
 		cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,cobbler_option_router)
@@ -103,7 +103,7 @@ class Cobbler_Integrator():
 		if https_proxy_ip!='':
                     towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":" + https_port + "' >> /etc/bashrc\n")
                 if http_proxy_ip!='':
-                    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + get_no_proxy_string(cobbler_subnet,cobbler_netmask) + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
+                    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + self.get_no_proxy_string(cobbler_subnet,cobbler_netmask) + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'printf -v no_proxy '%s,' 19.19.{0..255}.{0..255}' >> /etc/bashrc\n")
                 #towrite.append("/usr/bin/echo 'export no_proxy=${no_proxy%,}' >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo 'nameserver " + nameserver + "' >> /etc/resolv.conf\n") 

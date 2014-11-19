@@ -112,8 +112,9 @@ def enable_services(console):
     console.cprint_progress_bar("Starting the Xinetd Service and dhcpd Service",75)
     # Restart xinetd
     shell_command("systemctl restart xinetd.service")
-    shell_command("iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT")
-    shell_command("iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT")
+    shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
+    shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
+    shell_command("firewall-cmd --reload")
     # Open up Firewall
     shell_command_true("/sbin/iptables -F")
     shell_command_true("/sbin/iptables-save > /etc/sysconfig/iptables")

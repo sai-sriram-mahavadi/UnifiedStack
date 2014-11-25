@@ -1,8 +1,8 @@
 import os,inspect
 import sys,time
 import shutil
-root_path = os.path.abspath(r"../..")
-sys.path.append(root_path)
+
+
 
 from UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
@@ -15,11 +15,11 @@ class Foreman_Integrator():
         self.cur=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
         self.data_dict={}
         read_from_database=False
-        self.console=console
+        self.console=console	
         
     def preInstall(self,redhat_username,redhat_password,redhat_pool):
-        setUpObj=Foreman_Setup()
-        setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
+        setUpObj=Foreman_Setup(self.console)
+        #setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
         setUpObj.install_prerequistes()
     
     def setup_foreman(self):
@@ -94,7 +94,7 @@ class Foreman_Integrator():
                                self.data_dict['os_name'])
 	
         for host_name,host_data_dict in self.data_dict['system'].items():
-	    provisionObj.create_host(host_name
+	    provisionObj.create_host(host_name,
                                      self.data_dict['environment'],
                                      self.data_dict['domain_name'],
                                      host_data_dict['mac_address'],
@@ -136,7 +136,7 @@ class Foreman_Integrator():
 	#redhat
 	self.data_dict['redhat_username'] = Config.get_foreman_field('redhat_username')
         self.data_dict['redhat_password'] = Config.get_foreman_field('redhat_password')
-        self.data_dict['redhat_pool'] = 'redhat_pool')
+        self.data_dict['redhat_pool'] = Config.get_foreman_field('redhat_pool')
 	#foreman
 	self.data_dict['foreman_web_username'] = Config.get_foreman_field('foreman_web_username')
 	self.data_dict['foreman_web_password'] = Config.get_foreman_field('foreman_web_password')
@@ -179,8 +179,8 @@ class Foreman_Integrator():
 	self.data_dict['system']={}
 	systems = Config.get_systems_data()
         for system in systems:
-            self.data_dict['system'][system.hostname]:{'mac_address':system.mac_address
-                                                       'ip_address' = system.ip_address}
+            self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
+                                                       'ip_address':system.ip_address}
             
 
     def read_data_from_databse(self): pass

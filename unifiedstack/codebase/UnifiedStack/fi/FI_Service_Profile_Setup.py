@@ -46,6 +46,7 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
                                      {ucs.LsServer.NAME: service_profile_name,
                                       ucs.LsServer.UUID: "0",
                                       ucs.LsServer.IDENT_POOL_NAME: uuid_name,
+                                      ucs.LsServer.BOOT_POLICY_NAME: boot_policy_name
                                       ucs.LsServer.DN: "org-root/ls-" + service_profile_name}, True) 
         mo_1 = FIUtils.addOrOverrideMO(mo,
                                        ucs.VnicEther.ClassId(),

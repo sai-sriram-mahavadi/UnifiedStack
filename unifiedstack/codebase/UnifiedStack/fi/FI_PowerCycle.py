@@ -1,12 +1,13 @@
-from UcsSdk import *
-    handle = UcsHandle()
-    handle.Login("19.19.102.10","admin","Cisco12345)"
-   
+from UcsSdk import ucs
+from FI_Config_Base import FIConfiguratorBase
 
-    #Power Cycle Server
-    handle.StartTranscation()
-    obj = handle.GetManagedObject(None, LsPower.ClassId(), {LsPower.DN:"org-root/ls-testLS1/power"})
-    handle.SetManagedObject(obj, LsPower.ClassId(), {LsPower.STATE:"hard-reset-immediate"})
-    handle.CompleteTransaction()
+class FIPowerCycleServer(FIConfiguratorBase):
+    def power_cycle(self, service_profile_name)
+        #Power Cycle Server
+        handle = self.handle
+        handle.StartTranscation()
+        obj = handle.GetManagedObject(None, ucs.LsPower.ClassId(), {ucs.LsPower.DN:"org-root/ls-" + service_profile_name +"/power"})
+        handle.SetManagedObject(obj, ucs.LsPower.ClassId(), {ucs.LsPower.STATE:"hard-reset-immediate"})
+        handle.CompleteTransaction()
 
     

@@ -20,8 +20,8 @@ import inspect
 import os
 import sys
 
-root_path = os.path.abspath(r"../..")
-sys.path.append(root_path)
+
+
 from UnifiedStack.config.Config_Parser import Config
 
 
@@ -31,6 +31,7 @@ class Foreman_Setup():
         self.cur=os.path.dirname(os.path.abspath(
             inspect.getfile(inspect.currentframe())))
         self.console=console
+
     def enable_repos(self,redhat_username, redhat_password, redhat_pool):
         # Subscription
         self.console.cprint_progress_bar("Subscription", 0)
@@ -46,22 +47,24 @@ class Foreman_Setup():
         self.console.cprint_progress_bar("System updated. Now enabling \
                                          repos", 45)
         shell_command(
-            "yum-config-manager --enable rhel-7-server-optional-rpms \
-            rhel-server-rhscl-7-rpms")
+            "yum-config-manager --enable rhel-7-server-optional-rpms " + 
+	    "rhel-server-rhscl-7-rpms")
         shell_command(
-            "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7\
-            .noarch.rpm")
+            "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-" + 
+	    "el-7.noarch.rpm")
         shell_command(
-            "rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/\
-            epel-release-7-2.noarch.rpm")
+            "rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/" +
+	    "epel-release-7-2.noarch.rpm")
         self.console.cprint_progress_bar("Required Repos enabled", 50)
 	shell_command("yum update -y")
 	self.console.cprint_progress_bar("Re-Updated", 65)
 
-    def install_prerequistes(self,console):
+
+    def install_prerequistes(self):
+
         self.console.cprint_progress_bar("Installting pip", 65)
-        shell_command("wget https://pypi.python.org/packages/source/p/pip/\
-                      pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+        shell_command("wget https://pypi.python.org/packages/source/p/pip/"
+                      + "pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
         shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
         shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
         self.console.cprint_progress_bar("Installing virtual Env", 75)
@@ -69,18 +72,15 @@ class Foreman_Setup():
         self.console.cprint_progress_bar("Setting up virtual Env", 85)
         file_dir=os.path.dirname(os.path.abspath(inspect.getfile
                                                  (inspect.currentframe())))
-        UnifiedStack_top_dir= file_dir +  "../../../.."
-        shell_command("virtualenv " + UnifiedStack_top_dir +
-                      "/UnifiedStackVirtualEnv")
+        UnifiedStack_top_dir= file_dir +  "/../../../.."
+	virtual_env_path = UnifiedStack_top_dir + "/UnifiedStackVirtualEnv"
+        shell_command("virtualenv " + virtual_env_path)
         shell_command("cp -rf " + UnifiedStack_top_dir +
-                      "/UnifiedStack" + UnifiedStack_top_dir + \
-                      "/UnifiedStackVirtualEnv/")
-        shell_command("source " + UnifiedStack_top_dir +
-                      "/UnifiedStackVirtualEnv/bin/activate")
-        self.console.cprint_progress_bar("Installing Django", 85)
-        shell_command("pip install django==1.7")
-        shell_command("pip install djangorestframework")
-        shell_command("deactivate")
+                      "/unifiedstack  " +  virtual_env_path +  "/")        
+	self.console.cprint_progress_bar("Installing Django", 85)
+        shell_command(virtual_env_path + "/bin/pip install django==1.7")
+        shell_command(virtual_env_path + "/bin/pip install djangorestframework")
+	
         self.console.cprint_progress_bar("Installing UcsSdk", 85)
         shell_command("wget https://communities.cisco.com/servlet/\
                       JiveServlet/download/36899-13-76835\
@@ -88,7 +88,7 @@ class Foreman_Setup():
         shell_command("tar -zxvf /root/UcsSdk-0.8.2.tar.gz -C /root/")
         shell_command("pushd /root/UcsSdk-0.8.2; python setup.py install; popd")
         self.console.cprint_progress_bar("Task Completed", 100)
-        
+	
 	
 
     def disable_SELinux(self,console):
@@ -287,8 +287,7 @@ class Provision_Host():
                 os_major +
                 " " +
                 os_minor):
-            if os['operatingsystem']['name'] == os_name and os['operatingsystem']
-            ['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
+            if os['operatingsystem']['name'] == os_name and os['operatingsystem']['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
                 host_operating_system_id = os['operatingsystem']['id']
         for user in self.connectObj.index_users(search=host_owner):
             if user['user']['firstname'] == host_owner:
@@ -492,8 +491,7 @@ class Provision_Host():
             os_name)
         os_ids = []
         for os in os_search_list:
-	    if os['operatingsystem']['name'] == os_name and os['operatingsystem']
-                ['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
+	    if os['operatingsystem']['name'] == os_name and os['operatingsystem']['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
                 os_ids.append(os['operatingsystem']['id'])
         self.connectObj.update_config_templates(
             {'operatingsystem_ids': os_ids}, id)
@@ -527,8 +525,7 @@ class Provision_Host():
                                                     network_address
                                                     + " " +
                                                     subnet_mask):
-	    if subnet['subnet']['name']==subnet_name or
-	    subnet['subnet']['network']==network_address:
+	    if subnet['subnet']['name']==subnet_name or subnet['subnet']['network']==network_address:
 		return
 	domain_ids=[]
 	for domain in self.connectObj.index_domains(search=domain_name):

@@ -11,16 +11,16 @@ def configure_cobbler_preboot():
         redhat_pool="8a85f98444de1da50144e5c4aeae67d0"
         nameserver=""
         console = cli.ConsoleOutput()
-        if len(sys.argv) != 2 or sys.argv[1] != '-C' or sys.argv[1] != '-F':
+        if len(sys.argv) != 2 or (sys.argv[1] != '-C' and sys.argv[1] != '-F'):
                 print "USAGE: python preInstall.py -C/-F"
                 exit(1)
-        if sys.argv[1]=='C':
+        if sys.argv[1]=='-C':
                 cobblerObj = cobb.Cobbler_Integrator()
                 cobblerObj.cobbler_preInstall(console,redhat_username,redhat_password,redhat_pool,nameserver) 
-        elif sys.argv[1]=='F':
-                foremanObj=foreman_integrator .Foreman_Integrator()
-                foremanObj.preInstall(console,redhat_username,redhat_password,redhat_pool)
+        elif sys.argv[1]=='-F':
+                foremanObj=foreman_integrator.Foreman_Integrator(console)
+                foremanObj.preInstall(redhat_username,redhat_password,redhat_pool)
 
 
-if __name__=="__main__":
+if __name__=="__main__": 
     configure_cobbler_preboot()

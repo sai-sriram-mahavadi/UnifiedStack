@@ -27,54 +27,67 @@ from UnifiedStack.config.Config_Parser import Config
 
 class Foreman_Setup():
 
-    def __init__(self):
-        self.cur=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
-    def enable_repos(self,console,redhat_username, redhat_password, redhat_pool):
+    def __init__(self,console):
+        self.cur=os.path.dirname(os.path.abspath(
+            inspect.getfile(inspect.currentframe())))
+        self.console=console
+    def enable_repos(self,redhat_username, redhat_password, redhat_pool):
         # Subscription
-        console.cprint_progress_bar("Subscription", 0)
+        self.console.cprint_progress_bar("Subscription", 0)
         shell_command_true(
             "subscription-manager register --username=" +
             redhat_username +
             " --password=" +
             redhat_password)
         shell_command_true("subscription-manager attach --pool=" + redhat_pool)
-        console.cprint_progress_bar("Updating the System", 5)
+        self.console.cprint_progress_bar("Updating the System", 5)
         # Enabling the XML repos database of linux for installing
         shell_command("yum update -y")
-        console.cprint_progress_bar("System updated. Now enabling repos", 45)
+        self.console.cprint_progress_bar("System updated. Now enabling \
+                                         repos", 45)
         shell_command(
-            "yum-config-manager --enable rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms")
+            "yum-config-manager --enable rhel-7-server-optional-rpms \
+            rhel-server-rhscl-7-rpms")
         shell_command(
-            "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm")
+            "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7\
+            .noarch.rpm")
         shell_command(
-            "rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-2.noarch.rpm")
-        console.cprint_progress_bar("Required Repos enabled", 50)
+            "rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/\
+            epel-release-7-2.noarch.rpm")
+        self.console.cprint_progress_bar("Required Repos enabled", 50)
 	shell_command("yum update -y")
-	console.cprint_progress_bar("Re-Updated", 65)
+	self.console.cprint_progress_bar("Re-Updated", 65)
 
     def install_prerequistes(self,console):
-        console.cprint_progress_bar("Installting pip", 65)
-        shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+        self.console.cprint_progress_bar("Installting pip", 65)
+        shell_command("wget https://pypi.python.org/packages/source/p/pip/\
+                      pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
         shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
         shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
-        console.cprint_progress_bar("Installing virtual Env", 75)
+        self.console.cprint_progress_bar("Installing virtual Env", 75)
         shell_command("pip install virtualenv")
-        console.cprint_progress_bar("Setting up virtual Env", 85)
-        file_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        self.console.cprint_progress_bar("Setting up virtual Env", 85)
+        file_dir=os.path.dirname(os.path.abspath(inspect.getfile
+                                                 (inspect.currentframe())))
         UnifiedStack_top_dir= file_dir +  "../../../.."
-        shell_command("virtualenv " + UnifiedStack_top_dir + "/UnifiedStackVirtualEnv")
-        shell_command("cp -rf " + UnifiedStack_top_dir + "/UnifiedStack" + UnifiedStack_top_dir + "/UnifiedStackVirtualEnv/")
-        shell_command("source " + UnifiedStack_top_dir + "/UnifiedStackVirtualEnv/bin/activate")
-        console.cprint_progress_bar("Installing Django", 85)
+        shell_command("virtualenv " + UnifiedStack_top_dir +
+                      "/UnifiedStackVirtualEnv")
+        shell_command("cp -rf " + UnifiedStack_top_dir +
+                      "/UnifiedStack" + UnifiedStack_top_dir + \
+                      "/UnifiedStackVirtualEnv/")
+        shell_command("source " + UnifiedStack_top_dir +
+                      "/UnifiedStackVirtualEnv/bin/activate")
+        self.console.cprint_progress_bar("Installing Django", 85)
         shell_command("pip install django==1.7")
         shell_command("pip install djangorestframework")
         shell_command("deactivate")
-        console.cprint_progress_bar("Installing UcsSdk", 85)
-        shell_command("wget https://communities.cisco.com/servlet/JiveServlet/download/36899-13-76835/UcsSdk-0.8.2.tar.gz -O /root/UcsSdk-0.8.2.tar.gz")
+        self.console.cprint_progress_bar("Installing UcsSdk", 85)
+        shell_command("wget https://communities.cisco.com/servlet/\
+                      JiveServlet/download/36899-13-76835\
+                      /UcsSdk-0.8.2.tar.gz -O /root/UcsSdk-0.8.2.tar.gz")
         shell_command("tar -zxvf /root/UcsSdk-0.8.2.tar.gz -C /root/")
         shell_command("pushd /root/UcsSdk-0.8.2; python setup.py install; popd")
-        console.cprint_progress_bar("Task Completed", 100)
+        self.console.cprint_progress_bar("Task Completed", 100)
         
 	
 
@@ -96,15 +109,18 @@ class Foreman_Setup():
             foreman_web_password,
 	    python_foreman_version):
         shell_command(
-            "/usr/bin/yum -y install http://yum.theforeman.org/releases/1.6/el7/x86_64/foreman-release.rpm")
+            "/usr/bin/yum -y install http://yum.theforeman.org/releases/\
+            1.6/el7/x86_64/foreman-release.rpm")
         shell_command_true(
             "/usr/bin/yum -y install foreman-installer")
         with open('/etc/hostname', 'w') as file:
             file.write(hostname)
         with open('/etc/hosts', 'a') as file:
-            file.write(ipaddress + " " + hostname + "." + domain_name + " " + hostname)
+            file.write(ipaddress + " " + hostname + "." + domain_name +
+                       " " + hostname)
         #shell_command("easy_install pip")
-	#shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
+	#shell_command("wget https://pypi.python.org/packages/source/p/\
+        #               pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
 	#shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
 	#shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
         shell_command(
@@ -113,7 +129,8 @@ class Foreman_Setup():
             foreman_web_username)
         #shell_command("foreman-installer")
         shell_command(
-            "pip install -Iv https://pypi.python.org/packages/source/p/python-foreman/python-foreman-" + python_foreman_version + ".tar.gz")
+            "pip install -Iv https://pypi.python.org/packages/source/p/\
+            python-foreman/python-foreman-" + python_foreman_version + ".tar.gz")
 
     def setup_dhcp_service(
             self,
@@ -211,14 +228,15 @@ class Foreman_Setup():
             "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso " +
             mount_path)
 	
-        # shell_command("cp -r /var/www/images/RHEL/images/pxeboot/* /var/lib/tftpboot/boot/")
+        #shell_command("cp -r /var/www/images/RHEL/images/pxeboot/* /var/lib/tftpboot/boot/")
         # shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
     
     
 
 
 class Provision_Host():
-    def __init__(self,foreman_url,foreman_username,foreman_password,foreman_version):
+    def __init__(self,foreman_url,foreman_username,
+                 foreman_password,foreman_version):
 	import foreman.client
         self.connectObj = foreman.client.Foreman(
             url=foreman_url,
@@ -269,8 +287,8 @@ class Provision_Host():
                 os_major +
                 " " +
                 os_minor):
-            if os['operatingsystem']['name'] == os_name and os['operatingsystem'][
-                    'major'] == os_major and os['operatingsystem']['minor'] == os_minor:
+            if os['operatingsystem']['name'] == os_name and os['operatingsystem']
+            ['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
                 host_operating_system_id = os['operatingsystem']['id']
         for user in self.connectObj.index_users(search=host_owner):
             if user['user']['firstname'] == host_owner:
@@ -299,7 +317,8 @@ class Provision_Host():
         }
         self.connectObj.create_hosts(host)
  
-    def write_host_to_dhcp(self,host_name,domain_name,host_mac_address,host_ip_address):
+    def write_host_to_dhcp(self,host_name,
+                           domain_name,host_mac_address,host_ip_address):
         with open("/etc/dhcp/dhcpd.conf","r") as file:
             dhcp_conf=file.readlines()
         while dhcp_conf.pop()=='\n':pass
@@ -473,8 +492,8 @@ class Provision_Host():
             os_name)
         os_ids = []
         for os in os_search_list:
-	    if os['operatingsystem']['name'] == os_name and os['operatingsystem'][
-                    'major'] == os_major and os['operatingsystem']['minor'] == os_minor:
+	    if os['operatingsystem']['name'] == os_name and os['operatingsystem']
+                ['major'] == os_major and os['operatingsystem']['minor'] == os_minor:
                 os_ids.append(os['operatingsystem']['id'])
         self.connectObj.update_config_templates(
             {'operatingsystem_ids': os_ids}, id)
@@ -484,7 +503,8 @@ class Provision_Host():
 	for proxy in self.connectObj.index_smart_proxies():
 	    if proxy['smart_proxy']['name']==full_hostname:
 		return
-	self.connectObj.create_smart_proxies({'name':full_hostname,'url':"https://" + full_hostname + ":8443"})
+	self.connectObj.create_smart_proxies(
+            {'name':full_hostname,'url':"https://" + full_hostname + ":8443"})
 
     def create_environment(self,environment):
 	for envir in self.connectObj.index_environments(search=environment):
@@ -498,26 +518,37 @@ class Provision_Host():
 		return
 	self.connectObj.create_domains({'name':domain_name})
 
-    def create_subnet(self,subnet_name,network_address,subnet_mask,domain_name,tftp_smart_proxy):
-	for subnet in self.connectObj.index_subnets(search=subnet_name + " " + network_address + " " + subnet_mask):
-	    if subnet['subnet']['name']==subnet_name or subnet['subnet']['network']==network_address:
+    def create_subnet(self,subnet_name,
+                      network_address,subnet_mask,
+                      domain_name,tftp_smart_proxy):
+	for subnet in self.connectObj.index_subnets(search=
+                                                    subnet_name
+                                                    + " " +
+                                                    network_address
+                                                    + " " +
+                                                    subnet_mask):
+	    if subnet['subnet']['name']==subnet_name or
+	    subnet['subnet']['network']==network_address:
 		return
 	domain_ids=[]
 	for domain in self.connectObj.index_domains(search=domain_name):
-		if domain['domain']['name']==domain_name:
-		    domain_ids.append(domain['domain']['id'])
+	    if domain['domain']['name']==domain_name:
+		domain_ids.append(domain['domain']['id'])
 	proxy_id=None
 	for proxy in self.connectObj.index_smart_proxies():
 	    if proxy['smart_proxy']['name']==tftp_smart_proxy:
 		proxy_id=proxy['smart_proxy']['id']
 	print proxy_id
-	subnet={'name':subnet_name,'network':network_address,'mask':subnet_mask,'domain_ids':domain_ids,'tftp_id':proxy_id}
+	subnet={'name':subnet_name,'network':network_address,'mask':subnet_mask,
+                'domain_ids':domain_ids,'tftp_id':proxy_id}
 	self.connectObj.create_subnets(subnet)
 
     def copy_to_tftp_boot(self,os_name,os_major,os_minor,architecture):
         filename=os_name + "-" + os_major + "." + os_minor + "-" + architecture + "-"
         src_dir="/var/www/images/RHEL/images/pxeboot/"
         dest_dir="/var/lib/tftpboot/boot/"
-        shell_command("cp -f " + src_dir + "vmlinuz" + " " + dest_dir + filename + "vmlinuz")
-        shell_command("cp -f " + src_dir + "initrd.img" + " " + dest_dir + filename + "initrd.img")
+        shell_command("cp -f " + src_dir + "vmlinuz" + " " +
+                      dest_dir + filename + "vmlinuz")
+        shell_command("cp -f " + src_dir + "initrd.img" + " " +
+                      dest_dir + filename + "initrd.img")
 

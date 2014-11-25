@@ -11,142 +11,218 @@ from netaddr import *
 
 class Foreman_Integrator():
 
-    def __init__(self):
+    def __init__(self,console):
         self.cur=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
-    def preInstall(self,console,redhat_username,redhat_password,redhat_pool):
+        self.data_dict={}
+        read_from_database=False
+        self.console=console
+        
+    def preInstall(self,redhat_username,redhat_password,redhat_pool):
         setUpObj=Foreman_Setup()
-        setUpObj.enable_repos(console,redhat_username,redhat_password,redhat_pool)
-        setUpObj.install_prerequistes(console)
+        setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
+        setUpObj.install_prerequistes()
     
     def setup_foreman(self):
 	#from config file
-        system_ipaddress = Config.get_cobbler_field('cobbler_ipaddress')
-	domain_name= "cisco.com"
-        nameserver= Config.get_cobbler_field('cobbler_DNS')
-	option_router= Config.get_cobbler_field('cobbler_option_router')  #gateway
-	system_hostname = Config.get_cobbler_field('cobbler_hostname')
-	subnet= Config.get_cobbler_field('cobbler_subnet')          #network address
-        netmask = Config.get_cobbler_field('cobbler_netmask')
-	subnet_name=system_hostname
-	proxy="19.19.0.253"
-	rhel_image_url=Config.get_general_field("rhel-image-url")
-	#redhat
-	redhat_username = Config.get_cobbler_field('redhat_username')
-        redhat_password = Config.get_cobbler_field('redhat_password')
-        redhat_pool = Config.get_cobbler_field('redhat_pool')
-	#foreman
-	foreman_web_username = "admin"
-	foreman_web_password = "12345678"
-	foreman_version="2.0" 
-	foreman_url="https://" + system_ipaddress
-	#dhcp 
-	start_ip="19.19.0.0"
-        end_ip="19.19.255.254"
-	broadcast_ip="19.19.255.255"
-	dhcp_file=self.cur + "/../data_static/dhcpd.conf"    #path to data_static/dhcp.conf
-	lease_time="21600"
-	max_lease_time="43200"
-	#rhel mirror
-	mount_path="/var/www/images/RHEL"
-	python_http_server_path="/var/www/images/"
-	#os 
-	os_family="Redhat"
-	os_major="7"
-	os_minor="0"
-	os_name="RHEL"
-	environment="production"
-	architecture="x86_64"
-	#partition table
-	ptable_name="rhel7_ptable"
-        ptable_file = self.cur + "/../data_static/" + ptable_name
-	#host to be provisioned
-	status="build"
-	root_pass="12345678"
-	owner="Admin"
-	mac_address=None
-	ip_address=None
-	host_name=None
-	#media
-	installation_media_name="Redhat mirror"
-	installation_media_url="http://" + system_ipaddress + ":8000/RHEL"
-	#templates
-	provision_template_name="rhel7-osp5.ks"
-	provision_template_path=self.cur+ "/../data_static/" + provision_template_name
-	pxelinux_template_name="Kickstart default PXELinux"
-	#python foreman version
-	python_foreman_version="0.1.2"
-
-	self.modify_kickstart(redhat_username,redhat_password,redhat_pool,nameserver,system_ipaddress,proxy)
-        installationObj=Foreman_Setup()
-	installationObj.enable_repos(redhat_username,redhat_password,redhat_pool)
-	installationObj.foreman_install(system_hostname,system_ipaddress,domain_name,foreman_web_username,foreman_web_password,python_foreman_version)
-	installationObj.setup_dhcp_service(dhcp_file,subnet,netmask,start_ip,end_ip,broadcast_ip,domain_name,nameserver,option_router,lease_time,max_lease_time)
-	installationObj.mount(mount_path,rhel_image_url)
-	self.run_simpleHTTPserver(python_http_server_path)	
-        provisionObj=Provision_Host(foreman_url,foreman_web_username,foreman_web_password,foreman_version)
-	provisionObj.create_smart_proxy(system_hostname + "." +  domain_name)
-	provisionObj.create_environment(environment)
-	provisionObj.create_domain(domain_name)	
-	provisionObj.create_subnet(subnet_name,network_address=subnet,subnet_mask=netmask,domain_name=domain_name,tftp_smart_proxy=system_hostname + "." +  domain_name)	
-        provisionObj.create_os(os_major,os_minor,os_name,os_family)
-	provisionObj.create_installation_media(os_family,installation_media_name,installation_media_url)
-	provisionObj.create_partition_table(ptable_file,ptable_name,os_family)	
-	provisionObj.create_template("provision",provision_template_path,provision_template_name,os_major,os_minor,os_name)
-	provisionObj.update_template("pxelinux",pxelinux_template_name,os_major,os_minor,os_name)	
-	provisionObj.update_os(ptable_name,os_family,installation_media_name,provision_template_name,pxelinux_template_name,os_major,os_minor,os_name)
+        if read_from_database==False:
+            self.read_data_from_config_file()
+        else:
+            self.read_data_from_database()
+	self.modify_kickstart()
+        installationObj=Foreman_Setup(self.console)
+	#installationObj.enable_repos(self.data_dict['redhat_username'],
+        #                              self.data_dict['redhat_password'],
+        #                              self.data_dict['redhat_pool'])
+	installationObj.foreman_install(self.data_dict['system_hostname'],
+                                        self.data_dict['system_ipaddress'],
+                                        self.data_dict['domain_name'],
+                                        self.data_dict['foreman_web_username'],
+                                        self.data_dict['foreman_web_password'],
+                                        self.data_dict['python_foreman_version'])
+	installationObj.setup_dhcp_service(self.data_dict['dhcp_file'],
+                                           self.data_dict['subnet'],
+                                           self.data_dict['netmask'],
+                                           self.data_dict['start_ip'],
+                                           self.data_dict['end_ip'],
+                                           self.data_dict['broadcast_ip'],
+                                           self.data_dict['domain_name'],
+                                           self.data_dict['nameserver'],
+                                           self.data_dict['option_router'],
+                                           self.data_dict['lease_time'],
+                                           self.data_dict['max_lease_time'])
+	installationObj.mount(self.data_dict['mount_path'],
+                              self.data_dict['rhel_image_url'])
+	self.run_simpleHTTPserver()	
+        provisionObj=Provision_Host(self.console,
+                                    self.data_dict['foreman_url'],
+                                    self.data_dict['foreman_web_username'],
+                                    self.data_dict['foreman_web_password'],
+                                    self.data_dict['foreman_version'])
+	provisionObj.create_smart_proxy(self.data_dict['system_hostname'] +
+                                        "." +
+                                        self.data_dict['domain_name'])
+	provisionObj.create_environment(self.data_dict['environment'])
+	provisionObj.create_domain(self.data_dict['domain_name'])	
+	provisionObj.create_subnet(self.data_dict['subnet_name'],
+                                   network_address=self.data_dict['subnet'],
+                                   subnet_mask=self.data_dict['netmask'],
+                                   domain_name=self.data_dict['domain_name'],
+                                   tftp_smart_proxy=self.data_dict['system_hostname']
+                                   + "." + self.data_dict['domain_name'])	
+        provisionObj.create_os(self.data_dict['os_major'],self.data_dict['os_minor'],
+                               self.data_dict['os_name'],self.data_dict['os_family'])
+	provisionObj.create_installation_media(self.data_dict['os_family'],
+                                               self.data_dict['installation_media_name'],
+                                               self.data_dict['installation_media_url'])
+	provisionObj.create_partition_table(self.data_dict['ptable_file'],
+                                            self.data_dict['ptable_name'],
+                                            self.data_dict['os_family'])	
+	provisionObj.create_template("provision",self.data_dict['provision_template_path'],
+                                     self.data_dict['provision_template_name'],
+                                     self.data_dict['os_major'],
+                                     self.data_dict['os_minor'],
+                                     self.data_dict['os_name'])
+	provisionObj.update_template("pxelinux",self.data_dict['pxelinux_template_name'],
+                                     self.data_dict['os_major'],
+                                     self.data_dict['os_minor'],
+                                     self.data_dict['os_name'])	
+	provisionObj.update_os(self.data_dict['ptable_name'],self.data_dict['os_family'],
+                               self.data_dict['installation_media_name'],
+                               self.data_dict['provision_template_name'],
+                               self.data_dict['pxelinux_template_name'],
+                               self.data_dict['os_major'],self.data_dict['os_minor'],
+                               self.data_dict['os_name'])
 	
+        for host_name,host_data_dict in self.data_dict['system'].items():
+	    provisionObj.create_host(host_name
+                                     self.data_dict['environment'],
+                                     self.data_dict['domain_name'],
+                                     host_data_dict['mac_address'],
+                                     self.data_dict['subnet_name'],
+                                     host_data_dict['ip_address'],
+                                     self.data_dict['architecture'],
+                                     self.data_dict['os_name'],
+                                     self.data_dict['os_major'],
+                                     self.data_dict['os_minor'],
+                                     self.data_dict['status'],
+	    			     self.data_dict['installation_media_name'],
+                                     self.data_dict['ptable_name'],
+                                     self.data_dict['root_pass'],
+                                     self.data_dict['owner'])
+	    provisionObj.write_host_to_dhcp(host_name,
+                                            self.data_dict['domain_name'],
+                                            host_data_dict['mac_address'],
+                                            host_data_dict['ip_address'])
+	    self.pxelinux_mac_file_entry(system_ipaddress,host_data_dict['mac_address'])
+	    
+	provisionObj.copy_to_tftp_boot(self.data_dict['os_name'],
+                                       self.data_dict['os_major'],
+                                       self.data_dict['os_minor'],
+                                       self.data_dict['architecture'])
+
+    def read_data_from_config_file(self):        
+        self.data_dict['system_ipaddress'] = Config.get_foreman_field('foreman_ipaddress')
+	self.data_dict['domain_name']= Config.get_foreman_field('doman_name')
+        self.data_dict['nameserver']= Config.get_foreman_field('DNS')
+	self.data_dict['option_router']= Config.get_foreman_field('option_router')  #gateway
+	self.data_dict['system_hostname'] = Config.get_foreman_field('foreman_hostname')
+	self.data_dict['subnet']= Config.get_foreman_field('subnet')          #network address
+        self.data_dict['netmask'] = Config.get_foreman_field('netmask')
+	self.data_dict['subnet_name']=system_hostname
+	self.data_dict['http_proxy_ip']=Config.get_foreman_field('http_proxy_ip')
+	self.data_dict['https_proxy_ip']=Config.get_foreman_field('https_proxy_ip')
+	self.data_dict['https_port']=Config.get_foreman_field('https_port')
+	self.data_dict['rhel_image_url']=Config.get_general_field("rhel-image-url")
+	#redhat
+	self.data_dict['redhat_username'] = Config.get_foreman_field('redhat_username')
+        self.data_dict['redhat_password'] = Config.get_foreman_field('redhat_password')
+        self.data_dict['redhat_pool'] = 'redhat_pool')
+	#foreman
+	self.data_dict['foreman_web_username'] = Config.get_foreman_field('foreman_web_username')
+	self.data_dict['foreman_web_password'] = Config.get_foreman_field('foreman_web_password')
+	self.data_dict['foreman_version']="2.0" 
+	self.data_dict['foreman_url']="https://" + system_ipaddress
+	#dhcp
+	#self.data_dict['start_ip']
+        #self.data_dict['end_ip']
+	#self.data_dict['broadcast_ip']
+	self.data_dict['dhcp_file']=self.cur + "/../data_static/dhcpd.conf"    #path to data_static/dhcp.conf
+	self.data_dict['lease_time']="21600"
+	self.data_dict['max_lease_time']="43200"
+	
+	#Redhat public OS mounted and accessible through wget
+	self.data_dict['mount_path']="/var/www/images/RHEL"
+	self.data_dict['python_http_server_path']="/var/www/images/"
+	#os 
+	self.data_dict['os_family']="Redhat"
+	self.data_dict['os_major']="7"
+	self.data_dict['os_minor']="0"
+	self.data_dict['os_name']="RHEL"
+	self.data_dict['environment']="production"
+	self.data_dict['architecture']="x86_64"
+	#partition table
+	self.data_dict['ptable_name']="rhel7_ptable"
+        self.data_dict['ptable_file'] = self.cur + "/../data_static/" + ptable_name
+	#host to be provisioned
+	self.data_dict['status']="build"
+	self.data_dict['root_pass']="Cisco12345"
+	self.data_dict['owner']="Admin"
+	#media
+	self.data_dict['installation_media_name']="Redhat mirror"
+	self.data_dict['installation_media_url']="http://" + system_ipaddress + ":8000/RHEL"
+	#templates
+	self.data_dict['provision_template_name']="rhel7-osp5.ks"
+	self.data_dict['provision_template_path']=self.cur+ "/../data_static/" + provision_template_name
+	self.data_dict['pxelinux_template_name']="Kickstart default PXELinux"
+	#python foreman version
+	self.data_dict['python_foreman_version']="0.1.2"
+	self.data_dict['system']={}
 	systems = Config.get_systems_data()
         for system in systems:
-            host_name = system.hostname
-            mac_address = system.mac_address
-            ip_address = system.ip_address	
-	    provisionObj.create_host(host_name,environment,domain_name,mac_address,subnet_name,ip_address,architecture,os_name,os_major,os_minor,status,
-	    			 installation_media_name,ptable_name,root_pass,owner)
-	    provisionObj.write_host_to_dhcp(host_name,domain_name,mac_address,ip_address)
-	self.pxelinux_mac_file_entry(system_ipaddress,mac_address)
-	provisionObj.copy_to_tftp_boot(os_name,os_major,os_minor,architecture)
-	
-    def modify_kickstart(self,redhat_username,redhat_password,redhat_pool,name_server,ipaddress,proxy): 
+            self.data_dict['system'][system.hostname]:{'mac_address':system.mac_address
+                                                       'ip_address' = system.ip_address}
+            
+
+    def read_data_from_databse(self): pass
+        
+    def modify_kickstart(self): 
 	#Update kickstart template  
         with open(self.cur+ "/../data_static/rhel7-osp5_aux.ks", "r") as file:
             kickstart=file.readlines()
         towrite = []
         for line in kickstart:
 	    if 'url --url' in line:
-                towrite.append("url --url=http://" + ipaddress + ":8000/RHEL\n")
+                towrite.append("url --url=http://" + self.data_dict['system_ipaddress'] + ":8000/RHEL\n")
                 continue
             towrite.append(line)
             if '%post' in line:
-            	if http_proxy_ip!='':
+            	if self.data_dict['http_proxy_ip']!='':
 		    towrite.append(
-		        "subscription-manager config --server.proxy_hostname=" + http_proxy_ip + " --server.proxy_port=80 \n")
+		        "subscription-manager config --server.proxy_hostname=" + self.data_dict['http_proxy_ip'] + " --server.proxy_port=80 \n")
                 towrite.append(
                     "subscription-manager register --username=" +
-                    redhat_username +
+                    self.data_dict['redhat_username'] +
                     " --password=" +
-                    redhat_password )
+                    self.data_dict['redhat_password'] )
                 towrite.append(
                     "\nsubscription-manager subscribe --pool=" +
-                    redhat_pool + "\n")
+                    self.data_dict['redhat_pool'] + "\n")
 		#TO DO REMOVE HARD CODING
-		if http_proxy_ip!='':
-		    towrite.append("/usr/bin/echo 'export http_proxy=http://" + http_proxy_ip + ":80' >> /etc/bashrc\n")
-		if https_proxy_ip!='':
-                    towrite.append("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":" + https_port + "' >> /etc/bashrc\n")
-                if http_proxy_ip!='':
-                    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + self.get_no_proxy_string(cobbler_subnet,cobbler_netmask) + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
-                #towrite.append("/usr/bin/echo 'printf -v no_proxy '%s,' 19.19.{0..255}.{0..255}' >> /etc/bashrc\n")
-                #towrite.append("/usr/bin/echo 'export no_proxy=${no_proxy%,}' >> /etc/bashrc\n")
-                towrite.append("/usr/bin/echo 'nameserver " + nameserver + "' >> /etc/resolv.conf\n") 
+		if self.data_dict['http_proxy_ip']!='':
+		    towrite.append("/usr/bin/echo 'export http_proxy=http://" + self.data_dict['http_proxy_ip'] + ":80' >> /etc/bashrc\n")
+		    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + self.get_no_proxy_string() + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
+		if self.data_dict['https_proxy_ip']!='':
+                    towrite.append("/usr/bin/echo 'export https_proxy=https://" + self.data_dict['https_proxy_ip'] + ":" + self.data_dict['https_port'] + "' >> /etc/bashrc\n")
+                towrite.append("/usr/bin/echo 'nameserver " + self.data_dict['nameserver'] + "' >> /etc/resolv.conf\n") 
 		towrite.append("chkconfig NetworkManager stop\n")
                 towrite.append("chkconfig NetworkManager off\n")
+                
         with open(self.cur+ "/../data_static/rhel7-osp5.ks", "w") as file:
             file.writelines(towrite)
 
     def pxelinux_mac_file_entry(self,system_ip_address,host_mac_address):
 	filename='01'
-	splitted_list=host_mac_address.split(":")
+	splitted_list=host_mac_address.lower().split(":")
 	for i in splitted_list:
 	    if i!=":":
 	        filename=filename + "-" + i
@@ -163,22 +239,25 @@ class Foreman_Integrator():
         with open("/var/lib/tftpboot/pxelinux.cfg/" + filename,"w") as file:
                 file.writelines(toWrite)
 
-    def run_simpleHTTPserver(self,http_server_path):
-        shell_command("pushd " + http_server_path + "; python -m SimpleHTTPServer  > /dev/null 2>&1 &")
+    def run_simpleHTTPserver(self):
+        shell_command("pushd " + self.data_dict['python_http_server_path'] + "; python -m SimpleHTTPServer  > /dev/null 2>&1 &")
         shell_command("popd") 
     
-    def copy_to_tftp_boot(self,os_name,os_major,os_minor,architecture):
-	filename=os_name + "-" + os_major + "." + os_minor + "-" + architecture + "-"
+    def copy_to_tftp_boot(self):
+	filename=self.data_dict['os_name'] + "-" + self.data_dict['os_major'] + "." + self.data_dict['os_minor'] + "-" + self.data_dict['architecture'] + "-"
         src_dir="/var/www/images/RHEL/images/pxeboot/"
 	dest_dir="/var/lib/tftpboot/boot/"
 	shell_command("cp -f " + src_dir + "vmlinuz" + " " + dest_dir + filename + "vmlinuz")
 	shell_command("cp -f " + src_dir + "initrd.img" + " " + dest_dir + filename + "initrd.img")
 
-    def get_no_proxy_string(self,cobbler_subnet,cobbler_netmask):
-        ip=IPNetwork(cobbler_subnet + "/" + cobbler_netmask)
+    def get_no_proxy_string(self):
+        ip=IPNetwork(self.data_dict['cobbler_subnet'] + "/" + self.data_dict['cobbler_netmask'])
         length=len(list(ip))
         ip1=str(ip[0])
         ip2=str(ip[length-1])
+        self.data_dict['start_ip']=ip1
+        self.data_dict['end_ip']=ip2
+        self.data_dict['broadcast_ip']=str(ip[length-2])
         print ip1
         ip1_octets=ip1.split(".")
         ip2_octets=ip2.split(".")

@@ -3,7 +3,6 @@ import cobbler_setup
 import os,inspect
 import sys,time
 import shutil
-from netaddr import *
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
@@ -44,11 +43,12 @@ class Cobbler_Integrator():
 	systems=Config.get_systems_data()
 	profiles = Config.get_profiles_data()
 	nameserver=Config.get_cobbler_field('cobbler_DNS')
+        isCSeries=Config_get_general_field('isCSeries')
 	
         self.cobbler_postInstall(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
                 rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
-                https_port,nameserver,distro_name,profiles,systems)
+                https_port,nameserver,distro_name,profiles,systems,isCSeries)
 		
     def cobbler_preInstall(self,console,redhat_username,redhat_password,redhat_pool,nameserver): 
         shutil.copyfile(
@@ -65,7 +65,7 @@ class Cobbler_Integrator():
     def cobbler_postInstall(self,console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
 		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
-		https_port,nameserver,distro_name,profiles,systems):
+		https_port,nameserver,distro_name,profiles,systems,isCSeries):
 
         cobbler_setup.cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
 		cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,cobbler_option_router)
@@ -127,15 +127,17 @@ class Cobbler_Integrator():
 	shell_command("cobbler sync")
 	time.sleep(5)
 	shell_command("systemctl restart xinetd.service")
-	#If C-series the this 
-	#result=handle.power_cycle_systems(systems=systems)
-	#else if B-series 
-	#call fi- module to power cycle
+	if str(isCSeries.title()) == "True":
+	    result=handle.power_cycle_systems(systems=systems)
+	else: 
+	    from fi import FI_PowerCycle
+	    FI_PowerCycle.FIPowerCycleServer().power_cycle()
 	time.sleep(400)
 	handle.disable_netboot_systems(systems=systems)  
         console.cprint_progress_bar("Task Completed",100)
 
     def get_no_proxy_string(self,cobbler_subnet,cobbler_netmask):
+	from netaddr import *
         ip=IPNetwork(cobbler_subnet + "/" + cobbler_netmask)
         length=len(list(ip))
         ip1=str(ip[0])

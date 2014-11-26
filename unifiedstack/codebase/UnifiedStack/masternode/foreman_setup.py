@@ -22,7 +22,7 @@ import sys
 
 
 
-from UnifiedStack.config.Config_Parser import Config
+from codebase.UnifiedStack.config.Config_Parser import Config
 
 
 class Foreman_Setup():
@@ -209,16 +209,14 @@ class Foreman_Setup():
         shell_command("systemctl status dhcpd.service")
         shell_command("systemctl restart xinetd.service")
         # Open up Firewall
-        shell_command_true("/sbin/iptables -F")
-        shell_command_true("/sbin/iptables-save > /etc/sysconfig/iptables")
-        shell_command("iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT")
-        shell_command("iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT")
-        shell_command("chkconfig NetworkManager off")
+        shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
+        shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
+        shell_command("firewall-cmd --reload")
+        #shell_command("chkconfig NetworkManager off")
 
     def mount(self, mount_path,rhel_image_url):
         """Here goes the code to wget the rhel image in the /root directory"""
         shell_command("mkdir -p " + mount_path)
-        rhel_image_url = Config.get_general_field("rhel-image-url")
         shell_command(
             "wget " +
             rhel_image_url +
@@ -234,7 +232,7 @@ class Foreman_Setup():
 
 
 class Provision_Host():
-    def __init__(self,foreman_url,foreman_username,
+    def __init__(self,console,foreman_url,foreman_username,
                  foreman_password,foreman_version):
 	import foreman.client
         self.connectObj = foreman.client.Foreman(

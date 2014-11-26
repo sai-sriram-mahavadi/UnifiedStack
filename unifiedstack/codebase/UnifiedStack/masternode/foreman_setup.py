@@ -47,21 +47,21 @@ class Foreman_Setup():
         self.console.cprint_progress_bar("System updated. Now enabling \
                                          repos", 45)
         shell_command(
-            "yum-config-manager --enable rhel-7-server-optional-rpms " + 
-	    "rhel-server-rhscl-7-rpms")
-        shell_command(
             "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-" + 
 	    "el-7.noarch.rpm")
         shell_command(
             "rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/" +
 	    "epel-release-7-2.noarch.rpm")
+	shell_command(
+            "yum-config-manager --enable rhel-7-server-optional-rpms " +
+            "rhel-server-rhscl-7-rpms epel")
+
         self.console.cprint_progress_bar("Required Repos enabled", 50)
 	shell_command("yum update -y")
 	self.console.cprint_progress_bar("Re-Updated", 65)
 
 
     def install_prerequistes(self):
-
         self.console.cprint_progress_bar("Installting pip", 65)
         shell_command("wget https://pypi.python.org/packages/source/p/pip/"
                       + "pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
@@ -82,9 +82,9 @@ class Foreman_Setup():
         shell_command(virtual_env_path + "/bin/pip install djangorestframework")
 	
         self.console.cprint_progress_bar("Installing UcsSdk", 85)
-        shell_command("wget https://communities.cisco.com/servlet/\
-                      JiveServlet/download/36899-13-76835\
-                      /UcsSdk-0.8.2.tar.gz -O /root/UcsSdk-0.8.2.tar.gz")
+        shell_command("wget https://communities.cisco.com/servlet/" + 
+                       "JiveServlet/download/36899-13-76835" + 
+                       "/UcsSdk-0.8.2.tar.gz -O /root/UcsSdk-0.8.2.tar.gz")
         shell_command("tar -zxvf /root/UcsSdk-0.8.2.tar.gz -C /root/")
         shell_command("pushd /root/UcsSdk-0.8.2; python setup.py install; popd")
         self.console.cprint_progress_bar("Task Completed", 100)
@@ -109,8 +109,8 @@ class Foreman_Setup():
             foreman_web_password,
 	    python_foreman_version):
         shell_command(
-            "/usr/bin/yum -y install http://yum.theforeman.org/releases/\
-            1.6/el7/x86_64/foreman-release.rpm")
+            "/usr/bin/yum -y install http://yum.theforeman.org/releases/"
+            "1.6/el7/x86_64/foreman-release.rpm")
         shell_command_true(
             "/usr/bin/yum -y install foreman-installer")
         with open('/etc/hostname', 'w') as file:
@@ -126,11 +126,10 @@ class Foreman_Setup():
         shell_command(
             "foreman-installer --foreman-admin-password=" +
             foreman_web_password + "  --foreman-admin-username=" +
-            foreman_web_username)
-        #shell_command("foreman-installer")
+            foreman_web_username) 
         shell_command(
-            "pip install -Iv https://pypi.python.org/packages/source/p/\
-            python-foreman/python-foreman-" + python_foreman_version + ".tar.gz")
+            "pip install -Iv https://pypi.python.org/packages/source/p/" +
+            "python-foreman/python-foreman-" + python_foreman_version + ".tar.gz")
 
     def setup_dhcp_service(
             self,

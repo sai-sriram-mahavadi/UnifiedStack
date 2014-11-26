@@ -19,7 +19,7 @@ class Foreman_Integrator():
         
     def preInstall(self,redhat_username,redhat_password,redhat_pool):
         setUpObj=Foreman_Setup(self.console)
-        #setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
+        setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
         setUpObj.install_prerequistes()
     
     def setup_foreman(self):

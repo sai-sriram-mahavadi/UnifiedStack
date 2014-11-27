@@ -40,6 +40,7 @@ class Foreman_Setup():
             redhat_username +
             " --password=" +
             redhat_password)
+	shell_command("subscription-manager subscribe --auto")
         shell_command_true("subscription-manager attach --pool=" + redhat_pool)
         self.console.cprint_progress_bar("Updating the System", 5)
         # Enabling the XML repos database of linux for installing
@@ -118,15 +119,8 @@ class Foreman_Setup():
         with open('/etc/hosts', 'a') as file:
             file.write(ipaddress + " " + hostname + "." + domain_name +
                        " " + hostname)
-        #shell_command("easy_install pip")
-	#shell_command("wget https://pypi.python.org/packages/source/p/\
-        #               pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
-	#shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
-	#shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
         shell_command(
-            "foreman-installer --foreman-admin-password=" +
-            foreman_web_password + "  --foreman-admin-username=" +
-            foreman_web_username) 
+            "foreman-installer")
         shell_command(
             "pip install -Iv https://pypi.python.org/packages/source/p/" +
             "python-foreman/python-foreman-" + python_foreman_version + ".tar.gz")
@@ -208,12 +202,7 @@ class Foreman_Setup():
         shell_command("systemctl enable dhcpd.service")
         shell_command("systemctl status dhcpd.service")
         shell_command("systemctl restart xinetd.service")
-        # Open up Firewall
-        shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
-        shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
-        shell_command("firewall-cmd --reload")
-        #shell_command("chkconfig NetworkManager off")
-
+       
     def mount(self, mount_path,rhel_image_url):
         """Here goes the code to wget the rhel image in the /root directory"""
         shell_command("mkdir -p " + mount_path)
@@ -541,8 +530,10 @@ class Provision_Host():
         filename=os_name + "-" + os_major + "." + os_minor + "-" + architecture + "-"
         src_dir="/var/www/images/RHEL/images/pxeboot/"
         dest_dir="/var/lib/tftpboot/boot/"
-        shell_command("cp -f " + src_dir + "vmlinuz" + " " +
-                      dest_dir + filename + "vmlinuz")
-        shell_command("cp -f " + src_dir + "initrd.img" + " " +
-                      dest_dir + filename + "initrd.img")
+	if os.path.getsize(dest_dir + filename + "vmlinuz") == 0:
+            shell_command("cp -f " + src_dir + "vmlinuz" + " " +
+                          dest_dir + filename + "vmlinuz")
+        if os.path.getsize(dest_dir + filename + "initrd.img") == 0):
+	    shell_command("cp -f " + src_dir + "initrd.img" + " " +
+                          dest_dir + filename + "initrd.img")
 

@@ -18,6 +18,7 @@ class Installer:
             redhat_username +
             " --password=" +
             redhat_password)
+	shell_command("subscription-manager subscribe --auto")
         shell_command("subscription-manager attach --pool=" + redhat_pool)
         self.console.cprint_progress_bar("Updating", 5)
         shell_command("yum update -y")

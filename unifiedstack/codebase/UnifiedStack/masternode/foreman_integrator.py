@@ -33,7 +33,7 @@ class Foreman_Integrator():
             self.read_data_from_config_file()
         else:
             self.read_data_from_database()
-	"""
+	
 	self.modify_kickstart()
         installationObj=Foreman_Setup(self.console)
 	#installationObj.enable_repos(self.data_dict['redhat_username'],
@@ -45,6 +45,7 @@ class Foreman_Integrator():
                                         self.data_dict['foreman_web_username'],
                                         self.data_dict['foreman_web_password'],
                                         self.data_dict['python_foreman_version'])
+	self.extract_web_user_pass()
 	installationObj.setup_dhcp_service(self.data_dict['dhcp_file'],
                                            self.data_dict['subnet'],
                                            self.data_dict['netmask'],
@@ -58,9 +59,7 @@ class Foreman_Integrator():
                                            self.data_dict['max_lease_time'])
 	installationObj.mount(self.data_dict['mount_path'],
                               self.data_dict['rhel_image_url'])
-	#self.run_simpleHTTPserver()	
-	"""
-	
+	self.run_simpleHTTPserver()	
         provisionObj=Provision_Host(self.console,
                                     self.data_dict['foreman_url'],
                                     self.data_dict['foreman_web_username'],
@@ -122,11 +121,25 @@ class Foreman_Integrator():
                                             host_data_dict['mac_address'],
                                             host_data_dict['ip_address'])
 	    self.pxelinux_mac_file_entry(system_ipaddress,host_data_dict['mac_address'])
-	    
+	
 	provisionObj.copy_to_tftp_boot(self.data_dict['os_name'],
                                        self.data_dict['os_major'],
                                        self.data_dict['os_minor'],
                                        self.data_dict['architecture'])
+	# Open up Firewall
+        shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
+        shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
+        shell_command("firewall-cmd --reload")
+
+    def extract_web_user_pass(self):
+	answers=[]
+	with open("/etc/foreman/foreman-installer-answers.yaml", "r") as file:
+	    answers=file.readline()
+	for line in answers:
+	    if 'admin_username' in line:
+		self.data_dict['foreman_web_username']=line.strip().split(":")[1].strip()
+	    if 'admin_password' in line:
+                self.data_dict['foreman_web_password']=line.strip().split(":")[1].strip()
 
     def read_data_from_config_file(self):        
         self.data_dict['system_ipaddress'] = Config.get_foreman_field('foreman_ipaddress')
@@ -146,14 +159,9 @@ class Foreman_Integrator():
         self.data_dict['redhat_password'] = Config.get_foreman_field('redhat_password')
         self.data_dict['redhat_pool'] = Config.get_foreman_field('redhat_pool')
 	#foreman
-	self.data_dict['foreman_web_username'] = Config.get_foreman_field('foreman_web_username')
-	self.data_dict['foreman_web_password'] = Config.get_foreman_field('foreman_web_password')
 	self.data_dict['foreman_version']="2.0" 
 	self.data_dict['foreman_url']="https://" + self.data_dict['system_ipaddress']
 	#dhcp
-	#self.data_dict['start_ip']
-        #self.data_dict['end_ip']
-	#self.data_dict['broadcast_ip']
 	self.data_dict['dhcp_file']=self.cur + "/../data_static/dhcpd.conf"    #path to data_static/dhcp.conf
 	self.data_dict['lease_time']="21600"
 	self.data_dict['max_lease_time']="43200"

@@ -13,12 +13,11 @@ def configure_cobbler_preboot():
     nameserver=""
     console = cli.ConsoleOutput()
     if len(sys.argv)== 1:
-	Installer(console).run(redhat_username,redhat_password,redhat_pool)
-		        
-    if len(sys.argv) == 2  and  (sys.argv[1] != '-C' and sys.argv[1] != '-F'):
+	Installer(console).run(redhat_username,redhat_password,redhat_pool)		        
+    elif len(sys.argv) == 2  and  (sys.argv[1] != '-C' and sys.argv[1] != '-F'):
         print "USAGE: python preInstall.py -C/-F"
         exit(1)
-    if sys.argv[1]=='-C':
+    elif sys.argv[1]=='-C':
         cobblerObj = cobb.Cobbler_Integrator()
         cobblerObj.cobbler_preInstall(console,redhat_username,redhat_password,redhat_pool,nameserver) 
     elif sys.argv[1]=='-F':

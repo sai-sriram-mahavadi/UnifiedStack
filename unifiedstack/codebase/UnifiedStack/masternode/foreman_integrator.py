@@ -272,6 +272,7 @@ class Foreman_Integrator():
         with open(self.cur+ "/../data_static/rhel7-osp5_aux.ks", "r") as file:
             kickstart=file.readlines()
         towrite = []
+        no_proxy_string=self.get_no_proxy_string()
         for line in kickstart:
 	    if 'url --url' in line:
                 towrite.append("url --url=http://" + self.data_dict['system_ipaddress'] + ":8000/RHEL\n")
@@ -292,7 +293,7 @@ class Foreman_Integrator():
 		#TO DO REMOVE HARD CODING
 		if self.data_dict['http_proxy_ip']!='':
 		    towrite.append("/usr/bin/echo 'export http_proxy=http://" + self.data_dict['http_proxy_ip'] + ":80' >> /etc/bashrc\n")
-		    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + self.get_no_proxy_string() + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
+		    towrite.append("/usr/bin/echo \"export no_proxy=`echo " + no_proxy_string + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
 		if self.data_dict['https_proxy_ip']!='':
                     towrite.append("/usr/bin/echo 'export https_proxy=https://" + self.data_dict['https_proxy_ip'] + ":" + self.data_dict['https_port'] + "' >> /etc/bashrc\n")
                 towrite.append("/usr/bin/echo 'nameserver " + self.data_dict['nameserver'] + "' >> /etc/resolv.conf\n") 

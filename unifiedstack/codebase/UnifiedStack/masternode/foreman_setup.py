@@ -106,8 +106,6 @@ class Foreman_Setup():
             hostname,
             ipaddress,
             domain_name,
-            foreman_web_username,
-            foreman_web_password,
 	    python_foreman_version):
         shell_command(
             "/usr/bin/yum -y install http://yum.theforeman.org/releases/"
@@ -313,7 +311,7 @@ class Provision_Host():
         dhcp_conf.append('\tfilename "pxelinux.0";\n\t}\n}')
         with open("/etc/dhcp/dhcpd.conf","w") as file:
             file.writelines(dhcp_conf)
-	shell_command("service dhcpd restart")
+	#shell_command("service dhcpd restart")
 
     def create_os(self, os_major, os_minor, os_name, os_family):
         os = {
@@ -533,7 +531,7 @@ class Provision_Host():
 	if os.path.getsize(dest_dir + filename + "vmlinuz") == 0:
             shell_command("cp -f " + src_dir + "vmlinuz" + " " +
                           dest_dir + filename + "vmlinuz")
-        if os.path.getsize(dest_dir + filename + "initrd.img") == 0):
+        if os.path.getsize(dest_dir + filename + "initrd.img") == 0:
 	    shell_command("cp -f " + src_dir + "initrd.img" + " " +
                           dest_dir + filename + "initrd.img")
 

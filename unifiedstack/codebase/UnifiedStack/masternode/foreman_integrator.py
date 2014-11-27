@@ -42,8 +42,6 @@ class Foreman_Integrator():
 	installationObj.foreman_install(self.data_dict['system_hostname'],
                                         self.data_dict['system_ipaddress'],
                                         self.data_dict['domain_name'],
-                                        self.data_dict['foreman_web_username'],
-                                        self.data_dict['foreman_web_password'],
                                         self.data_dict['python_foreman_version'])
 	self.extract_web_user_pass()
 	installationObj.setup_dhcp_service(self.data_dict['dhcp_file'],
@@ -120,12 +118,13 @@ class Foreman_Integrator():
                                             self.data_dict['domain_name'],
                                             host_data_dict['mac_address'],
                                             host_data_dict['ip_address'])
-	    self.pxelinux_mac_file_entry(system_ipaddress,host_data_dict['mac_address'])
+	    self.pxelinux_mac_file_entry(self.data_dict['system_ipaddress'],host_data_dict['mac_address'])
 	
 	provisionObj.copy_to_tftp_boot(self.data_dict['os_name'],
                                        self.data_dict['os_major'],
                                        self.data_dict['os_minor'],
                                        self.data_dict['architecture'])
+	shell_command("service dhcpd restart")
 	# Open up Firewall
         shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
         shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
@@ -134,7 +133,8 @@ class Foreman_Integrator():
     def extract_web_user_pass(self):
 	answers=[]
 	with open("/etc/foreman/foreman-installer-answers.yaml", "r") as file:
-	    answers=file.readline()
+	    answers=file.readlines()
+	print len(answers)
 	for line in answers:
 	    if 'admin_username' in line:
 		self.data_dict['foreman_web_username']=line.strip().split(":")[1].strip()
@@ -200,31 +200,26 @@ class Foreman_Integrator():
             
 
     def read_data_from_database(self): 
-        self.data_dict['system_ipaddress'] = '19.19.150.9'
-        self.data_dict['domain_name']= 'cisco.com'
-        self.data_dict['nameserver']= '72.163.128.140'
-        self.data_dict['option_router']= '72.163.128.140'  #gateway
-        self.data_dict['system_hostname'] = 'buildserver'
-        self.data_dict['subnet']= '19.19.0.0'         #network address
-        self.data_dict['netmask'] = '255.255.0.0' 
-        self.data_dict['http_proxy_ip']='19.19.150.9'
-        self.data_dict['https_proxy_ip']='19.19.150.9'
+        self.data_dict['system_ipaddress'] = '192.168.211.176'
+        self.data_dict['domain_name']= 'domain.name'
+        self.data_dict['nameserver']= '192.168.211.2'
+        self.data_dict['option_router']= '192.168.211.2'  #gateway
+        self.data_dict['system_hostname'] = 'buildserver-2'
+        self.data_dict['subnet']= '192.168.211.0'         #network address
+        self.data_dict['netmask'] = '255.255.255.0' 
+        self.data_dict['http_proxy_ip']=''
+        self.data_dict['https_proxy_ip']=''
         self.data_dict['https_port']='80'
-        self.data_dict['rhel_image_url']='http://19.19.100.102:8000/rhel-server-7.0-x86_64-dvd.iso'
+        self.data_dict['rhel_image_url']='http://192.168.211.176:8000/rhel-server-7.0-x86_64-dvd.iso'
         self.data_dict['isCSeries']=False
         #redhat
         self.data_dict['redhat_username'] = 'rahuupad2'
         self.data_dict['redhat_password'] = 'iso*help123'
         self.data_dict['redhat_pool'] = "8a85f98444de1da50144e5c4aeae67d0"
 	#foreman
-        self.data_dict['foreman_web_username'] = 'Admin'
-	self.data_dict['foreman_web_password'] = '12345678'
         self.data_dict['foreman_version']="2.0"
         self.data_dict['foreman_url']="https://" + self.data_dict['system_ipaddress']
-        #dhcp
-        #self.data_dict['start_ip']
-        #self.data_dict['end_ip']
-        #self.data_dict['broadcast_ip']
+        #dhcp 
         self.data_dict['dhcp_file']=self.cur + "/../data_static/dhcpd.conf"    #path to data_static/dhcp.conf
         self.data_dict['lease_time']="21600"
         self.data_dict['max_lease_time']="43200"
@@ -259,9 +254,9 @@ class Foreman_Integrator():
         self.data_dict['system']={}
         #systems = Config.get_systems_data()
 	self.data_dict['system']['crhel-compute']={'mac_address':'00:25:B5:6A:00:1E',
-                                                    'ip_address':'19.19.150.12'}
+                                                    'ip_address':'192.168.211.178'}
 	self.data_dict['system']['nrhel1-network']={'mac_address':'00:25:B5:6A:00:06',
-                                                    'ip_address':'19.19.150.11'}
+                                                    'ip_address':'192.168.211.179'}
 
         #for system in systems:
         #    self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,

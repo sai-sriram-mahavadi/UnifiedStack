@@ -28,12 +28,13 @@ MAX_TRIES = 5
 
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from codebase.UnifiedStack.masternode import cobbler_integrator as cobb
+from codebase.UnifiedStack.masternode import foreman_integrator as fore
 from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
-from codebase.UnifiedStack.fi import FI_Configurator
-from logger.models import ConsoleLog
+#from codebase.UnifiedStack.fi import FI_Configurator
+#from logger.models import ConsoleLog
 # To Add
 #name, purpose(networker, compute), os -> name of system
 #system, rhel img (access.redhat)(http server), hostname port
@@ -83,8 +84,8 @@ class Integrator:
         
     def configure_unifiedstack(self):
         console = cli.ConsoleOutput()
-        shi.ShellInterpretter.set_console(console)
-        shell = shi.ShellInterpretter()
+        #shi.ShellInterpretter.set_console(console)
+        #shell = shi.ShellInterpretter()
 
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
         #runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
@@ -107,15 +108,16 @@ class Integrator:
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
-       
+        """
+	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
         if isCobbler==True:
 	    cobbler_config = cobb.Cobbler_Integrator(data_source="config_File")
             cobbler_config.cobbler_postInstall_adapter(console) 
         else:
-	    foreman_config = fore.Foreman_Integrator(data_source="config_File")
+	    foreman_config = fore.Foreman_Integrator(console,data_source="database")
 	    foreman_config.setup_foreman() 
-        """
+        
 	tries = 0
         while not self.poll_all_nodes():
             time.sleep(10)

@@ -131,22 +131,22 @@ def sync(console):
     shell_command("cobbler get-loaders --force")
     shell_command("cobbler check")
     shell_command("cobbler sync")
-    #sys.path.append('/usr/lib/python2.7/site-packages/cobbler/')
-    #import cobbler.api as capi
-    #import cobbler.cexceptions
-    #try:
-    #    handle = capi.BootAPI()
-    #except cobbler.cexceptions.CX:
-    #	handle = capi.BootAPI()
-    #handle.check()
-    #handle.sync()
+    sys.path.append('/usr/lib/python2.7/site-packages/cobbler/')
+    import cobbler.api as capi
+    import cobbler.cexceptions
+    try:
+        handle = capi.BootAPI()
+    except cobbler.cexceptions.CX:
+    	handle = capi.BootAPI()
+    handle.check()
+    handle.sync()
    
 
 def mount(console,rhel_image_url):
     """Here goes the code to wget the rhel image in the /root directory"""
     shell_command("mkdir -p /var/www/cobbler/images/RHEL")
-    #console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85) 
-    #shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
+    console.cprint_progress_bar("Downloading the rhel-image Mounting the RHEL iso to /root/rhel_mount ",85) 
+    shell_command("wget " + rhel_image_url + " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
     shell_command(
         "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso /var/www/cobbler/images/RHEL")
     shell_command("cp -rf /var/www/cobbler/images/RHEL/images/pxeboot /var/lib/tftpboot/")

@@ -8,5 +8,3 @@ urlpatterns = patterns('',
                        url(r'^configurator/serversample$', views.server_binding_sample),
                        url(r'^configuration$', views.server_binding_post),
                 )
-
-

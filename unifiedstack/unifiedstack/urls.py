@@ -2,12 +2,13 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 from logger.views import DeviceViewSet, LogViewSet, ConsoleLogViewSet
-from configurator.views import DeviceSettingViewSet
+from configurator.views import DeviceSettingViewSet, SimplePropertyViewSet
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'Logs', LogViewSet)
 router.register(r'Devices', DeviceViewSet)
 router.register(r'Device Settings', DeviceSettingViewSet)
+router.register(r'Simple Properties', SimplePropertyViewSet)
 router.register(r'Console Logs', ConsoleLogViewSet)
 
 

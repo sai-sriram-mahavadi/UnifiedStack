@@ -10,8 +10,8 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-from configurator.models import DeviceSetting
-from configurator.serializers import DeviceSettingSerializer
+from configurator.models import DeviceSetting, SimpleProperty
+from configurator.serializers import DeviceSettingSerializer, SimplePropertySerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
 #from codebase.UnifiedStack.integrator import Integrator
@@ -58,7 +58,10 @@ def sample(request):
 class DeviceSettingViewSet(viewsets.ModelViewSet):
     queryset = DeviceSetting.objects.all()
     serializer_class = DeviceSettingSerializer
-    
+
+class SimplePropertyViewSet(viewsets.ModelViewSet):
+    queryset = SimpleProperty.objects.all()
+    serializer_class = SimplePropertySerializer
     
 # Temporary binding with server itself ( no need for rest-api for this)
 # Settings to be read from user (Configurator input fields)

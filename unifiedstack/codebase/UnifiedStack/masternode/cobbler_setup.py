@@ -125,13 +125,21 @@ def enable_services(console):
     shell_command("systemctl status dhcpd.service")
     shell_command("chkconfig NetworkManager off")
 
+
 def sync(console):
     console.cprint_progress_bar("Cobbler Get-loaders and Sync",80)
     shell_command("cobbler get-loaders --force")
-    import cobbler.api as capi
-    handle = capi.BootAPI()
-    handle.check()
-    handle.sync()
+    shell_command("cobbler check")
+    shell_command("cobbler sync")
+    #sys.path.append('/usr/lib/python2.7/site-packages/cobbler/')
+    #import cobbler.api as capi
+    #import cobbler.cexceptions
+    #try:
+    #    handle = capi.BootAPI()
+    #except cobbler.cexceptions.CX:
+    #	handle = capi.BootAPI()
+    #handle.check()
+    #handle.sync()
    
 
 def mount(console,rhel_image_url):

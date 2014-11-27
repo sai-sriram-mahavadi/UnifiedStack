@@ -2,7 +2,7 @@ import os,inspect
 import sys,time
 import shutil
 
-from netaddr import *
+
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
 from foreman_setup import Foreman_Setup, Provision_Host
@@ -329,6 +329,7 @@ class Foreman_Integrator():
 	shell_command("cp -f " + src_dir + "initrd.img" + " " + dest_dir + filename + "initrd.img")
 
     def get_no_proxy_string(self):
+	from netaddr import IPNetwork
         ip=IPNetwork(self.data_dict['subnet'] + "/" + self.data_dict['netmask'])
         length=len(list(ip))
         ip1=str(ip[0])

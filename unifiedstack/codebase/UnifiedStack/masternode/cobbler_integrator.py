@@ -11,41 +11,49 @@ from general_utils import shell_command
 
 class Cobbler_Integrator():
 
-    def __init__(self):
+    def __init__(self,console,data_source):
         self.cur=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))       
-    
-    def cobbler_preInstall_adapter(self,console):
+        self.console=console
+	self.data_source_database=False
+	if data_source.title()=="Database":
+	    self.data_source_database=True
+	
+    def cobbler_preInstall_adapter(self):
         redhat_username = Config.get_cobbler_field('redhat_username') 
         redhat_password = Config.get_cobbler_field('redhat_password')   
         redhat_pool = Config.get_cobbler_field('redhat_pool')
 	nameserver=Config.get_cobbler_field('cobbler_DNS')
-	self.cobbler_preInstall(console,redhat_username,redhat_password,redhat_pool,nameserver)
+	self.cobbler_preInstall(self.console,redhat_username,redhat_password,redhat_pool,nameserver)
         
-    def cobbler_postInstall_adapter(self,console):
-        cobbler_interface = Config.get_cobbler_field('cobbler_interface')
-        cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
-        cobbler_server = Config.get_cobbler_field('cobbler_server')
-        cobbler_next_server = Config.get_cobbler_field('cobbler_next_server')
-        cobbler_subnet = Config.get_cobbler_field('cobbler_subnet')
-        cobbler_option_router = Config.get_cobbler_field('cobbler_option_router')
-        cobbler_DNS = Config.get_cobbler_field('cobbler_DNS')
-        cobbler_hostname = Config.get_cobbler_field('cobbler_hostname')
-        cobbler_web_username = Config.get_cobbler_field('cobbler_web_username')
-        cobbler_web_password = Config.get_cobbler_field('cobbler_web_password')	
-	rhel_image_url=Config.get_general_field('rhel-image-url')
-	redhat_username=Config.get_cobbler_field('redhat_username')
-	redhat_password=Config.get_cobbler_field('redhat_password')
-	redhat_pool=Config.get_cobbler_field('redhat_pool')
-	http_proxy_ip=Config.get_cobbler_field('http_proxy_ip')
-	https_proxy_ip=Config.get_cobbler_field('https_proxy_ip')
-	https_port=Config.get_cobbler_field('https_port')
-	distro_name=Config.get_cobbler_field('distro_name')
-	systems=Config.get_systems_data()
-	profiles = Config.get_profiles_data()
-	nameserver=Config.get_cobbler_field('cobbler_DNS')
-        isCSeries=Config_get_general_field('isCSeries')
+    def cobbler_postInstall_adapter(self):
+	if not self.data_source_database: 
+            cobbler_interface = Config.get_cobbler_field('cobbler_interface')
+            cobbler_netmask = Config.get_cobbler_field('cobbler_netmask')
+            cobbler_server = Config.get_cobbler_field('cobbler_server')
+            cobbler_next_server = Config.get_cobbler_field('cobbler_next_server')
+            cobbler_subnet = Config.get_cobbler_field('cobbler_subnet')
+            cobbler_option_router = Config.get_cobbler_field('cobbler_option_router')
+            cobbler_DNS = Config.get_cobbler_field('cobbler_DNS')
+            cobbler_hostname = Config.get_cobbler_field('cobbler_hostname')
+            cobbler_web_username = Config.get_cobbler_field('cobbler_web_username')
+            cobbler_web_password = Config.get_cobbler_field('cobbler_web_password')	
+	    rhel_image_url=Config.get_general_field('rhel-image-url')
+	    redhat_username=Config.get_cobbler_field('redhat_username')
+	    redhat_password=Config.get_cobbler_field('redhat_password')
+	    redhat_pool=Config.get_cobbler_field('redhat_pool')
+	    http_proxy_ip=Config.get_cobbler_field('http_proxy_ip')
+	    https_proxy_ip=Config.get_cobbler_field('https_proxy_ip')
+	    https_port=Config.get_cobbler_field('https_port')
+	    distro_name=Config.get_cobbler_field('distro_name')
+	    systems=Config.get_systems_data()
+	    profiles = Config.get_profiles_data()
+	    nameserver=Config.get_cobbler_field('cobbler_DNS')
+            isCSeries=False
+	else:
+	    #read_ from database
+	    pass
 	
-        self.cobbler_postInstall(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
+        self.cobbler_postInstall(self.console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
                 rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
                 https_port,nameserver,distro_name,profiles,systems,isCSeries)
@@ -127,17 +135,17 @@ class Cobbler_Integrator():
 	shell_command("cobbler sync")
 	time.sleep(5)
 	shell_command("systemctl restart xinetd.service")
-	if str(isCSeries.title()) == "True":
+	if str(isCSeries.title()) == "True" or str(isCSeries.title())=="true":
 	    result=handle.power_cycle_systems(systems=systems)
-	else: 
+	else:
 	    from fi import FI_PowerCycle
-	    FI_PowerCycle.FIPowerCycleServer().power_cycle()
+	    #FI_PowerCycle.FIPowerCycleServer().power_cycle()
 	time.sleep(400)
 	handle.disable_netboot_systems(systems=systems)  
         console.cprint_progress_bar("Task Completed",100)
 
     def get_no_proxy_string(self,cobbler_subnet,cobbler_netmask):
-	from netaddr import *
+	from netaddr import IPNetwork	
         ip=IPNetwork(cobbler_subnet + "/" + cobbler_netmask)
         length=len(list(ip))
         ip1=str(ip[0])

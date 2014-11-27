@@ -23,7 +23,7 @@ class Installer:
         self.console.cprint_progress_bar("Updating", 5)
         shell_command("yum update -y")
         self.console.cprint_progress_bar("Updation done. Enabling repos", 50)
-        self.enable_repos_foreman()
+        #self.enable_repos_foreman()
         self.enable_repos_cobbler()
 	self.install_prerequistes()
         self.disable_SELinux()
@@ -69,7 +69,7 @@ class Installer:
                                                  (inspect.currentframe())))
         UnifiedStack_top_dir= file_dir +  "/../../../.."
         virtual_env_path = UnifiedStack_top_dir + "/UnifiedStackVirtualEnv"
-        shell_command("virtualenv " + virtual_env_path)
+        shell_command("virtualenv  --system-site-packages " + virtual_env_path)
         shell_command("cp -rf " + UnifiedStack_top_dir +
                       "/unifiedstack  " +  virtual_env_path +  "/")
         self.console.cprint_progress_bar("Installing Django", 85)

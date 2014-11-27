@@ -109,11 +109,11 @@ class Integrator:
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
         """
-	isCobbler=False
+	isCobbler=True
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
         if isCobbler==True:
-	    cobbler_config = cobb.Cobbler_Integrator(data_source="config_File")
-            cobbler_config.cobbler_postInstall_adapter(console) 
+	    cobbler_config = cobb.Cobbler_Integrator(console,data_source="config_File")
+            cobbler_config.cobbler_postInstall_adapter() 
         else:
 	    foreman_config = fore.Foreman_Integrator(console,data_source="database")
 	    foreman_config.setup_foreman() 

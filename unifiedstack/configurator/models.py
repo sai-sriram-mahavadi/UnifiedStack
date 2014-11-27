@@ -22,6 +22,82 @@ class DeviceSetting(models.Model):
         (ADVANCED_LEVEL, 'Advanced'),
     )
     
+    
+    device = models.ForeignKey(Device, related_name="settings")
+    # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
+    # compond_settings = models.ManyToManyField('self', null=True)
+    label = models.CharField(max_length=50, blank=False)
+    desc = models.CharField(max_length=100, blank=True, default="")
+    level = models.CharField(max_length=1, choices=SETTING_LEVEL_CHOICES,
+                                    default=BASIC_LEVEL)
+    standard_label = models.CharField(max_length=50, blank=True, default="")
+    
+    def __str__(self):
+        return self.label + ": " + self.level + ", " + self.stype + ", " + self.value
+
+class SimpleProperty(models.Model):
+    MANDATORY_LEVEL = 'M'
+    BASIC_LEVEL = 'B'
+    OPTIONAL_LEVEL = 'O'
+    ADVANCED_LEVEL = 'A'
+
+    SETTING_LEVEL_CHOICES = (
+        (MANDATORY_LEVEL, 'Mandatory'),
+        (BASIC_LEVEL, 'Basic'),
+        (OPTIONAL_LEVEL, 'Optional'),
+        (ADVANCED_LEVEL, 'Advanced'),
+    )
+    
+    ALPHA_TYPE = 'A'
+    NUMERIC_TYPE = 'N'
+    ALPHA_NUMERIC_TYPE = 'AN'
+    PASSWORD_TYPE = 'P'
+    IP_TYPE = 'IP'
+    MULTIPLE_IP_TYPE = 'MI'
+    EMAIL_TYPE = 'E'
+    CUSTOM_TYPE = 'CU'
+    
+    SETTING_TYPE_CHOICES = (
+        (ALPHA_TYPE, 'Aphabetic'),
+        (NUMERIC_TYPE, 'Numeric'),
+        (ALPHA_NUMERIC_TYPE, 'Alpha Numeric'),
+        (PASSWORD_TYPE, 'Password'),
+        (IP_TYPE, 'IPv4 Address'),
+        (MULTIPLE_IP_TYPE, 'Multiple IP Addresses'),
+        (EMAIL_TYPE, 'Email'),
+        (CUSTOM_TYPE, 'Custom'),
+    )
+    
+    device = models.ForeignKey(Device, related_name="settings")
+    # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
+    # compond_settings = models.ManyToManyField('self', null=True)
+    label = models.CharField(max_length=50, blank=False)
+    desc = models.CharField(max_length=100, blank=True, default="")
+    level = models.CharField(max_length=1, choices=SETTING_LEVEL_CHOICES,
+                                    default=BASIC_LEVEL)
+    stype = models.CharField(max_length=2, choices=SETTING_TYPE_CHOICES,
+                                    default=ALPHA_NUMERIC_TYPE)
+    standard_label = models.CharField(max_length=50, blank=True, default="")
+    value = models.CharField(max_length=200, blank=True, default="") #  compound settings are generally blank
+    
+    def __str__(self):
+        return self.label + ": " + self.level + ", " + self.stype + ", " + self.value
+
+
+'''
+class DeviceSetting(models.Model):
+    MANDATORY_LEVEL = 'M'
+    BASIC_LEVEL = 'B'
+    OPTIONAL_LEVEL = 'O'
+    ADVANCED_LEVEL = 'A'
+
+    SETTING_LEVEL_CHOICES = (
+        (MANDATORY_LEVEL, 'Mandatory'),
+        (BASIC_LEVEL, 'Basic'),
+        (OPTIONAL_LEVEL, 'Optional'),
+        (ADVANCED_LEVEL, 'Advanced'),
+    )
+    
     ALPHA_TYPE = 'A'
     NUMERIC_TYPE = 'N'
     ALPHA_NUMERIC_TYPE = 'AN'
@@ -58,6 +134,4 @@ class DeviceSetting(models.Model):
     
     def __str__(self):
         return self.label + ": " + self.level + ", " + self.stype + ", " + self.value
-
-
-    
+'''

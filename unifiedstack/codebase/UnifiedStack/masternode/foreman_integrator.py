@@ -36,14 +36,15 @@ class Foreman_Integrator():
 	
 	self.modify_kickstart()
         installationObj=Foreman_Setup(self.console)
-	#installationObj.enable_repos(self.data_dict['redhat_username'],
-        #                              self.data_dict['redhat_password'],
-        #                              self.data_dict['redhat_pool'])
+	installationObj.enable_repos(self.data_dict['redhat_username'],
+                                      self.data_dict['redhat_password'],
+                                      self.data_dict['redhat_pool'])
 	installationObj.foreman_install(self.data_dict['system_hostname'],
                                         self.data_dict['system_ipaddress'],
                                         self.data_dict['domain_name'],
                                         self.data_dict['python_foreman_version'])
 	self.extract_web_user_pass()
+
 	installationObj.setup_dhcp_service(self.data_dict['dhcp_file'],
                                            self.data_dict['subnet'],
                                            self.data_dict['netmask'],
@@ -55,14 +56,17 @@ class Foreman_Integrator():
                                            self.data_dict['option_router'],
                                            self.data_dict['lease_time'],
                                            self.data_dict['max_lease_time'])
+	
 	installationObj.mount(self.data_dict['mount_path'],
                               self.data_dict['rhel_image_url'])
 	self.run_simpleHTTPserver()	
+        
         provisionObj=Provision_Host(self.console,
                                     self.data_dict['foreman_url'],
                                     self.data_dict['foreman_web_username'],
                                     self.data_dict['foreman_web_password'],
                                     self.data_dict['foreman_version'])
+	
 	provisionObj.create_smart_proxy(self.data_dict['system_hostname'] +
                                         "." +
                                         self.data_dict['domain_name'])
@@ -126,9 +130,11 @@ class Foreman_Integrator():
                                        self.data_dict['architecture'])
 	shell_command("service dhcpd restart")
 	# Open up Firewall
-        shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
-        shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
-        shell_command("firewall-cmd --reload")
+        shell_command("service firewalld stop")
+	#shell_command("firewall-cmd --zone=public --add-port=69/udp --permanent")
+        #shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
+        #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
+        #shell_command("firewall-cmd --reload")
 
     def extract_web_user_pass(self):
 	answers=[]
@@ -200,17 +206,17 @@ class Foreman_Integrator():
             
 
     def read_data_from_database(self): 
-        self.data_dict['system_ipaddress'] = '192.168.211.176'
+        self.data_dict['system_ipaddress'] = '192.168.211.174'
         self.data_dict['domain_name']= 'domain.name'
         self.data_dict['nameserver']= '192.168.211.2'
         self.data_dict['option_router']= '192.168.211.2'  #gateway
-        self.data_dict['system_hostname'] = 'buildserver-2'
+        self.data_dict['system_hostname'] = 'buildserver-1'
         self.data_dict['subnet']= '192.168.211.0'         #network address
         self.data_dict['netmask'] = '255.255.255.0' 
         self.data_dict['http_proxy_ip']=''
         self.data_dict['https_proxy_ip']=''
         self.data_dict['https_port']='80'
-        self.data_dict['rhel_image_url']='http://192.168.211.176:8000/rhel-server-7.0-x86_64-dvd.iso'
+        self.data_dict['rhel_image_url']='http://192.168.211.174:8000/rhel-server-7.0-x86_64-dvd.iso'
         self.data_dict['isCSeries']=False
         #redhat
         self.data_dict['redhat_username'] = 'rahuupad2'

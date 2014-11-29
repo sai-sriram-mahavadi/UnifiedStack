@@ -71,10 +71,11 @@ class Installer:
             self.cur +
             "/../data_static/zeromq.repo",
             "/etc/yum.repos.d/zeromq.repo")
-	shell_command("yum install zeromq")
+	shell_command("yum install zeromq -y")
+	shell_command("yum install python-devel -y")
         UnifiedStack_top_dir= file_dir +  "/../../../.."
         virtual_env_path = UnifiedStack_top_dir + "/UnifiedStackVirtualEnv"
-        shell_command("virtualenv  --system-site-packages " + virtual_env_path)
+        shell_command("virtualenv  " + virtual_env_path)
         shell_command("cp -rf " + UnifiedStack_top_dir +
                       "/unifiedstack  " +  virtual_env_path +  "/")
         self.console.cprint_progress_bar("Installing Django", 85)

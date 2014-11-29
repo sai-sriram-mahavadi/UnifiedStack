@@ -22,32 +22,43 @@ import inspect
 import time
 
 class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
+    """ An HttpResponse that renders its content into JSON. """
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
         
 # Create your views here.
-@csrf_exempt
-def device_settings_list(request, dpk):
-    """
-    List all logs, or create a new log.
-    """
-    if request.method == 'GET':
-        settings = DeviceSetting.objects.filter(device_id=dpk)
-        serializer = DeviceSettingSerializer(settings, many=True)
-        return JSONResponse(serializer.data)
-
-    
 def configure(request):
     c = {}
     c["request"] = request
     context = RequestContext(request)
-    return render_to_response("configurator/index.html", c, context_instance=RequestContext(request))
+    return render_to_response("configurator/configurator.html", c, context_instance=RequestContext(request))
 
+
+# Rest API endpoint for configurator
+def device_type_list(request):
+    """ List all devices supported present in the data configuration """
+    if request.method == 'GET':
+        return JSONResponse(DeviceTypeSetting.DEVICE_TYPE_CHOICES)
+
+def device_type_settings_list(request, p_dtype):
+    """ List all device settings provided by a particular dtype """
+    if request.method == 'GET':
+        device_type_settings = DeviceTypeSetting.objects.filter(dtype=p_dtype)
+        serializer = DeviceTypeSettingSerializer(device_type_settings, many=True)
+        return JSONResponse(serializer.data)
+
+
+# Sample code to check working of the configurator
+@csrf_exempt
+def device_settings_list(request, dpk):
+    """ List all logs, or create a new log. """
+    if request.method == 'GET':
+        settings = DeviceSetting.objects.filter(device_id=dpk)
+        serializer = DeviceSettingSerializer(settings, many=True)
+        return JSONResponse(serializer.data)
+    
 def sample(request):
     c = {}
     c["request"] = request

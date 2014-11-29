@@ -14,6 +14,11 @@ from django.db import models
 
 # Initial Model with no data filled..
 # For purpose of understanding the format of settings the device needs.
+# For a compound setting say ("hostsettings"  with "ip" and "password") we may use as follows
+# label (Host Settings(hostname; IP; Password))
+# Standard label (host_settings(hostname;ip; password))
+# value (rootuser;19.19.200.150;fun)
+
 class DeviceTypeSetting(models.Model):
     MANDATORY_LEVEL = 'M'
     BASIC_LEVEL = 'B'
@@ -42,25 +47,13 @@ class DeviceTypeSetting(models.Model):
         (FOREMAN_TYPE, 'Foreman'),
         (GENERAL_TYPE, 'General'),
     )
-    dtype = models.CharField(max_length=2, choices=DEVICE_TYPE_CHOICES)
-    # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
-    # compond_settings = models.ManyToManyField('self', null=True)
-    label = models.CharField(max_length=50, blank=False)
-    desc = models.CharField(max_length=100, blank=True, default="")
-    level = models.CharField(max_length=1, choices=SETTING_LEVEL_CHOICES,
-                                    default=BASIC_LEVEL)
-    multiple = models.BooleanField()
-    standard_label = models.CharField(max_length=50, blank=False)
     
-    def __str__(self):
-        return self.label + ": " + self.level
-
-class SimpleProperty(models.Model):
     ALPHA_TYPE = 'A'
     NUMERIC_TYPE = 'N'
     ALPHA_NUMERIC_TYPE = 'AN'
     PASSWORD_TYPE = 'P'
     IP_TYPE = 'IP'
+    MAC_TYPE = 'MA'
     MULTIPLE_IP_TYPE = 'MI'
     EMAIL_TYPE = 'E'
     CUSTOM_TYPE = 'CU'
@@ -71,26 +64,25 @@ class SimpleProperty(models.Model):
         (ALPHA_NUMERIC_TYPE, 'Alpha Numeric'),
         (PASSWORD_TYPE, 'Password'),
         (IP_TYPE, 'IPv4 Address'),
+        (MAC_TYPE, 'MAC Address'),
         (MULTIPLE_IP_TYPE, 'Multiple IP Addresses'),
         (EMAIL_TYPE, 'Email'),
         (CUSTOM_TYPE, 'Custom'),
     )
-    device_type_setting = models.ForeignKey(DeviceTypeSetting, related_name="compound_settings")
+    level = models.CharField(max_length=1, choices=SETTING_LEVEL_CHOICES,
+                                    default=BASIC_LEVEL)
+    dtype = models.CharField(max_length=2, choices=DEVICE_TYPE_CHOICES)
+    stype = models.CharField(max_length=200)
     # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
     # compond_settings = models.ManyToManyField('self', null=True)
-    label = models.CharField(max_length=50, blank=False)
-    desc = models.CharField(max_length=100, blank=True, default="")
-    stype = models.CharField(max_length=2, choices=SETTING_TYPE_CHOICES,
-                                    default=ALPHA_NUMERIC_TYPE)
-    standard_label = models.CharField(max_length=50, blank=False)
-    value = models.CharField(max_length=200, blank=True, default="") #  compound settings are generally blank
-    
+    label = models.CharField(max_length=200, blank=False)
+    standard_label = models.CharField(max_length=200, blank=False)
+    desc = models.CharField(max_length=200, blank=True, default="")
+    multiple = models.BooleanField()
     def __str__(self):
-        return self.label + ": "  + self.value
+        return self.label + ": " + self.level
 
 class Device(models.Model):
-    # TODO: Set constants for device title to choose only from
-    # a set of networking devices
     title = models.CharField(max_length=50)
     dtype = models.CharField(max_length=2, choices=DeviceTypeSetting.DEVICE_TYPE_CHOICES)
     desc = models.CharField(max_length=200, blank=True)
@@ -98,36 +90,11 @@ class Device(models.Model):
         return self.title + ": " + self.desc
 
 class DeviceSetting(models.Model):
-    MANDATORY_LEVEL = 'M'
-    BASIC_LEVEL = 'B'
-    OPTIONAL_LEVEL = 'O'
-    ADVANCED_LEVEL = 'A'
-    
-    SETTING_LEVEL_CHOICES = (
-        (MANDATORY_LEVEL, 'Mandatory'),
-        (BASIC_LEVEL, 'Basic'),
-        (OPTIONAL_LEVEL, 'Optional'),
-        (ADVANCED_LEVEL, 'Advanced'),
-    )
     device = models.ForeignKey(Device, related_name="settings")
-    # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
-    # compond_settings = models.ManyToManyField('self', null=True)
-    label = models.CharField(max_length=50, blank=True)
-    desc = models.CharField(max_length=100, blank=True, default="")
-    level = models.CharField(max_length=1, choices=SETTING_LEVEL_CHOICES,
-                                    default=BASIC_LEVEL)
-    multiple = models.BooleanField()
-    standard_label = models.CharField(max_length=50, blank=True, default="")
-    
+    device_type_setting = models.ForeignKey(DeviceTypeSetting, related_name="values")
+    value = models.CharField(max_length=200, blank=False)
     def __str__(self):
-        return self.label + ": " + self.level 
-
-class DeviceProperty(models.Model):
-    d
-    value = models.CharField(max_length=200, blank=True, default="") #  compound settings are generally blank
-    
-    def __str__(self):
-        return self.label + ": "  + self.value
+        return self.device_type_setting + ": " + self.value 
 
 '''
 class SimpleProperty(models.Model):

@@ -14,7 +14,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from logger.models import Log, Device, ConsoleLog
-from logger.serializers import LogSerializer, DeviceSerializer, ConsoleLogSerializer
+from configurator.serializers import DeviceSerializer
+from logger.serializers import LogSerializer, ConsoleLogSerializer
 
 
 class JSONResponse(HttpResponse):

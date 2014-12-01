@@ -10,8 +10,8 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-from configurator.models import DeviceSetting, DeviceTypeSetting
-from configurator.serializers import DeviceSettingSerializer, DeviceTypeSettingSerializer
+from configurator.models import Device, DeviceSetting, DeviceTypeSetting
+from configurator.serializers import DeviceSerializer, DeviceSettingSerializer, DeviceTypeSettingSerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
 #from codebase.UnifiedStack.integrator import Integrator
@@ -49,7 +49,25 @@ def device_type_settings_list(request, p_dtype):
         serializer = DeviceTypeSettingSerializer(device_type_settings, many=True)
         return JSONResponse(serializer.data)
 
-
+@csrf_exempt
+def device_list(request):
+    """ List all device settings provided by a particular dtype """
+    print "Came into devices request"
+    if request.method == 'GET':
+        devices = Device.objects.all()
+        serializer = DeviceSerializer(devices, many=True)
+        return JSONResponse(serializer.data)
+    if request.method == "POST":
+        data = JSONParser().parse(request)
+        device = Device(
+            title = data["title"],
+            desc = data["desc"],
+            dtype = data["dtype"]
+        )
+        device.save()
+        serializer = DeviceSerializer(device, many=False)
+        return JSONResponse(serializer.data)
+    
 # Sample code to check working of the configurator
 @csrf_exempt
 def device_settings_list(request, dpk):

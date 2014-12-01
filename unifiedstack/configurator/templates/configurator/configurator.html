@@ -88,7 +88,16 @@
 	    {{ result_message }} <br/>
 	    {% endverbatim %}
 	</div>
-	<button data-ng-click="configure()" width="100%">Submit</button>
+	<button data-ng-click="configure()" width="100%">Submit</button> <br/>
+	
+	<!-- Testing -->
+	<input type="text" ng-model="sample_interpolate_1" /><br/>
+	<input type="text" ng-model="sample_interpolate_2" /><br/>
+	{% verbatim %}
+	{{sample_interpolate_1}}{{sample_interpolate_2}}<br/>
+	<span>{{sample_interpolate_3}}</span><br/>
+	<button data-ng-click="interpolateSample()">Sample Interpolate</button>
+	{% endverbatim %}
     </div>
     <hr>
 	    

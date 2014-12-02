@@ -6,7 +6,7 @@ import shutil
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
 from foreman_setup import Foreman_Setup, Provision_Host
-
+from configurator import fetch_db
 
 class Foreman_Integrator():
 
@@ -148,22 +148,24 @@ class Foreman_Integrator():
                 self.data_dict['foreman_web_password']=line.strip().split(":")[1].strip()
 
     def read_data_from_config_file(self):        
-        self.data_dict['system_ipaddress'] = Config.get_foreman_field('foreman_ipaddress')
-	self.data_dict['domain_name']= Config.get_foreman_field('doman_name')
-        self.data_dict['nameserver']= Config.get_foreman_field('DNS')
-	self.data_dict['option_router']= Config.get_foreman_field('option_router')  #gateway
-	self.data_dict['system_hostname'] = Config.get_foreman_field('foreman_hostname')
-	self.data_dict['subnet']= Config.get_foreman_field('subnet')          #network address
-        self.data_dict['netmask'] = Config.get_foreman_field('netmask')
-	self.data_dict['http_proxy_ip']=Config.get_foreman_field('http_proxy_ip')
-	self.data_dict['https_proxy_ip']=Config.get_foreman_field('https_proxy_ip')
-	self.data_dict['https_port']=Config.get_foreman_field('https_port')
-	self.data_dict['rhel_image_url']=Config.get_general_field("rhel-image-url")
-	self.data_dict['isCSeries']=Config.get_general_field("isCSeries")
+	db_foreman_obj=fetch_db.Foreman()
+	db_general_obj=fetch_db.General()
+        self.data_dict['system_ipaddress'] = db_foreman_obj.get('foreman-ip-address')
+	self.data_dict['domain_name']= db_foreman_obj.get('domain-name')
+        self.data_dict['nameserver']= db_foreman_obj.get('DNS')
+	self.data_dict['option_router']= db_foreman_obj.get('option-router')
+	self.data_dict['system_hostname'] = db_foreman_obj.get('foreman-hostname')
+	self.data_dict['subnet']= db_foreman_obj.get('subnet')
+        self.data_dict['netmask'] = db_foreman_obj.get('netmask')
+	self.data_dict['http_proxy_ip']= db_foreman_obj.get('http-proxy-ip')
+	self.data_dict['https_proxy_ip']= db_foreman_obj.get('https-proxy-ip')
+	self.data_dict['https_port']= db_foreman_obj.get('https-port')
+	self.data_dict['rhel_image_url']= db_general_obj.get('rhel-image-url')
+	self.data_dict['isCSeries']=True
 	#redhat
-	self.data_dict['redhat_username'] = Config.get_foreman_field('redhat_username')
-        self.data_dict['redhat_password'] = Config.get_foreman_field('redhat_password')
-        self.data_dict['redhat_pool'] = Config.get_foreman_field('redhat_pool')
+	self.data_dict['redhat_username'] = db_foreman_obj.get('redhat-username')
+        self.data_dict['redhat_password'] = db_foreman_obj.get('redhat-password')
+        self.data_dict['redhat_pool'] = db_foreman_obj.get('redhat-pool')
 	#foreman
 	self.data_dict['foreman_version']="2.0" 
 	self.data_dict['foreman_url']="https://" + self.data_dict['system_ipaddress']
@@ -199,7 +201,7 @@ class Foreman_Integrator():
 	#python foreman version
 	self.data_dict['python_foreman_version']="0.1.2"
 	self.data_dict['system']={}
-	systems = Config.get_systems_data()
+	systems = db_foreman_obj.get('systems')
         for system in systems:
             self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
                                                        'ip_address':system.ip_address}

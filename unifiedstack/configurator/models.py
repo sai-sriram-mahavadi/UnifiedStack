@@ -73,8 +73,8 @@ class DeviceTypeSetting(models.Model):
                                     default=BASIC_LEVEL)
     dtype = models.CharField(max_length=2, choices=DEVICE_TYPE_CHOICES)
     stype = models.CharField(max_length=200)
-    # compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
-    # compond_settings = models.ManyToManyField('self', null=True)
+    #compond_settings = models.ForeignKey('self', related_name="compound_settings", null=True)
+    #compond_settings = models.ManyToManyField('self', null=True)
     label = models.CharField(max_length=200, blank=False)
     standard_label = models.CharField(max_length=200, blank=False)
     desc = models.CharField(max_length=200, blank=True, default="")
@@ -94,7 +94,7 @@ class DeviceSetting(models.Model):
     device_type_setting = models.ForeignKey(DeviceTypeSetting, related_name="values")
     value = models.CharField(max_length=200, blank=False)
     def __str__(self):
-        return self.device_type_setting + ": " + self.value 
+        return str(self.device_type_setting) + ": " + self.value 
 
 '''
 class SimpleProperty(models.Model):

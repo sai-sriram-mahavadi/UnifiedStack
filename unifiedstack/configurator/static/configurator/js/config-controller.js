@@ -19,7 +19,7 @@
 	    $scope.loadDevices = function () {
 		$http.get($scope.dev_url).then(function (response) {
 		    $scope.devices = response.data;
-		    $scope.loadDeviceFields()
+		    $scope.loadDeviceFields();
 		    /*$scope.loadDeviceFields()*/
 		});
 	    };

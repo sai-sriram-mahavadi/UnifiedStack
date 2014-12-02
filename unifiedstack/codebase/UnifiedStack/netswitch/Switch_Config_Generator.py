@@ -1,11 +1,10 @@
-
 import sys
 import os
 
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from codebase.UnifiedStack.config import Config_Parser
+from UnifiedStack.config import Config_Parser
 # Alias for simple usage of Config parser
 Config = Config_Parser.Config
 
@@ -147,64 +146,74 @@ class SwitchConfigGenerator:
         console_config_lines += "line vty 5 15" + "\n"
         console_config_lines += "login local" + "\n"
         return console_config_lines
-    
-    def get_9k_general_configuration(self):
-        general_config_lines =  "conf t" + "\n"
-        general_config_lines += "hostname " + Config.get_field("Switch-9k", "hostname") + "\n"
-        general_config_lines += "username " + Config.get_field("Switch-9k", "username") + \
-                                Config.get_field("Switch-9k", "password") + "\n"
-        general_config_lines += "copp profile strict " + "\n"
-        general_config_lines += "vrf context management " + "\n"
-        return general_config_lines
 
+    def get_9k_general_configuration(self):
+        general_config_lines =  "conf t" + "\n" + "ip domain-lookup" + "\n"
+        general_config_lines += "hostname " + Config.get_field("Switch-9K", "hostname") + "\n"
+        general_config_lines += "username " + Config.get_field("Switch-9K", "username") 
+        general_config_lines += " password " + Config.get_field("Switch-9K", "password")
+        general_config_lines += " role network-admin" + "\n"
+        general_config_lines += "copp profile strict" + "\n"
+        general_config_lines += "vrf context management" + "\n"
+        return general_config_lines
+    
     def get_9k_vlan_configuration(self):
-        vlan_config_lines = ""
-        vlan_str = Config.get_field("Switch-9k", "vlan")
-        vlan_config_arr = vlan_str.split(', ')
-        for vlan_config in vlan_config_arr:
-            vlan_config_lines += "Vlan" + vlan_config.strip() + "\n"
+        vlan_config_arr = Config.get_field("Switch-9K", "vlan")
+        vlan_config_lines = "vlan " + vlan_config_arr + "\n"
+        vlan_config_lines += "exit" + "\n"
         return vlan_config_lines
 
-    def get_9k_trunk_interface_configuration(self):
+    def get_9k_trunk_interface_configuration(self, int_config_arr):
         trunk_config_lines = ""
-        int_str = Config.get_field("Switch-9k", "trunk-interfaces")
-        int_config_arr = int_str.split(', ')
         for int_config in int_config_arr:
-            trunk_config_lines += "interface " + int_config + "\n"
+            trunk_config_lines += "interface " + int_config.interface + "\n"
+            if not int_config.desc == "":
+                trunk_config_lines += "description " + int_config.desc + "\n"
             trunk_config_lines += "switchport mode trunk" + "\n"
         return trunk_config_lines
-    
-    def get_9k_management_interface_configuration(self, int_config_arr):
-        management_config_lines = ""
-        mgmt_str = Config.get_field("Switch-9k", "managment-interface")
-        mgmt_label = mgmt_str.split("(")[0].strip()
-        other_fields_str = mgmt_str.split("(")[1][:-1].strip()
+
+    def get_9k_management_interface_configuration(self):
+        mgmt_config_lines = ""
+        # TODO give a uniform notation/class design for all types of interfaces
+        mgmt_interface_str = Config.get_field("Switch-9K", "management-interface")
+        mgmt_interface_name = mgmt_interface_str.split("(")[0].strip()
+        other_fields_str = mgmt_interface_str.split("(")[1][:-1].strip()
         other_fields = other_fields_str.split(";")
         ip_address = other_fields[0]
-        subnet = other_fields[1]
-        management_config_lines += "interface" + mgmt_label + "\n"
-        management_config_lines += "ip address " + ip_address + " " + subnet + "\n"
-        return management_config_lines
+        subnet_mask = other_fields[1]
+        mgmt_config_lines += "interface " + mgmt_interface_name + "\n"
+        mgmt_config_lines += "vrf member management" + "\n"
+        mgmt_config_lines += "ip address " + ip_address
+        mgmt_config_lines += " " + subnet_mask
+        return mgmt_config_lines
+
+    def get_9k_interface_configuration(self):
+        interface_config_lines = ""
+        int_config_arr = SwitchExtractor.fetch_interface_config("Switch-9K", "trunk-interfaces")
+        interface_config_lines += self.get_9k_trunk_interface_configuration(int_config_arr)
+        interface_config_lines += self.get_9k_management_interface_configuration()
+        return interface_config_lines
     
     def generate_config_file(self, switch_config_section):
         config_file_name = switch_config_section + "_commands.cmds"
         with open(config_file_name, 'w') as config_file:
-            if switch_config_section=="Switch-3750":
+            if switch_config_section=="switch-3750":
                 # Commands Specific to sw-3750
                 config_file.write( self.get_3750_general_configuration() )
                 config_file.write( self.get_3750_vlan_configuration() )
                 config_file.write( self.get_3750_interface_configuration() )
                 config_file.write( self.get_3750_console_configuration() )
-            elif switch_config_section=="Switch-9k":
+            elif switch_config_section=="switch-9k":
                 # Commands Specific to sw-9k
                 config_file.write( self.get_9k_general_configuration() )
                 config_file.write( self.get_9k_vlan_configuration() )
-                config_file.write( self.get_9k_trunk_interface_configuration() )
-                config_file.write( self.get_9k_management_interface_configuration() )
+                config_file.write( self.get_9k_interface_configuration() )
+                
+                #config_file.write( self.get_3750_console_configuration() )
                 
 
 if __name__=="__main__":
     sw_gen = SwitchConfigGenerator()
-    #sw_gen.generate_config_file("switch-3750")
+    sw_gen.generate_config_file("switch-3750")
     sw_gen.generate_config_file("switch-9k")
     

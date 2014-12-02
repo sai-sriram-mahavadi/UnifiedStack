@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app="configurator"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" ng-app="configurator"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" ng-app="configurator"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app="configurator"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	{% load staticfiles %}
+
+        <link rel="stylesheet" type="text/css" href="{% static 'configurator/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'configurator/css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'configurator/css/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'configurator/css/configuration.css' %}">
+	<style>
+            body {
+                padding-top: 50px;
+            }
+        </style>
+        <script src="{% static 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    {% verbatim %}
+    <!-- Navigation -->
+    <!-- top navbar -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">UnifiedStack - Installer</a>
+        </div>
+	
+        <div class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+	      <li><a href="#">Import</a></li>
+              <li><a href="#">About Us</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Configuration Details</a></li>
+                  <li><a href="#">Project Summary</a></li>
+                  <li class="divider"></li>
+                  <li class="dropdown-header">Problem?</li>
+                  <li><a href="#">Raise an Issue</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">Auto Configure</a></li>
+              <li><a href="../navbar-static-top/">Troubleshoot</a></li>
+              <li><a href="../navbar-fixed-top/">Topology</a></li>
+            </ul>
+        </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row row-offcanvas row-offcanvas-left">
+        
+        <!-- sidebar -->
+        <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" role="navigation">
+            <ul class="nav">
+              <li class="active"><a href="#">1. Cobbler Settings</a></li>
+              <li><a href="#">2. FI Settings</a></li>
+              <li><a href="#">3. Switch Settings</a></li>
+              <li><a href="#">4. Packstack Settings</a></li>              
+            </ul>
+        </div>
+  	
+        <!-- main area -->
+        <div class="col-xs-12 col-sm-10" ng-controller="configController">
+	    <div class="panel panel-default">
+	      <div class="panel-body">
+		Enter the configurations as necessary. Any simple suggestions/header/Errors/Notes/Warning content can be written here.
+		<div> {{ result_message }} </div>
+	      </div>
+	    </div>
+	    <div class="container" ng-repeat="device in devices">
+		<div class="panel panel-primary">
+		    <div class="panel-heading">{{ device.title }} Settings</div>
+		    <div ng-repeat="device_field in devices_fields[device.id]">
+			<div class="input-group" style="width: 100%">
+			    <span class="input-group-addon" style="background:White;width: 200px" >{{ device_field.label }}</span>
+			    <input type="text" class="form-control" style="width:100%" placeholder="{{ device_field.value }}" name="{{device_field.id}}_{{device_field.label}}"
+				ng-model="{{device_field.id}}_{{device_field.label}}"
+			    />
+			</div>
+			<div>
+			    {{ devices_fields[device.id]}}
+			</div>
+		    </div>
+		</div>
+	    </div>
+	    <div class="container" ng-repeat="fields in devices_fields">
+		<div class="panel panel-primary">
+		    <div class="panel-heading">{{ fields.id }} Settings</div>
+		    <div class="input-group" style="width: 100%">
+			<span class="input-group-addon" style="background:White;width: 200px" >Setting</span>
+			<input type="text" class="form-control" style="width:100%" placeholder="{{ fields.label }} value" />
+			<div>{{ fields }}</div>
+		    </div>
+		</div>
+	    </div>
+	    <center><button type="submit" class="btn btn-primary btn-lg" data-ng-click="validate()">Configure</button></center>
+        </div><!-- /.col-xs-12 main -->
+    </div><!--/.row-->
+  </div><!--/.container-->
+  {% endverbatim %}
+      <hr>
+
+      <footer>
+        <p>&copy; Cloud System Development - India, Cisco Systems 2014</p>
+      </footer>
+    </div> <!-- /container -->
+	<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+	
+	<script src="{% static 'configurator/js/vendor/angular.min.js' %}"></script>
+	<script src="{% static 'configurator/js/vendor/angular-resource.js' %}"></script>
+	<script src="{% static 'configurator/js/config-controller.js' %}"></script>
+        <script>window.jQuery || document.write('<script src={% static "js/vendor/jquery-1.11.1.min.js" %}><\/script>')</script>
+        <script src="{% static 'configurator/js/vendor/bootstrap.min.js' %}"></script>
+        <script src="{% static 'configurator/js/plugins.js' %}"></script>
+        <script src="{% static 'configurator/js/main.js' %}"></script>
+    
+    </body>
+</html>

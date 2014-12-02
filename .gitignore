@@ -5,6 +5,9 @@ __pycache__/
 # C extensions
 *.so
 
+#Avoid checkin of answer file
+*.ans
+
 # Distribution / packaging
 .Python
 env/
@@ -51,3 +54,14 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#Ignore any .iso files
+*.iso
+
+#Ignore .swp files
+*.swp
+*.ext~
+
+#Ignore Packstack Answer files
+packstack.cfg
+packstack_result.cfg

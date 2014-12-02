@@ -94,7 +94,7 @@ class DeviceSetting(models.Model):
     device_type_setting = models.ForeignKey(DeviceTypeSetting, related_name="values")
     value = models.CharField(max_length=200, blank=False)
     def __str__(self):
-        return self.device_type_setting + ": " + self.value 
+        return self.value 
 
 '''
 class SimpleProperty(models.Model):

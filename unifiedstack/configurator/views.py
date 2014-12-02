@@ -68,21 +68,30 @@ def device_list(request):
         serializer = DeviceSerializer(device, many=False)
         return JSONResponse(serializer.data)
     
-# Sample code to check working of the configurator
 @csrf_exempt
 def device_settings_list(request, dpk):
     """ List all logs, or create a new log. """
+    print "Came into Device Settings"
     if request.method == 'GET':
         settings = DeviceSetting.objects.filter(device_id=dpk)
         serializer = DeviceSettingSerializer(settings, many=True)
         return JSONResponse(serializer.data)
-    
-def sample(request):
-    c = {}
-    c["request"] = request
-    context = RequestContext(request)
-    return render_to_response("configurator/sample.html", c, context_instance=RequestContext(request))
-
+    if request.method == "POST":
+        print "Post request to device settings"
+        data = JSONParser().parse(request)
+        print dpk, data["type_setting_id"]
+        print Device.objects.get(id=dpk)
+        print DeviceTypeSetting.objects.get(id=data["type_setting_id"])
+        setting = DeviceSetting(
+            value = data["value"],
+            device = Device.objects.get(id=dpk),
+            device_type_setting = DeviceTypeSetting.objects.get(id=data["type_setting_id"])
+        )
+        setting.save()
+        print setting
+        serializer = DeviceSettingSerializer(setting, many=False)
+        return JSONResponse(serializer.data)
+ 
 # ViewSets define the view behavior.
 class DeviceSettingViewSet(viewsets.ModelViewSet):
     queryset = DeviceSetting.objects.all()
@@ -91,6 +100,14 @@ class DeviceSettingViewSet(viewsets.ModelViewSet):
 class DeviceTypeSettingViewSet(viewsets.ModelViewSet):
     queryset = DeviceTypeSetting.objects.all()
     serializer_class = DeviceTypeSettingSerializer
+   
+# Sample code to check working of the configurator
+    
+def sample(request):
+    c = {}
+    c["request"] = request
+    context = RequestContext(request)
+    return render_to_response("configurator/sample.html", c, context_instance=RequestContext(request))
 
     
 # Temporary binding with server itself ( no need for rest-api for this)

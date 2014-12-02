@@ -8,6 +8,7 @@ sys.path.append(root_path)
 
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
+from configurator import fetch_db
 
 class Cobbler_Integrator():
 
@@ -48,11 +49,34 @@ class Cobbler_Integrator():
 	    systems=Config.get_systems_data()
 	    profiles = Config.get_profiles_data()
 	    nameserver=Config.get_cobbler_field('cobbler_DNS')
-            isCSeries=False
+            isCSeries=True
 	else:
+	    db_cobbler_obj=fetch_db.Cobbler()
+	    db_general_obj=fetch_db_General()
 	    #read_ from database
-	    pass
-	
+	    cobbler_interface = db_cobbler_obj.get('cobbler-interface')
+	    cobbler_netmask = db_cobbler_obj.get('cobbler-netmask')
+	    cobbler_server = db_cobbler_obj.get('cobbler-server')
+	    cobbler_next_server = db_cobbler_obj.get('cobbler-next-server')
+	    cobbler_subnet = db_cobbler_obj.get('cobbler-subnet')
+	    cobbler_option_router = db_cobbler_obj.get('cobbler-option-router')
+	    cobbler_DNS = db_cobbler_obj.get('cobbler-DNS')
+	    cobbler_hostname = db_cobbler_obj.get('cobbler-hostname')
+	    cobbler_web_username = db_cobbler_obj.get('cobbler-web-username')
+	    cobbler_web_password = db_cobbler_obj.get('cobbler-web-password')
+	    rhel_image_url = db_general_obj.get('rhel-image-url')
+	    redhat_username = db_cobbler_obj.get('redhat-username')
+	    redhat_password = db_cobbler_obj.get('redhat-password')
+	    redhat_pool = db_cobbler_obj.get('redhat-pool')
+	    http_proxy_ip = db_cobbler_obj.get('http-proxy-ip')
+	    https_proxy_ip = db_cobbler_obj.get('https-proxy-ip')
+	    https_port = db_cobbler_obj.get('https-port')
+	    distro_name = db_cobbler_obj.get('distro')
+	    systems = db_cobbler_obj.get('systems')
+	    profiles = db_cobbler_obj.get('profiles')
+	    nameserver = db_general_obj.get('name-server')
+	    isCSeries = True
+	   
         self.cobbler_postInstall(self.console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
                 rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
@@ -135,11 +159,11 @@ class Cobbler_Integrator():
 	shell_command("cobbler sync")
 	time.sleep(5)
 	shell_command("systemctl restart xinetd.service")
-	if str(isCSeries.title()) == "True" or str(isCSeries.title())=="true":
+	if str(isCSeries.title()) == "False" or str(isCSeries.title())=="false":
 	    result=handle.power_cycle_systems(systems=systems)
 	else:
 	    from fi import FI_PowerCycle
-	    #FI_PowerCycle.FIPowerCycleServer().power_cycle()
+	    FI_PowerCycle.FIPowerCycleServer().power_cycle()
 	time.sleep(400)
 	handle.disable_netboot_systems(systems=systems)  
         console.cprint_progress_bar("Task Completed",100)

@@ -577,6 +577,16 @@ DeviceTypeSetting(
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
+                  stype = values_to_str([DeviceTypeSetting.IP_TYPE]),
+                  label = "Management IP Address",
+                  standard_label="ip-address",
+                  desc = "IP Address of the management interface",
+                  multiple = False,
+                  ).save()
+
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "Username",
                   standard_label="username",
@@ -625,7 +635,7 @@ DeviceTypeSetting(
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "Port Channel(Number; Interfaces)" ,
-                  standard_label="port-channel(number, interfaces)",
+                  standard_label="port-channel(number; interfaces)",
                   desc = "Port Channel Number and comma separated list of Interfaces associated with the port channel",
                   multiple = True,
                   ).save()

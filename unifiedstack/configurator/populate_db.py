@@ -121,6 +121,8 @@ DeviceSetting(device=device, device_type_setting=setting, value="Cisco12345").sa
 device = Device.objects.get(dtype=DeviceTypeSetting.SWITCH_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='switch-type')
 DeviceSetting(device=device, device_type_setting=setting, value="9k").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='ip-address')
+DeviceSetting(device=device, device_type_setting=setting, value="192.168.211.156").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='hostname')
 DeviceSetting(device=device, device_type_setting=setting, value="cvf13-leaf-2").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='username')

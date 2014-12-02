@@ -234,7 +234,7 @@ class Switch:
 		    portchannelObj=Port_Channel()
 		    attributes=interface.value.strip().split(";")
 		    portchannelObj.number=attributes[0].strip()
-		    portchannelObj.number=attributes[1].strip()
+		    portchannelObj.interfaces=attributes[1].strip()
 		    port_channel_list.append(portchannelObj)
 	    else:
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label=attribute.strip())

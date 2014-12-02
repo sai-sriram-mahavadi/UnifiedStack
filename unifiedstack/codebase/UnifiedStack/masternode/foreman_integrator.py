@@ -147,7 +147,7 @@ class Foreman_Integrator():
 	    if 'admin_password' in line:
                 self.data_dict['foreman_web_password']=line.strip().split(":")[1].strip()
 
-    def read_data_from_config_file(self):        
+    def read_data_from_database((self):        
 	db_foreman_obj=fetch_db.Foreman()
 	db_general_obj=fetch_db.General()
         self.data_dict['system_ipaddress'] = db_foreman_obj.get('foreman-ip-address')
@@ -207,7 +207,7 @@ class Foreman_Integrator():
                                                        'ip_address':system.ip_address}
             
 
-    def read_data_from_database(self): 
+    def read_data_from_config_file(self): 
         self.data_dict['system_ipaddress'] = '192.168.211.174'
         self.data_dict['domain_name']= 'domain.name'
         self.data_dict['nameserver']= '192.168.211.2'
@@ -261,14 +261,14 @@ class Foreman_Integrator():
         self.data_dict['python_foreman_version']="0.1.2"
         self.data_dict['system']={}
         #systems = Config.get_systems_data()
-	self.data_dict['system']['crhel-compute']={'mac_address':'00:25:B5:6A:00:1E',
-                                                    'ip_address':'192.168.211.178'}
-	self.data_dict['system']['nrhel1-network']={'mac_address':'00:25:B5:6A:00:06',
-                                                    'ip_address':'192.168.211.179'}
+	#self.data_dict['system']['crhel-compute']={'mac_address':'00:25:B5:6A:00:1E',
+        #                                            'ip_address':'192.168.211.178'}
+	#self.data_dict['system']['nrhel1-network']={'mac_address':'00:25:B5:6A:00:06',
+        #                                            'ip_address':'192.168.211.179'}
 
-        #for system in systems:
-        #    self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
-        #                                               'ip_address':system.ip_address}
+        for system in systems:
+            self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
+                                                       'ip_address':system.ip_address}
 
     def modify_kickstart(self): 
 	#Update kickstart template  

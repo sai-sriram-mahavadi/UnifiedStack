@@ -103,7 +103,12 @@ DeviceSetting(device=device, device_type_setting=setting, value="internal; 172; 
 DeviceSetting(device=device, device_type_setting=setting, value="management; 131; 131").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-service-profile-name')
 DeviceSetting(device=device, device_type_setting=setting, value="demoLS").save()
-
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-boot-vnic')
+DeviceSetting(device=device, device_type_setting=setting, value="Management")
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-boot-policy-name')
+DeviceSetting(device=device, device_type_setting=setting, value="Boot policy 1").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='fi-ip-pool')
+DeviceSetting(device=device, device_type_setting=setting, value="ip_pool1; 19.19.117.10; 19.19.117.20; 19.19.0.100; 19.19.0.0").save()
 
 #Packstack
 device = Device.objects.get(dtype=DeviceTypeSetting.PACKSTACK_TYPE)
@@ -121,6 +126,8 @@ DeviceSetting(device=device, device_type_setting=setting, value="Cisco12345").sa
 device = Device.objects.get(dtype=DeviceTypeSetting.SWITCH_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='switch-type')
 DeviceSetting(device=device, device_type_setting=setting, value="9k").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='ip-address')
+DeviceSetting(device=device, device_type_setting=setting, value="192.168.211.156").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='hostname')
 DeviceSetting(device=device, device_type_setting=setting, value="cvf13-leaf-2").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='username')

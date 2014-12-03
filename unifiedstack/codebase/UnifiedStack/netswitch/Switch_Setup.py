@@ -4,8 +4,10 @@ import os
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
+from configurator import models,fetch_db
+from models import DeviceTypeSetting, Device, DeviceSetting 
 from codebase.UnifiedStack.cli import Console_Output as con
-from Switch_Config_Generator import SwitchConfigGenerator
+#from Switch_Config_Generator import SwitchConfigGenerator
 from codebase.UnifiedStack.config import Config_Parser as cfg
 import paramiko
 # Alias for config parser
@@ -14,7 +16,10 @@ Config = cfg.Config
 class SwitchConfigurator:
     # Returns SSH connection through which terminal needs to be invoked to send
     # a command and recieve it's output
-
+    def switch_configuration_wrapper(self):
+  	switch_device_list=Device.objects.filter(dtype = DeviceTypeSetting.SWITCH_TYPE)
+	for device in switch_device_list:
+	    	
     def establish_connection(self, ipaddress, username, password):
         remote_conn_pre = paramiko.SSHClient()
         # Automatically add untrusted hosts
@@ -52,31 +57,21 @@ class SwitchConfigurator:
         output = remote_conn.recv(5000)
 
     def configure_switch(self, console):
+	switch_device_list=Device.objects.filter(dtype = DeviceTypeSetting.SWITCH_TYPE)
+	console.cprint_progress_bar("Generated config files for switches", 10)
         sw_gen = SwitchConfigGenerator()
-        #sw_gen.generate_config_file("switch-3750")
-        sw_gen.generate_config_file("switch-9k")
-        console.cprint_progress_bar("Generated config files for switches", 10)
-
-        """# Configuring 3750 Switch
-        ip_address_3750 = Config.get_switch_field("3750-ip-address").strip()
-        username_3750 = Config.get_switch_field("3750-username").strip()
-        password_3750 = Config.get_switch_field("3750-password").strip()
-        self.configure_device_with_file(ip_address=ip_address_3750,
-                              username=username_3750,
-                              password=password_3750,
-                              commands_file='switch-3750_commands.cmds')
-        console.cprint_progress_bar("Configured the 3750 switch", 50)
-        sw_gen = SwitchConfigGenerator()"""
-        # Configuring 9k Switch
-        ip_address_9k = Config.get_switch_field("9k-ip-address").strip()
-        username_9k = Config.get_switch_field("9k-username").strip()
-        password_9k = Config.get_switch_field("9k-password").strip()
-        self.configure_device_with_file(ip_address=ip_address_9k,
-                              username=username_9k,
-                              password=password_9k,
-                              commands_file='switch-9k_commands.cmds')
-
-        console.cprint_progress_bar("Configured the N9K switch", 100)
+	for device in switch_device_list:  	
+            #sw_gen.generate_config_file("switch-3750")
+            sw_gen.generate_config_file(device)
+	    Config = fetch_db.Switch(device)
+	    ip_address=Config.get("ip-address")
+	    username=Config.get("username")
+	    password=Config.get("password")
+	    self.configure_device_with_file(ip_address=ip_address,
+			        username=username,
+			        password=password,
+				commands_file='switch-' + Config.get("switch-type") + "_commands.cmds"
+        console.cprint_progress_bar("Configured the  switches", 100)
 
 
 if __name__ == "__main__":

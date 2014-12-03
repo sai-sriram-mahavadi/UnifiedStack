@@ -23,6 +23,7 @@ DeviceTypeSetting.objects.all().delete()
 Device.objects.all().delete()
 DeviceSetting.objects.all().delete()
 
+print "Clearing Completed!!!"
 # TODO: Some Settings will belong to more than one devices. Try to relate the fields for multiple devices.
 # Cobbler - Device
 device_cobbler = Device(
@@ -167,7 +168,7 @@ DeviceTypeSetting(
                   dtype = DeviceTypeSetting.COBBLER_TYPE,
                   stype = values_to_str([DeviceTypeSetting.IP_TYPE]),
                   label = "Domain Name Server IP",
-	          standard_label="cobbler-DNS",
+                  standard_label="cobbler-DNS",
                   desc = "Nameserver of the subnet",
                   multiple = False,
                   ).save()
@@ -473,7 +474,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE,
-					DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                                         DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "FI UUID Pool(Name; Range Start; Range End)",
                   standard_label="fi-uuid-pool(fi-uuid-pool-name; fi-uuid-pool-start; fi-uuid-pool-end)",
                   desc = "UUID Pool",
@@ -484,7 +485,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.MAC_TYPE,
-					 DeviceTypeSetting.MAC_TYPE]),
+                                         DeviceTypeSetting.MAC_TYPE]),
                   label = "FI MAC Pool(Name; Range Start; Range End)",
                   standard_label="fi-mac-pool(fi-mac-pool-name; fi-mac-pool-start; fi-mac-pool-end)",
                   desc = "MAC Pool",
@@ -496,7 +497,7 @@ DeviceTypeSetting(
                   dtype = DeviceTypeSetting.FI_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.IP_TYPE,
                                          DeviceTypeSetting.IP_TYPE,DeviceTypeSetting.IP_TYPE,
-					 DeviceTypeSetting.IP_TYPE]),
+                                         DeviceTypeSetting.IP_TYPE]),
                   label = "FI IP Pool(Name; Range Start; Range End; Default-Gateway; Subnet)",
                   standard_label="fi-ip-pool(fi-ip-pool-name; fi-ip-pool-start; fi-ip-pool-end; default-gateway; subnet)",
                   desc = "IP POOL",
@@ -507,7 +508,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.NUMERIC_TYPE,
-					DeviceTypeSetting.NUMERIC_TYPE]),
+                                         DeviceTypeSetting.NUMERIC_TYPE]),
                   label = "fi-vnic(name; Vlan Range Start,Vlan Range End)",
                   standard_label="fi-vnic(name; vlan-range-start;vlan-range-end)",
                   desc = "FI Virtual NIC name and vlan range associated with vnic",
@@ -526,22 +527,22 @@ DeviceTypeSetting(
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
-		  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
-		  label = "FI Boot policy Name"
-		  standard_label="fi-boot-policy-name"
-		  desc = "FI Boot policy Name"
-		  multiple = false
-		  }.save()
+                  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                  label = "FI Boot policy Name",
+                  standard_label="fi-boot-policy-name",
+                  desc = "FI Boot policy Name",
+                  multiple = False,
+                  ).save()
 
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
-		  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
-                  label = "FI Boot VNIC"
-                  standard_label="fi-boot-vnic"
-                  desc = "FI Boot VNIC"
-                  multiple = false
-                  }.save()
+                  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                  label = "FI Boot VNIC",
+                  standard_label="fi-boot-vnic",
+                  desc = "FI Boot VNIC",
+                  multiple = False,
+                  ).save()
 
 #Packstack Section
 DeviceTypeSetting(
@@ -641,7 +642,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.IP_TYPE,
-					 DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                                         DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "VLAN(ID; IP ; Netmask)",
                   standard_label="vlan(id; ip; netmask)",
                   desc = "Vlan specific information",
@@ -653,7 +654,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE,
-				        DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                                         DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "Interface (Name; Type; Description; Vlan)",
                   standard_label="interface(name; type; description; vlan)",
                   desc = "Information specific to the Interface. Vlan is comma separated list",

@@ -494,10 +494,22 @@ DeviceTypeSetting(
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.FI_TYPE,
+                  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.IP_TYPE,
+                                         DeviceTypeSetting.IP_TYPE,DeviceTypeSetting.IP_TYPE,
+					 DeviceTypeSetting.IP_TYPE]),
+                  label = "FI IP Pool(Name; Range Start; Range End; Default-Gateway; Subnet)",
+                  standard_label="fi-ip-pool(fi-ip-pool-name; fi-ip-pool-start; fi-ip-pool-end; default-gateway; subnet)",
+                  desc = "IP POOL",
+                  multiple = True,
+                  ).save()
+
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.FI_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.NUMERIC_TYPE,
 					DeviceTypeSetting.NUMERIC_TYPE]),
                   label = "fi-vnic(name; Vlan Range Start,Vlan Range End)",
-                  standard_label="fi-vnic(name; vlan-range-start,vlan-range-end)",
+                  standard_label="fi-vnic(name; vlan-range-start;vlan-range-end)",
                   desc = "FI Virtual NIC name and vlan range associated with vnic",
                   multiple = True,
                   ).save()
@@ -511,6 +523,25 @@ DeviceTypeSetting(
                   desc = "FI Service Profile Name",
                   multiple = False,
                   ).save()     
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.FI_TYPE,
+		  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+		  label = "FI Boot policy Name"
+		  standard_label="fi-boot-policy-name"
+		  desc = "FI Boot policy Name"
+		  multiple = false
+		  }.save()
+
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.FI_TYPE,
+		  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                  label = "FI Boot VNIC"
+                  standard_label="fi-boot-vnic"
+                  desc = "FI Boot VNIC"
+                  multiple = false
+                  }.save()
 
 #Packstack Section
 DeviceTypeSetting(
@@ -577,6 +608,16 @@ DeviceTypeSetting(
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
+                  stype = values_to_str([DeviceTypeSetting.IP_TYPE]),
+                  label = "Management IP Address",
+                  standard_label="ip-address",
+                  desc = "IP Address of the management interface",
+                  multiple = False,
+                  ).save()
+
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "Username",
                   standard_label="username",
@@ -625,7 +666,7 @@ DeviceTypeSetting(
                   dtype = DeviceTypeSetting.SWITCH_TYPE,
                   stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE,DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
                   label = "Port Channel(Number; Interfaces)" ,
-                  standard_label="port-channel(number, interfaces)",
+                  standard_label="port-channel(number; interfaces)",
                   desc = "Port Channel Number and comma separated list of Interfaces associated with the port channel",
                   multiple = True,
                   ).save()

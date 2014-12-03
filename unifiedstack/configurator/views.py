@@ -49,6 +49,21 @@ def device_type_settings_list(request, p_dtype):
         serializer = DeviceTypeSettingSerializer(device_type_settings, many=True)
         return JSONResponse(serializer.data)
 
+
+def device_type_setting_get(request, dtsid):
+     """ Returns the device setting corresponding to the given id """
+     if request.method == 'GET':
+        type_setting = DeviceTypeSetting.objects.get(id=dtsid)
+        serializer = DeviceTypeSettingSerializer(type_setting, many=False)
+        return JSONResponse(serializer.data)
+
+@csrf_exempt
+def reload_configuration(request):
+   """ Repopulates the entire database values """
+   import configurator.data_loader
+   import configurator.populate_db
+   return JSONResponse("Success");
+
 @csrf_exempt
 def device_list(request):
     """ List all device settings provided by a particular dtype """
@@ -111,7 +126,7 @@ def configure_setup(request):
                 setting.save()
             else:
                 print "Bad Setting"
-    return JSONResponse("Setting Complete")
+    return JSONResponse("Success")
 
 
 # ViewSets define the view behavior.

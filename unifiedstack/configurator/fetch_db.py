@@ -234,7 +234,7 @@ class Switch:
 		    portchannelObj=Port_Channel()
 		    attributes=interface.value.strip().split(";")
 		    portchannelObj.number=attributes[0].strip()
-		    portchannelObj.number=attributes[1].strip()
+		    portchannelObj.interfaces=attributes[1].strip()
 		    port_channel_list.append(portchannelObj)
 	    else:
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label=attribute.strip())
@@ -262,8 +262,15 @@ class Vnic:
     def __init__(self):
 	self.name=''
         self.start=''
-        self.end=''
-
+	self.end=''
+class Ip_pool:
+    def __init__(self):
+	self.name=''
+	self.start=''
+	self.end=''
+	self.gateway=''
+	self.subnet=''
+    
 class FI:
     def __init__(self):
         self.device=Device.objects.get(dtype=DeviceTypeSetting.FI_TYPE)
@@ -305,8 +312,7 @@ class FI:
                     macpoolObj.end=attributes[2].strip() 
                     macpool_list.append(macpoolObj)
 	        return macpool_list
-
-	    elif attribute=='fi-vnics':
+	    elif attribute.strip()=='fi-vnics':
                 vnic_list=[]
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype,  standard_label__startswith='fi-vnic(')
                 lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
@@ -318,6 +324,20 @@ class FI:
                     vnicObj.end=attributes[2].strip()
                     vnic_list.append(vnicObj)
 		return vnic_list
+	    elif attribute.strip()=='fi-ip-pools':
+                ip_pool_list=[]
+                setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype,  standard_label__startswith='fi-ip-pool(')
+                lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
+                for ippool in lst:
+                    ippoolObj=Ip_pool()
+                    attributes=ippool.value.strip().split(";")
+                    ippoolObj.name=attributes[0].strip()
+                    ippoolObj.start=attributes[1].strip()
+                    ippoolObj.end=attributes[2].strip()
+		    ippoolObj.gateway=attributes[3].strip()
+		    ippoolObj.subnet=attributes[4].strip()
+                    ip_pool_list.append(ippoolObj)
+                return ip_pool_list
             else:
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label=attribute.strip())
                 return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value

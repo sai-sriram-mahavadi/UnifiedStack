@@ -1,22 +1,0 @@
-[95mUnifiedStack - Installer (Beta 1.0)[0m
-```````````````````````````````````
-[>                                                   | 0%]Started Installation of Cobbler
-[1A[2K[>                                                   | 1%]Running Subscription manager
-[1A[2KCOMMAND: subscription-manager register --username=rahuupad2 --password=iso*help123
-
-[1A[2K[>                                                   | 1%]Running Subscription manager
-[1A[2K[=====>                                              | 10%]Updating the System
-[1A[2KCOMMAND: yum update -y
-
-[1A[2K[=====>                                              | 10%]Updating the System
-[1A[2K[=========================>                          | 50%]Enabling the Required Repositories
-[1A[2KCOMMAND: sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms
-
-[1A[2K[=========================>                          | 50%]Enabling the Required Repositories
-[1A[2KCOMMAND: sudo yum-config-manager --enable home_libertas-ict_cobbler26
-
-[1A[2K[=========================>                          | 50%]Enabling the Required Repositories
-[1A[2K[==============================>                     | 60%]Cleaing the repositories list and populating
-[1A[2KCOMMAND: yum clean all
-
-[1A[2K[==============================>                     | 60%]Cleaing the repositories list and populating

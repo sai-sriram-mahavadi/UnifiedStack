@@ -182,23 +182,22 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		$window.alert("Some trouble adding device");
 	    }
 	)
-	return;
-	$window.alert("Check this out man.");
-	//$scope.data.devices.append(newDevice);
-	$window.alert($scope.data.newdevice.id)
     };
     
     $scope.configure = function(){
 	$log.info("Started Configuration");
+	var url = api_prefix + "configurator/api/v1.0/configure";
+	var Configuration = $resource(url,{});
+	var configuration = new Configuration();
 	for (var setting in $scope.data.settings) {
 	    //var setting_interpolation = $interpolate($scope.data.settings[setting]);
 	    setting_value = $scope.$eval($scope.data.settings[setting]);
+	    configuration[setting] = setting_value;
 	    $log.info("Setting: " + setting + ", " + setting_value);
 	    //code
 	}
+	configuration.$save(configuration);
 	return;
-	var url = api_prefix + "configurator/api/v1.0/dtsl/C"
-	var Setting = $resource(url,{}, {charge: {method:'POST', params:{charge:true}}});
 	var setting = new Setting();
 	setting.fun = "fun";
 	var setting_str = 'id';

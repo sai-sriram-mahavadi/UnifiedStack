@@ -92,6 +92,28 @@ def device_settings_list(request, dpk):
         serializer = DeviceSettingSerializer(setting, many=False)
         return JSONResponse(serializer.data)
  
+@csrf_exempt
+def configure_setup(request):
+    print "Configuration started."
+    if request.method == "POST":
+        print "Post request to configure"
+        data = JSONParser().parse(request)
+        for key in data:
+            if key.find("setting_")==0:
+                print "key: ", key, "Value: ", data[key]
+                tokens = key.split("_")
+                #device = Device.objects.get(tokens[1])
+                #type_setting = DeviceTypeSetting.objects.get(tokens[2])
+                print "Setting id: ", tokens[3]
+                setting = DeviceSetting.objects.get(id=tokens[3])
+                print "Got object: ", setting
+                setting.value = data[key]
+                setting.save()
+            else:
+                print "Bad Setting"
+    return JSONResponse("Setting Complete")
+
+
 # ViewSets define the view behavior.
 class DeviceSettingViewSet(viewsets.ModelViewSet):
     queryset = DeviceSetting.objects.all()

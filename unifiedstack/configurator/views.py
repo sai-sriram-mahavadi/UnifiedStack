@@ -10,11 +10,11 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-from configurator.models import DeviceSetting
-from configurator.serializers import DeviceSettingSerializer
+from configurator.models import Device, DeviceSetting, DeviceTypeSetting
+from configurator.serializers import DeviceSerializer, DeviceSettingSerializer, DeviceTypeSettingSerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
-from codebase.UnifiedStack.integrator import Integrator
+#from codebase.UnifiedStack.integrator import Integrator
 
 import ConfigParser
 import os
@@ -22,43 +22,115 @@ import inspect
 import time
 
 class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
+    """ An HttpResponse that renders its content into JSON. """
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
         
 # Create your views here.
-@csrf_exempt
-def device_settings_list(request, dpk):
-    """
-    List all logs, or create a new log.
-    """
-    if request.method == 'GET':
-        settings = DeviceSetting.objects.filter(device_id=dpk)
-        serializer = DeviceSettingSerializer(settings, many=True)
-        return JSONResponse(serializer.data)
-
-    
 def configure(request):
     c = {}
     c["request"] = request
     context = RequestContext(request)
-    return render_to_response("configurator/index.html", c, context_instance=RequestContext(request))
+    return render_to_response("configurator/configurator.html", c, context_instance=RequestContext(request))
 
-def sample(request):
-    c = {}
-    c["request"] = request
-    context = RequestContext(request)
-    return render_to_response("configurator/sample.html", c, context_instance=RequestContext(request))
+
+# Rest API endpoint for configurator
+def device_type_list(request):
+    """ List all devices supported present in the data configuration """
+    if request.method == 'GET':
+        return JSONResponse(DeviceTypeSetting.DEVICE_TYPE_CHOICES)
+
+def device_type_settings_list(request, p_dtype):
+    """ List all device settings provided by a particular dtype """
+    if request.method == 'GET':
+        device_type_settings = DeviceTypeSetting.objects.filter(dtype=p_dtype)
+        serializer = DeviceTypeSettingSerializer(device_type_settings, many=True)
+        return JSONResponse(serializer.data)
+
+@csrf_exempt
+def device_list(request):
+    """ List all device settings provided by a particular dtype """
+    print "Came into devices request"
+    if request.method == 'GET':
+        devices = Device.objects.all()
+        serializer = DeviceSerializer(devices, many=True)
+        return JSONResponse(serializer.data)
+    if request.method == "POST":
+        data = JSONParser().parse(request)
+        device = Device(
+            title = data["title"],
+            desc = data["desc"],
+            dtype = data["dtype"]
+        )
+        device.save()
+        serializer = DeviceSerializer(device, many=False)
+        return JSONResponse(serializer.data)
+    
+@csrf_exempt
+def device_settings_list(request, dpk):
+    """ List all logs, or create a new log. """
+    print "Came into Device Settings"
+    if request.method == 'GET':
+        settings = DeviceSetting.objects.filter(device_id=dpk)
+        serializer = DeviceSettingSerializer(settings, many=True)
+        return JSONResponse(serializer.data)
+    if request.method == "POST":
+        print "Post request to device settings"
+        data = JSONParser().parse(request)
+        print dpk, data["type_setting_id"]
+        print Device.objects.get(id=dpk)
+        print DeviceTypeSetting.objects.get(id=data["type_setting_id"])
+        setting = DeviceSetting(
+            value = data["value"],
+            device = Device.objects.get(id=dpk),
+            device_type_setting = DeviceTypeSetting.objects.get(id=data["type_setting_id"])
+        )
+        setting.save()
+        print setting
+        serializer = DeviceSettingSerializer(setting, many=False)
+        return JSONResponse(serializer.data)
+ 
+@csrf_exempt
+def configure_setup(request):
+    print "Configuration started."
+    if request.method == "POST":
+        print "Post request to configure"
+        data = JSONParser().parse(request)
+        for key in data:
+            if key.find("setting_")==0:
+                print "key: ", key, "Value: ", data[key]
+                tokens = key.split("_")
+                #device = Device.objects.get(tokens[1])
+                #type_setting = DeviceTypeSetting.objects.get(tokens[2])
+                print "Setting id: ", tokens[3]
+                setting = DeviceSetting.objects.get(id=tokens[3])
+                print "Got object: ", setting
+                setting.value = data[key]
+                setting.save()
+            else:
+                print "Bad Setting"
+    return JSONResponse("Setting Complete")
+
 
 # ViewSets define the view behavior.
 class DeviceSettingViewSet(viewsets.ModelViewSet):
     queryset = DeviceSetting.objects.all()
     serializer_class = DeviceSettingSerializer
     
+class DeviceTypeSettingViewSet(viewsets.ModelViewSet):
+    queryset = DeviceTypeSetting.objects.all()
+    serializer_class = DeviceTypeSettingSerializer
+   
+# Sample code to check working of the configurator
+    
+def sample(request):
+    c = {}
+    c["request"] = request
+    context = RequestContext(request)
+    return render_to_response("configurator/sample.html", c, context_instance=RequestContext(request))
+
     
 # Temporary binding with server itself ( no need for rest-api for this)
 # Settings to be read from user (Configurator input fields)
@@ -202,7 +274,7 @@ def server_binding_post(request):
     with open(file_containing_dir + '../codebase/UnifiedStack/data_static/unified_stack2.cfg' ,'wb') as configfile:
         unified_config.write(configfile) 
     """
-    Integrator().get_output()
+    #Integrator().get_output()
     return HttpResponse(status=201)
      
 

@@ -10,13 +10,6 @@ class LogSerializer(serializers.HyperlinkedModelSerializer):
         model = Log
         fields = ('id', 'level', 'message', 'timestamp', 'device_id', 'device_title')
 
-class DeviceSerializer(serializers.HyperlinkedModelSerializer):
-    logs = serializers.RelatedField(source='logs', many=True)
-    settings = serializers.RelatedField(source='settings', many=True)
-    class Meta:
-        model = Device
-        fields = ('id', 'title', 'desc', 'logs', 'settings')
-        
 class ConsoleLogSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
             model = ConsoleLog

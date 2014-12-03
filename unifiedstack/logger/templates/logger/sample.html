@@ -99,9 +99,15 @@
 	    </div>
 	  </div>
 	</div>
-
-
-	<pre>http response data: {{url}} {{ data }}...</pre>
+	<div class="container" ng-repeat="setting in device_settings">
+		<label>{{ setting.device_title }}</label>
+		<input ng-model="{{setting_data}}" />
+		<div class="bg-info" ng-repeat="log in device.logs">{{ log }}</div>
+	</div>
+	<div id="dynamic_form">
+	    
+	</div>
+	<pre>http response data: {{ data }}...</pre>
 
     </div>
     {% endverbatim %}

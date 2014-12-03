@@ -14,7 +14,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from logger.models import Log, Device, ConsoleLog
-from logger.serializers import LogSerializer, DeviceSerializer, ConsoleLogSerializer
+from configurator.serializers import DeviceSerializer
+from logger.serializers import LogSerializer, ConsoleLogSerializer
 
 
 class JSONResponse(HttpResponse):
@@ -46,11 +47,13 @@ def log_list(request):
         return JSONResponse(serializer.data)
 
     elif request.method == 'POST':
-        serializer = LogSerializer(data=request.DATA)
+        print "Post request for logserializer"
+        data = JSONParser().parse(request)
+        serializer = LogSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
     
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])

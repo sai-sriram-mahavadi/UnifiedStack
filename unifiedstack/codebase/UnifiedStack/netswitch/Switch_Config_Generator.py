@@ -6,8 +6,6 @@ sys.path.append(root_path)
 from configurator import fetch_db
 from UnifiedStack.config import Config_Parser
 
-# Alias for simple usage of Config parser
-#Config = fetch_db.Switch(
 # Helper classes to parse Switch Config Data
 class VlanConfig:
     def __init__(self):
@@ -155,6 +153,4 @@ class SwitchConfigGenerator:
 	    
 if __name__=="__main__":
     sw_gen = SwitchConfigGenerator()
-    sw_gen.generate_config_file("switch-3750")
-    sw_gen.generate_config_file("switch-9k")
     

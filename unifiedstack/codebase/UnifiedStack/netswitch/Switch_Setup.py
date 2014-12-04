@@ -8,18 +8,13 @@ from configurator import models,fetch_db
 from models import DeviceTypeSetting, Device, DeviceSetting 
 from codebase.UnifiedStack.cli import Console_Output as con
 #from Switch_Config_Generator import SwitchConfigGenerator
-from codebase.UnifiedStack.config import Config_Parser as cfg
+#from codebase.UnifiedStack.config import Config_Parser as cfg
 import paramiko
-# Alias for config parser
-Config = cfg.Config
 
 class SwitchConfigurator:
     # Returns SSH connection through which terminal needs to be invoked to send
     # a command and recieve it's output
-    def switch_configuration_wrapper(self):
-  	switch_device_list=Device.objects.filter(dtype = DeviceTypeSetting.SWITCH_TYPE)
-	for device in switch_device_list:
-	    	
+    
     def establish_connection(self, ipaddress, username, password):
         remote_conn_pre = paramiko.SSHClient()
         # Automatically add untrusted hosts
@@ -32,7 +27,6 @@ class SwitchConfigurator:
 
     # Used to configure any switch with reference to the topology provided from
     # config file.
-    # TODO - Commonds file is later auto-generated and not sent as a parameter
     def configure_device_with_file(self, ip_address, username, password, commands_file):
         remote_conn_client = self.establish_connection(
             ipaddress=ip_address,
@@ -58,10 +52,9 @@ class SwitchConfigurator:
 
     def configure_switch(self, console):
 	switch_device_list=Device.objects.filter(dtype = DeviceTypeSetting.SWITCH_TYPE)
-	console.cprint_progress_bar("Generated config files for switches", 10)
+	console.cprint_progress_bar("Generating config files for switches", 10)
         sw_gen = SwitchConfigGenerator()
 	for device in switch_device_list:  	
-            #sw_gen.generate_config_file("switch-3750")
             sw_gen.generate_config_file(device)
 	    Config = fetch_db.Switch(device)
 	    ip_address=Config.get("ip-address")
@@ -70,11 +63,10 @@ class SwitchConfigurator:
 	    self.configure_device_with_file(ip_address=ip_address,
 			        username=username,
 			        password=password,
-				commands_file='switch-' + Config.get("switch-type") + "_commands.cmds"
+				commands_file= device.title + "_commands.cmds"
         console.cprint_progress_bar("Configured the  switches", 100)
 
 
 if __name__ == "__main__":
     sw_config = SwitchConfigurator()
     # sw_config.configure_switch(con.ConsoleOutput())
-    # sw_config.establish_connection("10.106.16.253", "sdu", "1@#$sDu%^7")

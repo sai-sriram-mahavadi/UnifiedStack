@@ -383,7 +383,7 @@ DeviceTypeSetting(
                   level = DeviceTypeSetting.OPTIONAL_LEVEL,
                   dtype = DeviceTypeSetting.FOREMAN_TYPE,
                   stype = values_to_str([DeviceTypeSetting.IP_TYPE,DeviceTypeSetting.IP_TYPE,DeviceTypeSetting.NUMERIC_TYPE]),
-                  label = "Proxy (Http Proxy IP; Https Proxy IP; Https Port",
+                  label = "Proxy (Http Proxy IP; Https Proxy IP; Https Port)",
                   standard_label="proxy(http-proxy-ip; https-proxy-ip; https-port)",
                   desc = "If the network has web proxy ",
                   multiple = False,

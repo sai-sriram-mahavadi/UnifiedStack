@@ -111,12 +111,12 @@ class SwitchConfigGenerator:
                 trunk_config_lines += "switchport mode trunk" + "\n"
         return trunk_config_lines
 
-    def get_portchannel_interface_configuration(self, int_config_arr):
+    def get_portchannel_interface_configuration(self, device):
         portchannel_config_lines = ""
 	Config = fetch_db.Switch(device)
         port_channel_list=Config.get("port-channels")
         for port_channel in port_channel_list :
-	    interface_list=port_channel.interfaces.strip().split(",").strip()
+	    interface_list=port_channel.interfaces.strip().split(",")
 	    for interface in interface_list:
                 portchannel_config_lines += "interface " + interface + "\n"
                 portchannel_config_lines += "channel-group " + port_channel.number + "  mode active" + "\n"
@@ -124,9 +124,9 @@ class SwitchConfigGenerator:
 
     def get_interface_configuration(self,device):
         interface_config_lines = "" 
-        interface_config_lines += self.get_3750_access_interface_configuration(device)    
-        interface_config_lines += self.get_3750_trunk_interface_configuration(device)
-        interface_config_lines += self.get_3750_portchannel_interface_configuration(device)
+        interface_config_lines += self.get_access_interface_configuration(device)    
+        interface_config_lines += self.get_trunk_interface_configuration(device)
+        interface_config_lines += self.get_portchannel_interface_configuration(device)
         return interface_config_lines
 
     def get_console_configuration(self):
@@ -144,7 +144,7 @@ class SwitchConfigGenerator:
         return console_config_lines  
    
     def generate_config_file(self, device):
-        config_file_name = device.title  + "_commands.cmds"
+        config_file_name = str(device.id)  + "_commands.cmds"
         with open(config_file_name , 'w') as config_file:
    	    config_file.write( self.get_general_configuration(device))   
             config_file.write( self.get_vlan_configuration(device))

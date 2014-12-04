@@ -96,10 +96,11 @@ class Integrator:
         
     def configure_unifiedstack(self):
         console = cli.ConsoleOutput()
-        #shi.ShellInterpretter.set_console(console)
-        #shell = shi.ShellInterpretter()
+        shi.ShellInterpretter.set_console(console)
+        shell = shi.ShellInterpretter()
 
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")      
+	"""
 	#FI
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
@@ -109,6 +110,7 @@ class Integrator:
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
+	"""
 	#LIFE_CYCLE
 	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
@@ -294,7 +296,7 @@ if __name__ == "__main__":
     from configurator import fetch_db
     integrator = Integrator()  
     integrator.configure_unifiedstack()
-    integrator.test_poll()  
+    #integrator.test_poll()  
    
 """
 runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]

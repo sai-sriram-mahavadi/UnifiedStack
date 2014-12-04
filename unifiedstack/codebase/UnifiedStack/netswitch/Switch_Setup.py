@@ -1,13 +1,13 @@
 import sys
 import os
-
+import time
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
 
-from configurator import models,fetch_db
-from models import DeviceTypeSetting, Device, DeviceSetting 
+from configurator import fetch_db
+from configurator.models import DeviceTypeSetting, Device, DeviceSetting 
 from codebase.UnifiedStack.cli import Console_Output as con
-#from Switch_Config_Generator import SwitchConfigGenerator
+from Switch_Config_Generator import SwitchConfigGenerator
 #from codebase.UnifiedStack.config import Config_Parser as cfg
 import paramiko
 
@@ -40,13 +40,15 @@ class SwitchConfigurator:
             # times if fail
             success = False
             attempts = 0
-            while (success == False) and (attempts < 3):
+	    remote_conn.send(line)
+	    output = remote_conn.recv(1000) 
+            while (success == False) and (attempts < 3):	
                 try:
                     remote_conn.send(line)
                     time.sleep(1)
                     success = True
-                except Exception as e:
-                    # print "Connection is not established : " + e.strerror
+                except Exception as e:	
+                    #print "Connection is not established : " 
                     attempts += 1
         output = remote_conn.recv(5000)
 
@@ -63,7 +65,7 @@ class SwitchConfigurator:
 	    self.configure_device_with_file(ip_address=ip_address,
 			        username=username,
 			        password=password,
-				commands_file= device.title + "_commands.cmds"
+				commands_file= str(device.id) + "_commands.cmds")
         console.cprint_progress_bar("Configured the  switches", 100)
 
 

@@ -221,7 +221,7 @@ class Switch:
 		    vlan_list.append(vlanObj)
 	        return vlan_list
 	    elif attribute.strip()=='interfaces':
-		interfaces_list=[]
+		interface_list=[]
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='interface(name')
                 lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
                 for interface in lst:
@@ -231,7 +231,7 @@ class Switch:
                     interfaceObj.type=attributes[1].strip()
 		    interfaceObj.description=attributes[2].strip()
                     interfaceObj.vlan=attributes[3].strip()
-                    vlan_list.append(interfaceObj)
+                    interface_list.append(interfaceObj)
                 return interface_list
 	    elif attribute.strip()=='port-channels':
 		port_channel_list=[]
@@ -239,10 +239,11 @@ class Switch:
 		lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
 		for port_channel in lst:
 		    portchannelObj=Port_Channel()
-		    attributes=interface.value.strip().split(";")
+		    attributes=port_channel.value.strip().split(";")
 		    portchannelObj.number=attributes[0].strip()
 		    portchannelObj.interfaces=attributes[1].strip()
 		    port_channel_list.append(portchannelObj)
+		return port_channel_list
 	    else:
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label=attribute.strip())
                 return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value

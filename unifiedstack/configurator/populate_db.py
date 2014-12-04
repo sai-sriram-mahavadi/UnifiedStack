@@ -1,6 +1,6 @@
 
 from configurator.models import Device, DeviceTypeSetting, DeviceSetting
-
+print "Cobbler"
 #Cobbler Device
 device = Device.objects.get(dtype=DeviceTypeSetting.COBBLER_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='compute-host(host-name;')
@@ -37,21 +37,23 @@ DeviceSetting(device=device, device_type_setting=setting, value="rahuupad2;iso*h
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='proxy(http-')
 DeviceSetting(device=device, device_type_setting=setting, value=";;").save()
 
-
+print "general"
 #GENERAL
 device = Device.objects.get(dtype=DeviceTypeSetting.GENERAL_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='name-server')
 DeviceSetting(device=device, device_type_setting=setting, value="192.168.211.2").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='enable-fi')
 DeviceSetting(device=device, device_type_setting=setting, value="True").save()
-setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='host-ip-address(')
-DeviceSetting(device=device, device_type_setting=setting, value="192.168.211.178;root").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='host-ip-address')
+DeviceSetting(device=device, device_type_setting=setting, value="192.168.211.178").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='host-password')
+DeviceSetting(device=device, device_type_setting=setting, value="root").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='life-cycle-manager')
 DeviceSetting(device=device, device_type_setting=setting, value="Foreman").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='openstack-provisioner')
 DeviceSetting(device=device, device_type_setting=setting, value="Packstack").save()
 
-
+print "Foreman"
 #Foreman
 device = Device.objects.get(dtype=DeviceTypeSetting.FOREMAN_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='compute-host(h')
@@ -76,7 +78,7 @@ DeviceSetting(device=device, device_type_setting=setting, value=";;").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='redhat-info(')
 DeviceSetting(device=device, device_type_setting=setting, value="rahuupad2;iso*help123;8a85f98444de1da50144e5c4aeae67d0").save()
 
-
+print "FI"
 #FI
 device = Device.objects.get(dtype=DeviceTypeSetting.FI_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-mgmt-native-vlan')
@@ -104,12 +106,13 @@ DeviceSetting(device=device, device_type_setting=setting, value="management; 131
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-service-profile-name')
 DeviceSetting(device=device, device_type_setting=setting, value="demoLS").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-boot-vnic')
-DeviceSetting(device=device, device_type_setting=setting, value="Management")
+DeviceSetting(device=device, device_type_setting=setting, value="Management").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='fi-boot-policy-name')
 DeviceSetting(device=device, device_type_setting=setting, value="Boot policy 1").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='fi-ip-pool')
 DeviceSetting(device=device, device_type_setting=setting, value="ip_pool1; 19.19.117.10; 19.19.117.20; 19.19.0.100; 19.19.0.0").save()
 
+print "Packstack"
 #Packstack
 device = Device.objects.get(dtype=DeviceTypeSetting.PACKSTACK_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='enable-openvswitch')
@@ -121,8 +124,9 @@ DeviceSetting(device=device, device_type_setting=setting, value="physnet:1000:15
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='keystone-admin-pw')
 DeviceSetting(device=device, device_type_setting=setting, value="Cisco12345").save()
 
-
+print "Switch"
 #Switch
+
 device = Device.objects.get(dtype=DeviceTypeSetting.SWITCH_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='switch-type')
 DeviceSetting(device=device, device_type_setting=setting, value="9k").save()

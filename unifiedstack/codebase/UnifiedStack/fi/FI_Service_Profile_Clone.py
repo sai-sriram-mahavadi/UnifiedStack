@@ -18,12 +18,12 @@ from FI_Config_Base import FIConfiguratorBase
 
 class FICloneConfigurator(FIConfiguratorBase):
   # Cloning Service Profile
-    def clone_profile(self, name, service_profile_name):
+    def clone_profile(self,name,service_profile_name):
         handle = self.handle
         handle.StartTransaction()
         handle.LsClone(
             dn="org-root/ls-"+service_profile_name,
-            inServerName=name,
+            inServerName = name,
             inTargetOrg="org-root",
             inHierarchical="Yes",
             dumpXml=None)

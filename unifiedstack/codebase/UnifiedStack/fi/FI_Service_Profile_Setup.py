@@ -34,7 +34,7 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
                                  ucs.FabricVlan.ID: vlan_id,
                                  ucs.FabricVlan.NAME: vlan_name})
 
-    def associate_vlan_vnic(self, vlan_name, uuid_name, mac_name, vnic_name, service_profile_name, switch_id):
+    def associate_vlan_vnic(self, vlan_name, uuid_name, mac_name, vnic_name, service_profile_name, switch_id, boot_policy_name, ip_pool_name):
         # Create Service Profile
         handle = self.handle
         handle.StartTransaction()
@@ -46,7 +46,8 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
                                      {ucs.LsServer.NAME: service_profile_name,
                                       ucs.LsServer.UUID: "0",
                                       ucs.LsServer.IDENT_POOL_NAME: uuid_name,
-                                      ucs.LsServer.BOOT_POLICY_NAME: boot_policy_name
+                                      ucs.LsServer.BOOT_POLICY_NAME: boot_policy_name,
+                                      ucs.LsServer.EXT_IP_POOL_NAME: ip_pool_name
                                       ucs.LsServer.DN: "org-root/ls-" + service_profile_name}, True) 
         mo_1 = FIUtils.addOrOverrideMO(mo,
                                        ucs.VnicEther.ClassId(),
@@ -65,7 +66,7 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
         handle.CompleteTransaction()
 
 if __name__ == "__main__":
-    sp_config = FIServiceProfileConfigurator()
+k    sp_config = FIServiceProfileConfigurator()
     for i in range(1, 10):
         sp_config.add_vlan(10 + i, "test" + str(i))
     for i in range(10, 11):

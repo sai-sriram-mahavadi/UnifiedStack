@@ -14,7 +14,6 @@ from configurator.models import Device, DeviceSetting, DeviceTypeSetting
 from configurator.serializers import DeviceSerializer, DeviceSettingSerializer, DeviceTypeSettingSerializer
 from logger.serializers import LogSerializer
 from logger.models import ConsoleLog
-#from codebase.UnifiedStack.integrator import Integrator
 
 import ConfigParser
 import os
@@ -60,8 +59,8 @@ def device_type_setting_get(request, dtsid):
 @csrf_exempt
 def reload_configuration(request):
    """ Repopulates the entire database values """
-   import configurator.data_loader
-   import configurator.populate_db
+   execfile("configurator/data_loader.py");
+   execfile("configurator/populate_db.py");
    return JSONResponse("Success");
 
 @csrf_exempt
@@ -82,7 +81,16 @@ def device_list(request):
         device.save()
         serializer = DeviceSerializer(device, many=False)
         return JSONResponse(serializer.data)
-    
+
+@csrf_exempt
+def device_of_type_list(request, p_dtype):
+    """ List all device settings provided by a particular dtype """
+    print "Came into devices request"
+    devices = Device.objects.filter(dtype=p_dtype)
+    serializer = DeviceSerializer(devices, many=True)
+    return JSONResponse(serializer.data)
+ 
+
 @csrf_exempt
 def device_settings_list(request, dpk):
     """ List all logs, or create a new log. """
@@ -108,7 +116,7 @@ def device_settings_list(request, dpk):
         return JSONResponse(serializer.data)
  
 @csrf_exempt
-def configure_setup(request):
+def save_configuration(request):
     print "Configuration started."
     if request.method == "POST":
         print "Post request to configure"
@@ -128,6 +136,12 @@ def configure_setup(request):
                 print "Bad Setting"
     return JSONResponse("Success")
 
+@csrf_exempt
+def configure_setup(request):
+    print "Configuration started."
+    if request.method == "POST":
+        fake_output()
+    return JSONResponse("Success")
 
 # ViewSets define the view behavior.
 class DeviceSettingViewSet(viewsets.ModelViewSet):
@@ -144,7 +158,7 @@ def sample(request):
     c = {}
     c["request"] = request
     context = RequestContext(request)
-    return render_to_response("configurator/sample.html", c, context_instance=RequestContext(request))
+    return render_to_response("configurator/configurator_index.html", c, context_instance=RequestContext(request))
 
     
 # Temporary binding with server itself ( no need for rest-api for this)
@@ -291,5 +305,42 @@ def server_binding_post(request):
     """
     #Integrator().get_output()
     return HttpResponse(status=201)
-     
+
+def console_output(msg):
+    ConsoleLog(console_summary=msg).save()
+    
+def fake_output():
+    print "Started at get_output"
+    console_output("Software pre installation phase completed")
+    console_output("FI Configuration Started")
+    time.sleep(3)
+    console_output("FI Port Setup completed")
+    time.sleep(2)
+    console_output("FI Pools Setup completed")
+    time.sleep(2)
+    console_output("FI Service Profiles created")
+    console_output("FI Service Profile associated")
+    time.sleep(1)
+    console_output("FI Console IP assigned")
+    time.sleep(10)
+    console_output("Switch Configuration started")
+    time.sleep(2)
+    console_output("Switch Config files generated")
+    time.sleep(4)
+    console_output("Switch 9K configured")
+    time.sleep(2)
+    console_output("Cobbler Postboot installation started")
+    time.sleep(3)
+    console_output("Cobbler distro created")
+    time.sleep(2)
+    console_output("Cobbler Profile created")
+    time.sleep(1)
+    console_output("Cobbler system created")
+    time.sleep(10)
+    console_output("Packstack setup started")
+    time.sleep(2)
+    console_output("Packstack answer file generated")
+    time.sleep(2)
+    console_output("Openstack configured")
+    time.sleep(2)
 

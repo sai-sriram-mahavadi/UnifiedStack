@@ -99,15 +99,41 @@
     }
 }
 
+
+#devices-holder{
+    padding:5px;
+}
+
 /* Setting related styles */
 .type-setting{
     border: solid;
-    border-width: 2px;
-    border-color: #333;
+    padding: 2px;
+    border-width: 1px;
+    border-color: Gray;
 }
 
 .setting{
     border: solid;
-    border-width: 2px;
-    border-color: Blue;
+    border-width: 1px;
+    margin: 4px;
+    padding: 2px;
+    border-color: Gray;
 }
+
+.setting_label{
+    margin-right: 200px;
+}
+
+
+/* cellpadding */
+th, td { padding: 5px; }
+
+/* cellspacing */
+table { border-collapse: separate; border-spacing: 5px; } 
+table { border-collapse: collapse; border-spacing: 0; } 
+
+/* valign */
+th, td { vertical-align: top; }
+
+/* align (center) */
+table { margin: 0 auto; }

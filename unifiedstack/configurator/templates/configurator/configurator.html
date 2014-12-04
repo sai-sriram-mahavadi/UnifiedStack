@@ -29,7 +29,7 @@
 
         <script src="{% static 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
     </head>
-    <body>
+    <body ng-controller="mainController">
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -62,7 +62,7 @@
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Auto Configure</a></li>
+              <li><a href="#" data-ng-click="reloadConfiguration()">Auto Configure</a></li>
               <li><a href="../navbar-static-top/">Troubleshoot</a></li>
               <li><a href="../navbar-fixed-top/">Topology</a></li>
             </ul>
@@ -72,7 +72,7 @@
     </div>
 
     
-    <div class="container_fluid" ng-controller="mainController">
+    <div class="container_fluid" >
     <div class="row row-offcanvas row-offcanvas-left">
     <!-- sidebar -->
         <div class="col-xs-6 col-sm-2 sidebar-offcanvas" id="sidebar" role="navigation" style="background-color: #d9edf7;height: 900px;">
@@ -89,15 +89,7 @@
 	    {% endverbatim %}
 	</div>
 	<button data-ng-click="configure()" width="100%">Submit</button> <br/>
-	
-	<!-- Testing -->
-	<input type="text" ng-model="sample_interpolate_1" /><br/>
-	<input type="text" ng-model="sample_interpolate_2" /><br/>
-	{% verbatim %}
-	{{sample_interpolate_1}}{{sample_interpolate_2}}<br/>
-	<span>{{sample_interpolate_3}}</span><br/>
-	<button data-ng-click="interpolateSample()">Sample Interpolate</button>
-	{% endverbatim %}
+
     </div>
     <hr>
 	    

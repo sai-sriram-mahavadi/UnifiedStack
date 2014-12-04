@@ -99,4 +99,15 @@
     }
 }
 
+/* Setting related styles */
+.type-setting{
+    border: solid;
+    border-width: 2px;
+    border-color: #333;
+}
 
+.setting{
+    border: solid;
+    border-width: 2px;
+    border-color: Blue;
+}

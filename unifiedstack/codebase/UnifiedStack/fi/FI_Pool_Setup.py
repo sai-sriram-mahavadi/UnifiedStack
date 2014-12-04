@@ -60,3 +60,25 @@ class FIPoolConfigurator(FIConfiguratorBase):
                 ucs.MacpoolBlock.FROM: mac_start,
                 ucs.MacpoolBlock.TO: mac_end,
                 ucs.MacpoolBlock.DN: "org-root/mac-pool-"+ mac_pool + "/block-" + mac_start + "-" + mac_end})
+
+        #Configure IP Pool
+        def configure_ip_pool(self, ip_pool, ip_start, ip_end, default_gateway, subnet)
+            handle = self.handle
+            obj = handle.GetManagedObject(
+            None, ucs.OrgOrg.ClassId(), {
+                ucs.OrgOrg.DN: "org-root"})
+             mo = FIUtils.addOrOverrideMO(obj,
+                                     ucs.ippoolPool.ClassId(),
+                                     {ucs.ippoolPool.NAME: ip_pool,
+                                      ucs.ippoolPool.DN: "org-root/ip-pool-" + ip_pool,
+                                      ucs.ippoolPool.ASSIGNMENT_ORDER: "sequential"})
+             mo_1 = FIUtils.addOrOverrideMO(
+            mo,
+            ucs.ippoolBlock.ClassId(),
+            {
+                ucs.ippoolBlock.FROM: ip_start,
+                ucs.ippoolBlock.TO: ip_end,
+                ucs.ippoolBlock.DN: "org-root/ip-pool-"+ ip_pool + "/block-" + ip_start + "-" + ip_end,
+                ucs.ippoolBlock.defGW: default_gateway,
+                ucs.ippoolBlock.subnet: subnet})
+            

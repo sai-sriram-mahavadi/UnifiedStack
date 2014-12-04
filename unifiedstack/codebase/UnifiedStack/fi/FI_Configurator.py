@@ -12,7 +12,7 @@
 
 # Common interface to access/configure fi from outside
 
-
+from configurator import fetch_db
 from FI_Config_Parser import FIConfig
 from FI_Port_setup import FIPortConfigurator
 from FI_Pool_Setup import FIPoolConfigurator
@@ -25,26 +25,35 @@ class FIConfigurator:
     def configure_fi_components(self):    
         # Configuring Server and Uplink ports
         port_config = FIPortConfigurator()
-       
-        server_ports = FIConfig.get_server_ports()
+        server_ports = fetch_db.FI().get('fi-server-ports').strip().split(",")
         for server_port in server_ports:
             port_config.configure_server_port(str(server_port), 'sw-A', str(1))
         
-        uplink_ports = FIConfig.get_uplink_ports()
+        uplink_ports = fetch_db.FI().get('fi-uplink-ports').strip().split(",")
         print uplink_ports
         for uplink_port in uplink_ports:
             port_config.configure_uplink_port(str(uplink_port), 'sw-A', str(1))
         # Configuring uuid and mac pools
+        uuid_pool_list=fetch_db.FI().get('fi-uuid-pools')
         pool_config = FIPoolConfigurator()
-        pool_config.configure_uuid_pool( FIConfig.get_uuid_pool_name(),
-                                         FIConfig.get_uuid_pool_start(),
-                                         FIConfig.get_uuid_pool_end())
-        
-        pool_config.configure_mac_pool( FIConfig.get_mac_pool_name(),
-                                        FIConfig.get_mac_pool_start(),
-                                        FIConfig.get_mac_pool_end())
-       
+        for uuid_pool in uuid_pool_list:
+            pool_config.configure_uuid_pool( uuid_pool.name,
+                                         uuid_pool.start,
+                                         uuid_pool.end)
+        mac_pool_list=fetch_db.FI().get('fi-mac-pools')
+        for mac_pool in mac_pool_list:
+            pool_config.configure_mac_pool( mac_pool.name,
+                                        mac_pool.start,
+                                        mac_pool.end)
+        ip_pool_list=fetch_db.FI().get('fi-ip-pools')
+        for ip_pool in ip_pool_list:
+            pool_config.configure_ip_pool( ip_pool.name,
+                                        ip_pool.start,
+                                        ip_pool.end,
+                                        ip_pool.gateway,
+                                        ip_pool.subnet)
         # Configuring service profiles
+        """
         sp_config = FIServiceProfileConfigurator()
         vnic_names = FIConfig.get_vnic_names()
         print vnic_names
@@ -55,18 +64,33 @@ class FIConfigurator:
                 sp_config.associate_vlan_vnic("vlan-"+str(vlan_id), FIConfig.get_uuid_pool_name(),
                                               FIConfig.get_mac_pool_name(), vnic_names[vnic_id-1],
                                               FIConfig.get_service_profile_name(), "A")
+        """
+        vnic_list=fetch_db.FI().get('fi-vnics')
+        for vnic_id in range(1,len(vnic_list)+1):
+            sp_config.add_vlan(vnic_id, vnic_list[vnic_id-1].name)
+            for vlan_id in range(vnic_list[vnic_id-1].start,vnic_list[vnic_id-1].end + 1):
+                sp_config.associate_vlan_vnic("vlan-"+str(vlan_id), uuid_pool_list[0].name,
+                                              mac_pool_list[0].name, vnic_list[vnic_id-1].name,
+                                              fetch_db.FI().get('fi-service-profile-name'),"A",
+                                              fetch_db.FI().get('fi-boot-policy-name'),ip_pool_list[0].name)
+                               
 	clone_config = FICloneConfigurator()
 	for i in range(1, 9):
-       	    clone_config.clone_profile(FIConfig.get_service_profile_name() + str(i), FIConfig.get_service_profile_name())
+       	    clone_config.clone_profile(fetch_db.FI().get('fi-service-profile-name') + str(i), fetch_db.FI().get('fi-service-profile-name'))
 
 	bindconfig = FIBindingConfigurator()
 	for i in range(1, 9):
-	    p_service_profile = FIConfig.get_service_profile_name() + str(i)
+	    p_service_profile = fetch_db.FI().get('fi-service-profile-name') + str(i)
             p_bladeDn = "sys/rack-unit-" + str(i)
             bindconfig.configure_bindings(
                 service_profile=p_service_profile,
                 bladeDn=p_bladeDn)
         print "Completed"
+        boot_policy = FIBootPolicy()
+        boot_policy_name = fetch_db.FI().get('fi-boot-policy-name')
+        boot_policy_vnic = fetch_db.FI().get('fi-boot-vnic')
+        boot_policy.configure_boot_policy(boot_policy_name, boot_policy_vnic)
+        
 
 if __name__ == '__main__':
     ficonfig = FIConfigurator()

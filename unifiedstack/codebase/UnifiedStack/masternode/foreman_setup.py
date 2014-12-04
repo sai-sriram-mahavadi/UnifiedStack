@@ -115,11 +115,12 @@ class Foreman_Setup():
             "1.6/el7/x86_64/foreman-release.rpm")
         shell_command_true(
             "/usr/bin/yum -y install foreman-installer")
+	shell_command("hostname " + hostname)
         with open('/etc/hostname', 'w') as file:
             file.write(hostname)
         with open('/etc/hosts', 'a') as file:
             file.write(ipaddress + " " + hostname + "." + domain_name +
-                       " " + hostname)
+                       " " + hostname + "\n")
         shell_command(
             "foreman-installer")
         shell_command(
@@ -241,6 +242,11 @@ class Provision_Host():
                 self.provision_template_kind_id = template[
                     'template_kind']['id']
 
+    def modify_host(self,host_name):
+	for host in self.connectObj.index_hosts():
+	    if host['host']['name']==host_name:
+		host_id=host['host']['id']	
+	self.connectObj.modify_hosts({'build':False},id=host_id)
 
     def create_host(
             self,

@@ -1,11 +1,11 @@
 import os
 import sys
-root_path = os.path.abspath(r"..")
+root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
-from django.core.management import execute_from_command_line
-execute_from_command_line(sys.argv)
-from configurator.models import Device, DeviceTypeSetting, DeviceSetting
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
+#from django.core.management import execute_from_command_line
+#execute_from_command_line(sys.argv)
+#from configurator.models import Device, DeviceTypeSetting, DeviceSetting
 import django.core.exceptions
 class System:
     def __init__(self):
@@ -420,3 +420,6 @@ if __name__ == "__main__":
     compute_hosts_ip_list=Cobbler().get_compute_hosts_ip()
     for i in compute_hosts_ip_list:
         print i
+    compute_hosts_ip_list=Cobbler().get("systems")
+    for i in  compute_hosts_ip_list:
+	print i.hostname

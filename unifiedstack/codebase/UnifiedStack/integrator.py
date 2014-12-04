@@ -33,15 +33,12 @@ from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
-#from codebase.UnifiedStack.fi import FI_Configurator
-#from logger.models import ConsoleLog
-# To Add
-#name, purpose(networker, compute), os -> name of system
-#system, rhel img (access.redhat)(http server), hostname port
+from configurator import fetch_db
+from configurator.models import Device, DeviceSetting, DeviceTypeSetting
+from codebase.UnifiedStack.fi import FI_Configurator
+from logger.models import ConsoleLog
 
 Config = Config_Parser.Config
-
-
 import zmq
 import random
 
@@ -102,57 +99,55 @@ class Integrator:
         #shi.ShellInterpretter.set_console(console)
         #shell = shi.ShellInterpretter()
 
-        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")       
-        #runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
-        #RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
-        #try:
-        #    runstatus = RUNSTATUSCODE[runstatusmsg]
-        #except Exception:
-        #    print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
-        
-        #if(runstatus <= 0):  # Configuring Cobbler pre-boot
-        #    console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
-        #    self.configure_cobbler_preboot(shell, console)
-        #if(runstatus <= 1):
-        
-	"""
+        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")      
+	#FI
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
-        
+	#SWITCH
         shell.execute_command("yum install python-devel python-paramiko -y")
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
-        """
+	#LIFE_CYCLE
 	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
         if isCobbler==True:
-	    cobbler_config = cobb.Cobbler_Integrator(console,data_source="config_File")
+	    cobbler_config = cobb.Cobbler_Integrator(console,data_source="database")
             cobbler_config.cobbler_postInstall_adapter() 
         else:
 	    foreman_config = fore.Foreman_Integrator(console,data_source="database")
 	    foreman_config.setup_foreman() 
-        """
+        #PACKSTACK
 	tries = 0
-        while not self.poll_all_nodes():
+	cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
+        if len(cobbler_device_list) != 0:
+            system_list=fetch_db.Cobbler().get('systems')
+	    redhat_username=fetch_db.Cobbler().get('redhat-username')
+	    redhat_password=fetch_db.Cobbler().get('redhat-password')
+	    redhat_pool=fetch_db.Cobbler().get('redhat-pool')
+        else:
+            system_list=fetch_db.Foreman().get('systems')
+	    redhat_username=fetch_db.Foreman().get('redhat-username')
+            redhat_password=fetch_db.Foreman().get('redhat-password')
+            redhat_pool=fetch_db.Foreman().get('redhat-pool')
+        while not self.poll_all_nodes(system_list):
             time.sleep(10)
             if tries < MAX_TRIES:
                 tries += 1
             else:
                 break
-        if not self.poll_all_nodes():
+        if not self.poll_all_nodes(system_list):
             console.cprint("Not all systems could boot!!!")
             exit(0)
-        self.configure_nodes(console)
+        self.configure_nodes(console,system_list,redhat_username,redhat_password,redhat_pool)
         console.cprint_progress_bar("Started Configuration of Packstack", 0)
         self.configure_packstack(shell, console)
         """
-        '''           
-        # Configuring CIMC
+	# Configuring CIMC
         console.cprint_progress_bar("Started Configuration of CIMC", 0)
         cimc_config = cimc.CIMCConfigurator(console)
         cimc_config.configure_cimc()
-        '''
+        """
     def console_output(self, msg):
         ConsoleLog(console_summary=msg).save()
     def get_output(self):
@@ -203,20 +198,18 @@ class Integrator:
         # print "Interactive SSH session established"
         return remote_conn_pre
     
-    def configure_nodes(self, console):
+    def configure_nodes(self, console,system_list,redhat_username,redhat_password,redhat_pool):
         self.setup_ssh_key()
-        for system in Config.get_systems_data():
-            # Calling the function to make the ssh co
+	self.ssh_key_exchange(fetch_db.General().get('host-ip-address'), 'root',fetch_db.General().get('host-password'))
+	cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
+        for system in system_list:
+            # Calling the function to make the ssh connection
             self.ssh_key_exchange(system.ip_address, username, password)
             remote_conn_client = self.establish_connection(
                         ipaddress=system.ip_address,
                         username=username,
                         password=password)
-            
-            remote_conn = remote_conn_client.invoke_shell()
-            redhat_username = Config.get_cobbler_field('redhat_username') 
-            redhat_password = Config.get_cobbler_field('redhat_password')   
-            redhat_pool = Config.get_cobbler_field('redhat_pool')
+	    remote_conn = remote_conn_client.invoke_shell()
             remote_conn.send(
                 "subscription-manager register --username=" +
                 redhat_username +
@@ -227,7 +220,6 @@ class Integrator:
             remote_conn.send("subscription-manager attach --pool=" + redhat_pool)
             time.sleep(30)
             console.cprint("Attached pool")
-          
             time.sleep(30)
             remote_conn.send(
                 "sudo yum-config-manager --enable rhel-7-server-openstack-5.0-rpms")
@@ -250,9 +242,9 @@ class Integrator:
             return False
         return True
     
-    def poll_all_nodes(self):
-        overall_poll_result = True        
-        for system in Config.get_systems_data():
+    def poll_all_nodes(self,system_list):
+        overall_poll_result = True      
+        for system in system_list:
             # Calling the function to make the ssh connection
             result = self.establish_connection(
                                 ipaddress=system.ip_address,
@@ -275,9 +267,6 @@ class Integrator:
                 # UnSuccessful
   
     def setup_ssh_key(self):
-	#shell_command("wget https://pypi.python.org/packages/source/p/pip/pip-1.2.1.tar.gz -O /root/pip_tar_file.tar.gz")
-	#shell_command("tar -zxvf /root/pip_tar_file.tar.gz -C /root/")
-	#shell_command("pushd /root/pip-1.2.1; python setup.py install; popd")
 	shell_command("pip install pysftp")
 	shell_command('ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa')
 
@@ -300,4 +289,16 @@ if __name__ == "__main__":
     integrator.configure_unifiedstack()
     integrator.test_poll()  
    
+"""
+runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
+RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
+try:
+    runstatus = RUNSTATUSCODE[runstatusmsg]
+except Exception:
+    print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
+if(runstatus <= 0):  # Configuring Cobbler pre-boot
+    console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
+    self.configure_cobbler_preboot(shell, console)
+if(runstatus <= 1):
+"""
 

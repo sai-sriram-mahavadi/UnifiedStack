@@ -33,17 +33,17 @@ from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
-from configurator import fetch_db
-from configurator.models import Device, DeviceSetting, DeviceTypeSetting
+#from configurator import fetch_db
+#from configurator.models import Device, DeviceSetting, DeviceTypeSetting
 from codebase.UnifiedStack.fi import FI_Configurator
 from logger.models import ConsoleLog
 
 Config = Config_Parser.Config
-import zmq
-import random
 
 class BackEndMessenger:
     def __init__(self):
+        import zmq
+        import random
         self.port = "5556"
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PAIR)
@@ -104,6 +104,7 @@ class Integrator:
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
 	#SWITCH
+	"""
         shell.execute_command("yum install python-devel python-paramiko -y")
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
@@ -142,6 +143,7 @@ class Integrator:
         self.configure_nodes(console,system_list,redhat_username,redhat_password,redhat_pool)
         console.cprint_progress_bar("Started Configuration of Packstack", 0)
         self.configure_packstack(shell, console)
+	"""
         """
 	# Configuring CIMC
         console.cprint_progress_bar("Started Configuration of CIMC", 0)
@@ -285,7 +287,12 @@ def shell_command(fully_qualified_command):
     shell.execute_command(fully_qualified_command)
 
 if __name__ == "__main__":
-    integrator = Integrator()
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)
+    from configurator.models import Device, DeviceTypeSetting, DeviceSetting
+    from configurator import fetch_db
+    integrator = Integrator()  
     integrator.configure_unifiedstack()
     integrator.test_poll()  
    

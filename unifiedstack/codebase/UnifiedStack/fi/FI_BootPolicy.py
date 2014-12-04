@@ -16,27 +16,29 @@
 
 import UcsSdk as ucs
 from FI_Config_Base import FIConfiguratorBase
-
+from FI_Utils import FIUtils
 class FIBootPolicy(FIConfiguratorBase):
-    def configure_boot_policy(self, boot_policy_name, Vnic_name)
+    def configure_boot_policy(self, boot_policy_name, Vnic_name):	
         handle = self.handle
         handle.StartTransaction()
         obj = handle.GetManagedObject(None, ucs.OrgOrg.ClassId(), {ucs.OrgOrg.DN:"org-root"})
-        mo = handle.AddManagedObject(obj, ucs.LsbootPolicy.ClassId(),
-     {ucs.LsbootPolicy.REBOOT_ON_UPDATE:"no",
+	handle.CompleteTransaction()
+        mo = FIUtils.addOrOverrideMO(obj, ucs.LsbootPolicy.ClassId(),
+        {ucs.LsbootPolicy.REBOOT_ON_UPDATE:"no",
         ucs.LsbootPolicy.NAME:boot_policy_name,
         ucs.LsbootPolicy.ENFORCE_VNIC_NAME:"yes",
-        ucs.LsbootPolicy.DN:"org-root/boot-policy-Boot_" + boot_policy_name ,
-        ucs.LsbootPolicy.DESCR:"Boot Policy for Cobbler"})
-        mo_1 = handle.AddManagedObject(mo, ucs.LsbootLan.ClassId(),
-       {ucs.LsbootLan.DN:"org-root/boot-policy-Boot_Local/lan",
+        ucs.LsbootPolicy.DN:"org-root/boot-policy-" + boot_policy_name ,
+        ucs.LsbootPolicy.DESCR:"Boot Policy for Cobbler"})	
+        mo_1 = FIUtils.addOrOverrideMO(mo, ucs.LsbootLan.ClassId(),
+        {ucs.LsbootLan.DN:"org-root/boot-policy-" + boot_policy_name + "/lan",
         ucs.LsbootLan.ORDER:"1", ucs.LsbootLan.PROT:"pxe"}, True)
-        mo_1_1 = handle.AddManagedObject(mo_1, ucs.LsbootLanImagePath.ClassId(),
-         {ucs.LsbootLanImagePath.DN:"org-root/boot-policy-" + boot_policy_name +"/lan/path-primary",
+        mo_1_1 = FIUtils.addOrOverrideMO(mo_1, ucs.LsbootLanImagePath.ClassId(),
+         {ucs.LsbootLanImagePath.DN:"org-root/boot-policy-" + boot_policy_name + "/lan/path-primary",
         ucs.LsbootLanImagePath.VNIC_NAME:Vnic_name,
         ucs.LsbootLanImagePath.TYPE:"primary"})
-        mo_3 = handle.AddManagedObject(mo, ucs.LsbootStorage.ClassId(),
-       {ucs.LsbootStorage.DN:"org-root/boot-policy-" + boot_policy_name + "/storage ",
+        mo_3 = FIUtils.addOrOverrideMO(mo, ucs.LsbootStorage.ClassId(),
+        {ucs.LsbootStorage.DN:"org-root/boot-policy-" + boot_policy_name + "/storage ",
         ucs.LsbootStorage.ORDER:"2"})
-        mo_3_1 = handle.AddManagedObject(mo_3, ucs.LsbootLocalStorage.ClassId(),
-       {ucs.LsbootLocalStorage.DN:"org-root/boot-policy-" + boot_policy_name + "/storage/local-storage"})
+        mo_3_1 = FIUtils.addOrOverrideMO(mo_3, ucs.LsbootLocalStorage.ClassId(),
+        {ucs.LsbootLocalStorage.DN:"org-root/boot-policy-" + boot_policy_name + "/storage/local-storage"})
+	

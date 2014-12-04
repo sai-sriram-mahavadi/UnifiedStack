@@ -6,11 +6,11 @@ import shutil
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
 from foreman_setup import Foreman_Setup, Provision_Host
-from configurator import fetch_db
+
 
 class Foreman_Integrator():
 
-    def __init__(self,console,data_source):
+    def __init__(self,console,data_source='database'):
         self.cur=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
         self.data_dict={}
 	self.read_from_database=False
@@ -147,7 +147,8 @@ class Foreman_Integrator():
 	    if 'admin_password' in line:
                 self.data_dict['foreman_web_password']=line.strip().split(":")[1].strip()
 
-    def read_data_from_database((self):        
+    def read_data_from_database(self):        
+	from configurator import fetch_db
 	db_foreman_obj=fetch_db.Foreman()
 	db_general_obj=fetch_db.General()
         self.data_dict['system_ipaddress'] = db_foreman_obj.get('foreman-ip-address')

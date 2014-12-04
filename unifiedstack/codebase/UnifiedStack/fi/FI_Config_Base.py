@@ -15,13 +15,15 @@
 # such as login handle, etc.
 
 import UcsSdk as ucs
-
+from configurator import fetch_db
 class FIConfiguratorBase:
    
     # Handle used to login and access FI
     handle = ucs.UcsHandle()
-    handle.Login("192.168.131.65", "satroutr", "S6T8UB1i")
-    
+    ip=fetch_db.FI().get('fi-cluster-ip-address') 
+    username=fetch_db.FI().get("fi-cluster-username")
+    password=fetch_db.FI().get("fi-cluster-password")   
+    handle.Login(ip,username,password)
     @staticmethod
     def login(fi_ip, username, password):
         handle.Login(fi_ip, username, password)

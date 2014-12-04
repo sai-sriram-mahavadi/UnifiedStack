@@ -8,7 +8,7 @@ sys.path.append(root_path)
 
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
-from configurator import fetch_db
+
 
 class Cobbler_Integrator():
 
@@ -51,6 +51,7 @@ class Cobbler_Integrator():
 	    nameserver=Config.get_cobbler_field('cobbler_DNS')
             isCSeries=True
 	else:
+	    from configurator import fetch_db
 	    db_cobbler_obj=fetch_db.Cobbler()
 	    db_general_obj=fetch_db_General()
 	    #read_ from database

@@ -623,7 +623,7 @@ DeviceTypeSetting(
                   label = "Username",
                   standard_label="username",
                   desc = "Username",
-                  multiple = True,
+                  multiple = False,
                   ).save()
 
 

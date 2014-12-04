@@ -25,7 +25,7 @@ class FIPortConfigurator(FIConfiguratorBase):
     # Configure Server Port
     # will take params port_id, slot_id
     def configure_server_port(self, server_port, switch, slot_id):
-        # Getting handle from FIConfiguratorBase
+        # Getting handle from FIConfiguratorBase	
         handle = self.handle 
         handle.StartTransaction()
         obj = handle.GetManagedObject(None, ucs.FabricDceSwSrv.ClassId(),

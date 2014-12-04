@@ -23,7 +23,7 @@ class Installer:
         self.console.cprint_progress_bar("Updating", 5)
         shell_command("yum update -y")
         self.console.cprint_progress_bar("Updation done. Enabling repos", 50)
-        #self.enable_repos_foreman()
+        self.enable_repos_foreman()
         self.enable_repos_cobbler()
 	self.install_prerequistes()
         self.disable_SELinux()

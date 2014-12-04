@@ -121,6 +121,7 @@
 				'<b "style="color:Green">Unified Stack Configurator in Progress.<br/> Please donot Interrupt.</b><br/>' + 
 				'<progressbar class="progress-striped active" max="100" value="progress_value" type="info"></progressbar>' + 
 				'<div style="width:430px; height:400px;overflow-y:auto;overflow-x:auto;">' +
+				    'Sample Message' + 
 				    '<div ng-repeat="console_log in console_logs | reverse">' + 
 					'<div><i>{{console_log.console_summary}}</i></div>' +
 				    '</div>' +

@@ -1,13 +1,7 @@
 
-var app = angular.module("configurator", ['ngResource', 'ngDialog', 'ui.bootstrap']);
+var app = angular.module("configurator", ['ngResource', 'ngDialog']);
 
-app.filter('reverse', function() {
-    return function(items) {
-	return items.slice().reverse();
-    };
-});
-
-app.controller("mainController", function($scope,$http,$window,$resource, $compile, $parse, ngDialog, $interpolate, $log, $interval){    
+app.controller("mainController", function($scope,$http,$window,$resource, $compile, $parse, ngDialog, $interpolate, $log){    
     // Result message to be displayed over top of the screen.
     $scope.result_message = "Initial Result Message";
     $scope.$log = $log;
@@ -34,27 +28,24 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	    device_types = response.data;
 	    for (var i=0; i<device_types.length; i++){
 		$scope.data.device_types[device_types[i][0]] = device_types[i][1];
-		/*
 		var device_type_button = '<li><button style="width:100%" type="button"' +
 		    'data-ng-click="showAddDeviceDialog(\'' + device_types[i][0] + '\')"' +
 		    'class="btn btn-success">Add '+ device_types[i][1] + ' Settings</button></li>';
 		// $window.alert(device_type_button);
 		var compiled_device_type_button = $compile(device_type_button)($scope);
 		$('#device-type-nav').append(compiled_device_type_button);
-		*/
 	    }
 	})
     };
     
     $scope.showAddDeviceDialog = function (selectedDevice) {
 	ngDialog.open({            
-	    template: '<center><div >' +
-			'<b "style="color:Green">Add New '+ $scope.data.device_types[selectedDevice] + '</b><br/>' +
-			'<table cellspacing:"10"><tr><th>' +
-			'Title: </th> <td> <input type="text" ng-model="data.newdevice.title" /> </td></tr> <tr><th>' + 
-			'Desc: </th> <td> <input type="text" ng-model="data.newdevice.desc"/> </td></tr> </table>' +
+	    template: '<div ><br/>' +
+			'<b "style="color:Green">Add New '+ $scope.data.device_types[selectedDevice] + '</b><br/>' + 
+			'Title: <input type="text" ng-model="data.newdevice.title" /> <br/>' + 
+			'Desc: <input type="text" ng-model="data.newdevice.desc"/> <br/>' +
 			'<button data-ng-click=addDevice("' + selectedDevice + '")>Add Device</button>' +
-		      '</div></center>',
+		      '</div>',
 	    plain: true,
 	    scope:$scope
 	});
@@ -102,14 +93,14 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		    for (var i=0; i<label_tokens.length; i++) {
 			subsetting_model = setting_model + "_" + i;
 			$log.info("Sub Field: " + label_tokens[i].trim() + "; Id: " + subsetting_model);
-			device_html += '<input type"text" class="form-control" placeholder="' + label_tokens[i].trim() +
+			device_html += '<input type"text" placeholder="' + label_tokens[i].trim() +
 					'" ng-model="' + subsetting_model + '"/>'
 			setting_html += '{{' + subsetting_model + '}};';
 		    }	    
 		} else{
 		    $log.info("Simple  Setting: " + setting_div_id + ", " + label_str);
-		    device_html += '<label style="float:left">' + label + '</label>';
-		    device_html += '<input type="text" class="form-control" ng-model="'+ setting_model + '"/>';
+		    device_html += '<label>' + label + '</label>';
+		    device_html += '<input type="text" ng-model="'+ setting_model + '"/>';
 		    setting_html += '{{' + setting_model + '}};';
 		}
 		if (setting_html.length>=1) { // Removing last semicolon from the set of values
@@ -140,15 +131,9 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	    for (var i=0; i<device_type_settings.length; i++){
 		var type_setting_id = 'setting-'+ newDevice.id + '-' + device_type_settings[i].id;
 		$log.info("Type Setting id: " + type_setting_id);
-		var device_html = '<div id="' + type_setting_id + '" class="type-setting">';
+		var device_html = '<div id="' + type_setting_id + '" class="type-setting">'
 		var label_str = device_type_settings[i].label.trim();
 		if (device_type_settings[i].multiple==true) {
-		    var device_html = '<div id="' + type_setting_id + '">';
-		    /*
-		    var device_html = '<div class="table-responsive">' +
-			    '<table class="table table-bordered table-hover table-striped" id="' +
-			    type_setting_id + '">';
-		    */
 		    $log.info(type_setting_id  + ": is multiple");
 		    var tokens = device_type_settings[i].label.split('(');
 		    var label_main = tokens[0].trim();
@@ -158,7 +143,6 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		    
 		    device_html += '<div style="float:right"><a href="#" data-ng-click="addDeviceSetting(' + newDevice.id + ', ' + device_type_settings[i].id +
 				    ',\'' + device_type_settings[i].label + '\')">Add One</a> | <a href="#" >Add More</a></div> <br/>';
-		    device_html += '</div>';
 		} else if(label_str[label_str.length - 1]==')'){
 		    var tokens = device_type_settings[i].label.split('(');
 		    var label_main = tokens[0].trim();
@@ -202,7 +186,7 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		$log.info("Device Added: " + device_html);
 		var compiled_device_html = $compile(device_html)($scope)
 		// Adding device template to the devices-holder
-		$('#devices-holder').html(compiled_device_html);
+		$('#devices-holder').append(compiled_device_html);
 		// $scope.data.devices.push(value.id);
     		$log.info("Device being added into scope: " + value.id );
 		$scope.addDeviceSettings(value);
@@ -272,7 +256,7 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		for (var i=0; i<label_tokens.length; i++) {
 		    subsetting_model = setting_model + "_" + i;
 		    $log.info("Sub Field: " + label_tokens[i].trim() + "; Id: " + subsetting_model);
-		    device_html += '<input type"text" class="form-control" placeholder="' + label_tokens[i].trim() +
+		    device_html += '<input type"text" placeholder="' + label_tokens[i].trim() +
 				    '" ng-model="' + subsetting_model + '"/>'
 		    setting_html += '{{' + subsetting_model + '}};';
 		    var subsetting_model_var = $parse(subsetting_model);
@@ -281,7 +265,7 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	    } else{
 		$log.info("Simple  Setting: " + setting_div_id + ", " + label_str);
 		device_html += '<label>' + label_str + '</label>';
-		device_html += '<input type="text" class="form-control" ng-model="'+ setting_model + '"/>';
+		device_html += '<input type="text" ng-model="'+ setting_model + '"/>';
 		setting_html += '{{' + setting_model + '}};';
 		var setting_model_var = $parse(setting_model);
 		setting_model_var.assign($scope, setting.value);
@@ -308,45 +292,15 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	})
     };
     
-
-
-    
-    /* Clear all the settings. Useful while reloading existing settings. */
-    $scope.clearSettings = function(){
-	$scope.data.settings = {}
-	$('#devices-holder').html("");
-    }
-    
-    $scope.loadExistingDevicesOfType = function(device_type){
-	$log.info("Starte loading existing devices");
-	$scope.clearSettings();
-	var url = api_prefix + "configurator/api/v1.0/dlist/" + device_type
-	$http.get(url).then(function (response) {
-	    var devices = response.data;
-	    for (var i=0; i<devices.length; i++){
-		$log.info(i + ": Device: Title-" + devices[i].title + " Type-" + devices[i].dtype );
-		$log.info($scope.data.device_types[devices[i].dtype]);
-		var device_html =
-		    '<div id="device-'+ devices[i].id + '">' +
-			'<h2>'+ $scope.data.device_types[devices[i].dtype] + " - " + devices[i].title + '</h2>' + 				    
-		    '</div>'
-		$log.info("Device Added: " + device_html);
-		var compiled_device_html = $compile(device_html)($scope);
-		$('#devices-holder').append(compiled_device_html);
-		$scope.loadExistingDeviceSettings(devices[i]);
-	    }
-	})
-    }
     
     /* Initialization of all the existing devices in the */
     $scope.loadExistingDevices = function(){
 	$log.info("Starte loading existing devices");
-	$scope.clearSettings();
 	var url = api_prefix + "configurator/api/v1.0/dlist"
 	$http.get(url).then(function (response) {
 	    // device_types is an array of arrays: [["S","Switch"],["C","Cobbler"], ...]
 	    var devices = response.data;
-	    for (var i=0; i<devices.length; i++){
+	    for (var i=0; i<devices.length && i<10; i++){
 		$log.info(i + ": Device: Title-" + devices[i].title + " Type-" + devices[i].dtype );
 		$log.info($scope.data.device_types[devices[i].dtype]);
 		var device_html =
@@ -361,6 +315,12 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	})
     };
     
+    /* Clear all the settings. Useful while reloading existing settings. */
+    $scope.clearSettings = function(){
+	$scope.data.settings = {}
+	$('#devices-holder').html("");
+    }
+
     $scope.reloadConfiguration = function(){
 	$window.alert("Reloading the configuration...");
 	var url = api_prefix + "configurator/api/v1.0/reload";
@@ -371,25 +331,9 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	})
     }; 
     
-    $scope.loadGeneralConfiguration = function(){
-	// Check if General Configuration exists. If not add it and display
-	var url = api_prefix + "configurator/api/v1.0/dlist/G"
-	$http.get(url).then(function (response) {
-	    var devices = response.data;
-	    if (devices.length >= 1) {
-		$scope.loadExistingDevicesOfType('G');
-	    } else{
-		$scope.data.newdevice.title = "Common Settings";
-		$scope.data.newdevice.desc = "settings common to all the devices";
-		$scope.addDevice('G');
-	    }
-	})
-	
-    }
-    
-    $scope.saveConfiguration = function(){
+    $scope.configure = function(){
 	$log.info("Started Configuration");
-	var url = api_prefix + "configurator/api/v1.0/saveconfiguration";
+	var url = api_prefix + "configurator/api/v1.0/configure";
 	var Configuration = $resource(url,{});
 	var configuration = new Configuration();
 	for (var setting in $scope.data.settings) {
@@ -401,62 +345,9 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 	}
 	configuration.$save(configuration);
     }
-    
-    $scope.configure = function(){
-	var url = api_prefix + "configurator/api/v1.0/configure";
-	var Configuration = $resource(url,{});
-	var conf = new Configuration();
-	conf.$save(conf,
-	    //success
-	    function( value ){
-		//$scope.progress_value = 100;
-		$window.alert("Configuration Completed Successfully");
-	    },
-	    //error
-	    function( error ){
-		$window.alert("Some trouble adding device")
-	    }
-	 )
-    };
-    
-    $scope.showConfigurationResult = function () {
-	$scope.progress_value = 2;
-	ngDialog.open({            
-	    template: '<div ><br/>' +
-			'<b "style="color:Green">Unified Stack Configurator in Progress.<br/> Please donot Interrupt.</b><br/>' + 
-			'<progressbar class="progress-striped active" max="100" value="progress_value" type="info"></progressbar>' + 
-			'<div style="width:430px; height:400px;overflow-y:auto;overflow-x:auto;">' +
-			    '<div ng-repeat="console_log in console_logs | reverse">' +
-				'<div><i>{{console_log.console_summary}}</i></div>' +
-			    '</div>' +
-			'</div>' +
-		      '</div>',
-	    plain: true,
-	    scope:$scope
-	   
-	});
-	$scope.configure()
-    }  
-
-    $scope.count = 0;
-    $scope.progress_value = 0;
-    $scope.loadConsoleMessages = function(){
-
-	var console_url = 'http://localhost:8000/console';
-	$http.get(console_url).then(function (response) {
-	    $scope.console_logs = response.data; 
-	});
-	if ($scope.progress_value!=0 && $scope.progress_value<=100) {
-	    $scope.progress_value += 2;
-	}
-	$log.info("Called loading console");
-	$scope.count++;
-    };
-    
-    $interval($scope.loadConsoleMessages, 1000);    
     $scope.loadDeviceTypes();
-    $scope.loadGeneralConfiguration();
-    //$scope.loadExistingDevices();
+    $scope.loadExistingDevices();
+
     // Testing
     // $scope.addDevice('S');
     

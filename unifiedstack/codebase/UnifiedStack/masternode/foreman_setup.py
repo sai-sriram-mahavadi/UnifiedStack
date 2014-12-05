@@ -41,7 +41,7 @@ class Foreman_Setup():
             " --password=" +
             redhat_password)
 	shell_command("subscription-manager subscribe --auto")
-        shell_command_true("subscription-manager attach --pool=" + redhat_pool)
+        shell_command("subscription-manager attach --pool=" + redhat_pool)
         self.console.cprint_progress_bar("Updating the System", 5)
         # Enabling the XML repos database of linux for installing
         shell_command("yum update -y")
@@ -214,9 +214,7 @@ class Foreman_Setup():
             " -O  /root/rhel-server-7.0-x86_64-dvd.iso ")
         shell_command(
             "mount -t iso9660  /root/rhel-server-7.0-x86_64-dvd.iso " +
-            mount_path)
-	
-        #shell_command("cp -r /var/www/images/RHEL/images/pxeboot/* /var/lib/tftpboot/boot/")
+            mount_path) 
         # shell_command("rm -rf /root/rhel-server-7.0-x86_64-dvd.iso")
     
     
@@ -242,11 +240,11 @@ class Provision_Host():
                 self.provision_template_kind_id = template[
                     'template_kind']['id']
 
-    def modify_host(self,host_name):
+    def modify_host(self,host_name):		
 	for host in self.connectObj.index_hosts():
 	    if host['host']['name']==host_name:
 		host_id=host['host']['id']	
-	self.connectObj.modify_hosts({'build':False},id=host_id)
+	self.connectObj.update_hosts({'build':False},id=host_id)
 
     def create_host(
             self,

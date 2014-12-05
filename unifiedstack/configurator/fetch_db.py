@@ -46,13 +46,18 @@ class Cobbler:
         for host in lst:
             ip_list.append(host.value.strip().split(";")[1].strip())
         return ip_list
+    
+    def get_controller_host_ip(self):
+	setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='controller-host')
+	host=DeviceSetting.objects.get(device=self.device,device_type_setting=setting)
+	return host.value.strip().split(";")[1].strip()
 
     def get(self,attribute):
 	try:
 	    attribute=attribute.strip()
 	    if attribute=='systems':
 	        system_list=[]
-		for purpose in ['compute','network']:
+		for purpose in ['compute','network','controller']:
                     setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith= purpose + '-host')
                     lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
                     for system in lst:
@@ -106,10 +111,10 @@ class Cobbler:
 
 
 class Foreman:
-     def __init__(self):
+    def __init__(self):
         self.device = Device.objects.get(dtype=DeviceTypeSetting.FOREMAN_TYPE)
 
-     def get_compute_hosts_ip(self):
+    def get_compute_hosts_ip(self):
 	ip_list=[]
 	setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='compute-host')
 	lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
@@ -117,7 +122,7 @@ class Foreman:
 	    ip_list.append(host.value.strip().split(";")[1].strip())
         return ip_list
 
-     def get_network_hosts_ip(self):
+    def get_network_hosts_ip(self):
 	ip_list=[]
         setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='network-host')
         lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
@@ -125,11 +130,16 @@ class Foreman:
             ip_list.append(host.value.strip().split(";")[1].strip())
         return ip_list
 
-     def get(self,attribute):
+    def get_controller_host_ip(self):
+        setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='controller-host')
+        host=DeviceSetting.objects.get(device=self.device,device_type_setting=setting)
+        return host.value.strip().split(";")[1].strip() 
+
+    def get(self,attribute):
         try:
 	    if attribute.strip()=='systems':
                 system_list=[]
-                for purpose in ['compute','network']:
+                for purpose in ['compute','network','controller']:
                     setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith= purpose + '-host')
                     lst=DeviceSetting.objects.filter(device=self.device,device_type_setting=setting)
                     for system in lst:
@@ -417,10 +427,15 @@ if __name__ == "__main__":
         print i
     print "*" * 60
     #Similarly if Foreman is bring used
-    compute_hosts_ip_list=Cobbler().get_compute_hosts_ip()
+    compute_hosts_ip_list=Foreman().get_compute_hosts_ip()
     for i in compute_hosts_ip_list:
         print i
-    compute_hosts_ip_list=Cobbler().get("systems")
+    print "*" * 60
+    compute_hosts_ip_list=Foreman().get("systems")
     for i in  compute_hosts_ip_list:
 	print i.hostname
-    print Cobbler().get("http-proxy-ip")
+    print "*" * 60
+    print Foreman().get("http-proxy-ip")
+    print "*" * 60
+    print Foreman().get_controller_host_ip()
+    

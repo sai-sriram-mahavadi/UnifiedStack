@@ -41,13 +41,15 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
         obj = handle.GetManagedObject(
             None, ucs.OrgOrg.ClassId(), {
                 ucs.OrgOrg.DN: "org-root"})
+        handle.CompleteTransaction()
         mo = FIUtils.addOrOverrideMO(obj,
                                      ucs.LsServer.ClassId(),
                                      {ucs.LsServer.NAME: service_profile_name,
                                       ucs.LsServer.UUID: "0",
                                       ucs.LsServer.IDENT_POOL_NAME: uuid_name,
                                       ucs.LsServer.BOOT_POLICY_NAME: boot_policy_name,
-       #                               ucs.LsServer.EXT_IP_POOL_NAME: ip_pool_name,
+                                      ucs.LsServer.EXT_IPPOOL_NAME: ip_pool_name,
+                                      ucs.LsServer.EXT_IPSTATE:"pooled",
                                       ucs.LsServer.DN: "org-root/ls-" + service_profile_name}, True) 
         mo_1 = FIUtils.addOrOverrideMO(mo,
                                        ucs.VnicEther.ClassId(),
@@ -63,7 +65,7 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
                                     "/if-" + vlan_name,
                 ucs.VnicEtherIf.NAME: vlan_name,
                 ucs.VnicEtherIf.DEFAULT_NET: "no"}, True) 
-        handle.CompleteTransaction()
+        
 
 if __name__ == "__main__":
     sp_config = FIServiceProfileConfigurator()

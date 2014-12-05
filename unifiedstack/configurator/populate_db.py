@@ -4,10 +4,10 @@ print "Cobbler"
 #Cobbler Device
 device = Device.objects.get(dtype=DeviceTypeSetting.COBBLER_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='compute-host(host-name;')
-DeviceSetting(device=device, device_type_setting=setting, value="crhel1; 19.19.150.10;00:35:B5:6A:00:00; Eth1/1;enp9s0;profile1").save()
+DeviceSetting(device=device, device_type_setting=setting, value="crhel1; 19.19.150.10;00:35:B5:6A:00:02; Eth1/1;enp9s0;profile1").save()
 #DeviceSetting(device=device, device_type_setting=setting, value="crhel2; 192.168.211.88;00:56:34:87:34:55; Eth1/1;eno16777736;profile2").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='network-host(host-name')
-DeviceSetting(device=device, device_type_setting=setting, value="nrhel1; 192.168.150.11;00:35:B5:6A:03:E7; Eth1/1 ;enp9s0; profile2").save()
+DeviceSetting(device=device, device_type_setting=setting, value="nrhel1; 192.168.150.11;00:35:B5:6A:00:04; Eth1/1 ;enp9s0; profile2").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='profile(profile-name; distro)')
 DeviceSetting(device=device, device_type_setting=setting, value="profile1;RHEL-7x86_64").save()
 DeviceSetting(device=device, device_type_setting=setting, value="profile2;RHEL-7x86_64").save()
@@ -40,6 +40,8 @@ DeviceSetting(device=device, device_type_setting=setting, value="19.19.0.253;19.
 print "general"
 #GENERAL
 device = Device.objects.get(dtype=DeviceTypeSetting.GENERAL_TYPE)
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='rhel-image-url')
+DeviceSetting(device=device, device_type_setting=setting, value="http://19.19.100.102:8000/rhel-server-7.0-x86_64-dvd.iso").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='name-server')
 DeviceSetting(device=device, device_type_setting=setting, value="72.163.128.140").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='enable-fi')
@@ -57,8 +59,11 @@ print "Foreman"
 #Foreman
 device = Device.objects.get(dtype=DeviceTypeSetting.FOREMAN_TYPE)
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='compute-host(h')
-DeviceSetting(device=device, device_type_setting=setting, value="crhel1; 19.19.150.10;00:35:B5:6A:00:00").save()
-DeviceSetting(device=device, device_type_setting=setting, value="crhel2; 19.19.150.11;00:35:B5:6A:03:E7").save()
+DeviceSetting(device=device, device_type_setting=setting, value="crhel1; 19.19.150.10;00:35:B5:6A:00:02").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='network-host(h')
+DeviceSetting(device=device, device_type_setting=setting, value="nrhel1; 192.168.150.11;00:35:B5:6A:00:04;").save()
+setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label__startswith='network-host(h')
+DeviceSetting(device=device, device_type_setting=setting, value="nrhel1; 192.168.150.12;00:35:B5:6A:00:05;").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='foreman-ip-address')
 DeviceSetting(device=device, device_type_setting=setting, value="19.19.150.3").save()
 setting = DeviceTypeSetting.objects.get(dtype=device.dtype,  standard_label='foreman-hostname')

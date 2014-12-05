@@ -535,7 +535,7 @@ class Provision_Host():
 
     def copy_to_tftp_boot(self,os_name,os_major,os_minor,architecture):
         filename=os_name + "-" + os_major + "." + os_minor + "-" + architecture + "-"
-        src_dir="/var/www/images/RHEL/images/pxeboot/"
+        src_dir="/usr/share/foreman/public/RHEL/images/pxeboot/"
         dest_dir="/var/lib/tftpboot/boot/"
 	if os.path.getsize(dest_dir + filename + "vmlinuz") == 0:
             shell_command("cp -f " + src_dir + "vmlinuz" + " " +

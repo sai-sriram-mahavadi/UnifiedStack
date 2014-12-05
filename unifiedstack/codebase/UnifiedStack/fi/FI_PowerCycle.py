@@ -19,7 +19,7 @@ from FI_Config_Base import FIConfiguratorBase
 from FI_Config_Parser import FIConfig
 
 class FIPowerCycleServer(FIConfiguratorBase):
-    def power_cycle(self)
+    def power_cycle(self):
         #Power Cycle Server
         handle = self.handle
         handle.StartTranscation()

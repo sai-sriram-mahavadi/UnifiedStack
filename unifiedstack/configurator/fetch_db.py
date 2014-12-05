@@ -2,10 +2,10 @@ import os
 import sys
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
-#from django.core.management import execute_from_command_line
-#execute_from_command_line(sys.argv)
-#from configurator.models import Device, DeviceTypeSetting, DeviceSetting
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
+from django.core.management import execute_from_command_line
+execute_from_command_line(sys.argv)
+from configurator.models import Device, DeviceTypeSetting, DeviceSetting
 import django.core.exceptions
 class System:
     def __init__(self):
@@ -78,9 +78,9 @@ class Cobbler:
 		return prof_list
 	    elif 'http' in attribute:
 	        setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='proxy')
-		if attribute.strip()=='http_proxy_ip':
+		if attribute.strip()=='http-proxy-ip':
 		    return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[0].strip()
-		elif attribute.strip()=='https_proxy_ip':
+		elif attribute.strip()=='https-proxy-ip':
 		    return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[1].strip()
 		else:
 		    return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[2].strip()
@@ -151,9 +151,9 @@ class Foreman:
 
 	    elif 'http' in attribute.strip():
                 setting = DeviceTypeSetting.objects.get(dtype=self.device.dtype, standard_label__startswith='proxy')
-                if attribute.strip()=='http_proxy_ip':
+                if attribute.strip()=='http-proxy-ip':
                     return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[0].strip()
-                elif attribute.strip()=='https_proxy_ip':
+                elif attribute.strip()=='https-proxy-ip':
                     return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[1].strip()
                 else:
                     return DeviceSetting.objects.get(device=self.device,device_type_setting=setting).value.strip().split(";")[2].strip()
@@ -423,3 +423,4 @@ if __name__ == "__main__":
     compute_hosts_ip_list=Cobbler().get("systems")
     for i in  compute_hosts_ip_list:
 	print i.hostname
+    print Cobbler().get("http-proxy-ip")

@@ -33,7 +33,8 @@ class Foreman_Integrator():
             self.read_data_from_config_file()
         else:
             self.read_data_from_database()
-	
+	for key,value in self.data_dict.items():
+	    print key + "   " + str(value)	
 	self.modify_kickstart()
         installationObj=Foreman_Setup(self.console)
 	installationObj.enable_repos(self.data_dict['redhat_username'],
@@ -135,6 +136,11 @@ class Foreman_Integrator():
         #shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
         #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
         #shell_command("firewall-cmd --reload")
+	from fi import FI_PowerCycle
+        FI_PowerCycle.FIPowerCycleServer().power_cycle()
+        time.sleep(400)
+	for host_name in self.data_dict['system'].keys():
+	    provisionObj.modify_host(host_name)
 
     def extract_web_user_pass(self):
 	answers=[]
@@ -194,10 +200,10 @@ class Foreman_Integrator():
 	self.data_dict['owner']="Admin"
 	#media
 	self.data_dict['installation_media_name']="Redhat mirror"
-	self.data_dict['installation_media_url']="http://" + system_ipaddress + ":8000/RHEL"
+	self.data_dict['installation_media_url']="http://" + self.data_dict['system_ipaddress'] + ":8000/RHEL"
 	#templates
 	self.data_dict['provision_template_name']="rhel7-osp5.ks"
-	self.data_dict['provision_template_path']=self.cur+ "/../data_static/" + provision_template_name
+	self.data_dict['provision_template_path']=self.cur+ "/../data_static/" + self.data_dict['provision_template_name']
 	self.data_dict['pxelinux_template_name']="Kickstart default PXELinux"
 	#python foreman version
 	self.data_dict['python_foreman_version']="0.1.2"
@@ -206,7 +212,6 @@ class Foreman_Integrator():
         for system in systems:
             self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
                                                        'ip_address':system.ip_address}
-            
 
     def read_data_from_config_file(self): 
         self.data_dict['system_ipaddress'] = '192.168.211.174'

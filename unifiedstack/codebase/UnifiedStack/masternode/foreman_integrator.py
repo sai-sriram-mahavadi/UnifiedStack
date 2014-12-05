@@ -134,7 +134,7 @@ class Foreman_Integrator():
         #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
         #shell_command("firewall-cmd --reload")
 	from fi import FI_PowerCycle
-        #FI_PowerCycle.FIPowerCycleServer().power_cycle()
+        FI_PowerCycle.FIPowerCycleServer().power_cycle()
         time.sleep(400)
 	for host_name in self.data_dict['system'].keys():
 	    provisionObj.modify_host(host_name + "." + self.data_dict['domain_name'])

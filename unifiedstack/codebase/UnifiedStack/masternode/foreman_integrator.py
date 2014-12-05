@@ -33,9 +33,8 @@ class Foreman_Integrator():
         else:
             self.read_data_from_database()	
 	self.modify_kickstart()
-        installationObj=Foreman_Setup(self.console)
-	self.extract_web_user_pass()
-	"""
+	self.write_proxy_info_in_bash()
+        installationObj=Foreman_Setup(self.console)	
 	installationObj.enable_repos(self.data_dict['redhat_username'],
                                       self.data_dict['redhat_password'],
                                       self.data_dict['redhat_pool'])
@@ -60,7 +59,6 @@ class Foreman_Integrator():
 	installationObj.mount(self.data_dict['mount_path'],
                               self.data_dict['rhel_image_url'])	
        
-	""" 
         provisionObj=Provision_Host(self.console,
                                     self.data_dict['foreman_url'],
                                     self.data_dict['foreman_web_username'],
@@ -139,7 +137,7 @@ class Foreman_Integrator():
         #FI_PowerCycle.FIPowerCycleServer().power_cycle()
         time.sleep(400)
 	for host_name in self.data_dict['system'].keys():
-	    provisionObj.modify_host(host_name)
+	    provisionObj.modify_host(host_name + "." + self.data_dict['domain_name'])
 
     def extract_web_user_pass(self):
 	answers=[]
@@ -341,7 +339,7 @@ class Foreman_Integrator():
         ip=IPNetwork(self.data_dict['subnet'] + "/" + self.data_dict['netmask'])
         length=len(list(ip))
         ip1=str(ip[0])
-        ip2=str(ip[length-1])
+        ip2=str(ip[length-1])	
         self.data_dict['start_ip']=ip1
         self.data_dict['end_ip']=ip2
         self.data_dict['broadcast_ip']=str(ip[length-2])
@@ -362,3 +360,10 @@ class Foreman_Integrator():
             j=j+1
         return no_proxy_string
 
+    def write_proxy_info_in_bash(self):
+        no_proxy_string=self.get_no_proxy_string()
+	if self.data_dict['http_proxy_ip']!='':
+            shell_command("/usr/bin/echo 'export http_proxy=http://" + self.data_dict['http_proxy_ip'] + ":80' >> /root/.bashrc\n")
+            shell_command("/usr/bin/echo \"export no_proxy=`echo " + no_proxy_string + " | sed 's/ /,/g'`\" >> /root/.bashrc\n")
+        if self.data_dict['https_proxy_ip']!='':
+            shell_command("/usr/bin/echo 'export https_proxy=https://" + self.data_dict['https_proxy_ip'] + ":" + self.data_dict['https_port'] + "' >> /root/.bashrc\n")	

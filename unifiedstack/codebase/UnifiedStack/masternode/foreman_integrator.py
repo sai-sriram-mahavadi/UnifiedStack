@@ -25,15 +25,13 @@ class Foreman_Integrator():
         setUpObj.enable_repos(redhat_username,redhat_password,redhat_pool)
         setUpObj.install_prerequistes()
     
-    def setup_foreman(self):
-	
+    def setup_foreman(self):	
 	#from config file
         if self.read_from_database==False:
             self.read_data_from_config_file()
         else:
             self.read_data_from_database()	
-	self.modify_kickstart()
-	self.write_proxy_info_in_bash()
+	self.modify_kickstart()	
         installationObj=Foreman_Setup(self.console)	
 	installationObj.enable_repos(self.data_dict['redhat_username'],
                                       self.data_dict['redhat_password'],
@@ -43,7 +41,6 @@ class Foreman_Integrator():
                                         self.data_dict['domain_name'],
                                         self.data_dict['python_foreman_version'])
 	self.extract_web_user_pass()
-
 	installationObj.setup_dhcp_service(self.data_dict['dhcp_file'],
                                            self.data_dict['subnet'],
                                            self.data_dict['netmask'],
@@ -55,10 +52,12 @@ class Foreman_Integrator():
                                            self.data_dict['option_router'],
                                            self.data_dict['lease_time'],
                                            self.data_dict['max_lease_time'])
-	
+	if self.data_dict['http_proxy_ip'] !='': 
+	    os.environ['no_proxy']=self.data_dict['rhel_image_url'].split("//")[1].split("/")[0].split(":")[0]
 	installationObj.mount(self.data_dict['mount_path'],
                               self.data_dict['rhel_image_url'])	
-       
+        if self.data_dict['http_proxy_ip'] !='':
+	    os.environ['no_proxy']=self.data_dict['system_ipaddress']
         provisionObj=Provision_Host(self.console,
                                     self.data_dict['foreman_url'],
                                     self.data_dict['foreman_web_username'],
@@ -134,7 +133,7 @@ class Foreman_Integrator():
         #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
         #shell_command("firewall-cmd --reload")
 	from fi import FI_PowerCycle
-        #FI_PowerCycle.FIPowerCycleServer().power_cycle()
+        FI_PowerCycle.FIPowerCycleServer().power_cycle()
         time.sleep(400)
 	for host_name in self.data_dict['system'].keys():
 	    provisionObj.modify_host(host_name + "." + self.data_dict['domain_name'])

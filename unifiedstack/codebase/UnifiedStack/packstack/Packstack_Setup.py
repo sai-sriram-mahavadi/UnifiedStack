@@ -107,19 +107,27 @@ class PackStackConfigurator:
             "cvf-ntp1")
 
         # Move networker and compute services to proper nodes
-	for compute_host_ip in compute_host_ip_list:
-            self.set_packstack_field(
-                "general",
-                "CONFIG_COMPUTE_HOSTS",
-                compute_host_ip)
-	for network_host_ip in network_host_ip_list:
-            self.set_packstack_field(
-                "general",
-                "CONFIG_NETWORK_HOSTS",
-                network_host_ip)
+	compute_hosts=''
+	for i in range(0,len(compute_host_ip_list)-1):
+	    compute_hosts+=compute_host_ip_list[i].strip() + ","
+	comoute_hosts+=compute_host_ip_list[len(compute_host_ip_list)-1]
+        self.set_packstack_field(
+            "general",
+            "CONFIG_COMPUTE_HOSTS",
+            compute_hosts)
+
+	network_hosts=''
+	for i in range(0,len(network_host_ip_list)-1):
+            network_hosts+=network_host_ip_list[i].strip() + ","
+        network_hosts+=network_host_ip_list[len(network_host_ip_list)-1]
 	self.set_packstack_field(
             "general",
             "CONFIG_NETWORK_HOSTS",
+            network_hosts)
+
+	self.set_packstack_field(
+            "general",
+            "CONFIG_CONTROLLER_HOSTS",
             controller_host_ip) 
 
         # Customers will want to set admin keystone password to something sane

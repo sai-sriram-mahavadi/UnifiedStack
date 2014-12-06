@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>UnifiedStack v1.0 - Beta</title>
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'configurator/css/bootstrap.min.css' %}">
@@ -52,7 +52,7 @@
     <div id="wrapper">
 
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -60,7 +60,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html"><i class="fa fa-cloud fa-fw"></i>UnifiedStack v1.0 Beta</a>
+                <a class="navbar-brand" href="index.html"><i class="fa fa-cloud fa-fw"></i> UnifiedStack v1.0 - Beta</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -349,7 +349,7 @@
                             <a href="#"><i class="fa fa-child fa-fw"></i> About Us</span></a>
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-github fa-fw"></i> Visit us at git</span></a>
+                            <a href="https://github.com/rahuupad/UnifiedStack/wiki" target="_blank"><i class="fa fa-github fa-fw"></i> Visit us at git</span></a>
                         </li>
                     </ul>
                 </div>
@@ -359,19 +359,18 @@
         </nav>
 
         <div id="page-wrapper">
+            <br/>
             <div class="row">
                 <div class="col-lg-8">
+                    <!--
                     <div class="panel panel-default">
                         <div class="panel-body">
                           Enter the configurations as necessary. Topolgy is derived from the fields below. <br/>
                           Thanks for using and supporting UnifiedStack
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-wrench fa-fw"></i> Settings
-                        </div>
-                        <!-- /.panel-heading -->
+                    -->
+                    <div class="panel panel-primary" style="padding-top:0px">
                         <div class="panel-body">
                             <div class="row" id="devices-holder">
                                   <p  class="lead">
@@ -390,13 +389,17 @@
                 </div>
                 <!-- /.col-lg-8 -->
                 <div class="col-lg-4">
-                    <div class="panel panel-default">
+                    <div class="panel panel-info">
                         <div class="panel-heading">
                             <i class="fa fa-cog fa-fw"></i> Execute
                         </div>
                         <div class="panel-body">                            
                             <!-- /.list-group -->
                             <a href="#" class="btn btn-default btn-block">Visualize Topology</a>
+                        </div>
+                        <div class="panel-body">                            
+                            <!-- /.list-group -->
+                            <a href="#" class="btn btn-default btn-block" data-ng-click="reloadConfiguration()">Import Configuration</a>
                         </div>
                         <div class="panel-body">                            
                             <!-- /.list-group -->
@@ -407,7 +410,7 @@
                             <a href="#" class="btn btn-default btn-block" data-ng-click="showConfigurationResult()">Configure</a>
                         </div>
                     </div>
-                    <div class="panel panel-default">
+                    <div class="panel panel-warning">
                         <div class="panel-heading">
                             <i class="fa fa-bell fa-fw"></i> Notifications Panel
                         </div>

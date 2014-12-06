@@ -11,6 +11,15 @@ footer{
 
 
 
+.panel-info {
+    border-color: #e7e7e7;
+}
+
+.panel-info .panel-heading {
+    border-color:  #e7e7e7;
+    /*background-color: #eee;*/
+    background: #f8f8f8;;
+}
 
 
 

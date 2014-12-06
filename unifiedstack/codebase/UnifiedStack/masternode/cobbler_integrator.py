@@ -99,7 +99,12 @@ class Cobbler_Integrator():
                 cobbler_subnet,cobbler_option_router,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,\
 		rhel_image_url,redhat_username,redhat_password,redhat_pool,http_proxy_ip,https_proxy_ip,\
 		https_port,nameserver,distro_name,profiles,systems,isCSeries):
-
+	
+	self.write_proxy_info_in_bash(cobbler_subnet,
+                        cobbler_netmask,
+                        http_proxy_ip,
+                        https_proxy_ip,
+                        https_port)
         cobbler_setup.cobbler_setup(console,cobbler_interface,cobbler_netmask,cobbler_server,cobbler_next_server,\
 		cobbler_subnet,cobbler_DNS,cobbler_hostname,cobbler_web_username,cobbler_web_password,cobbler_option_router)
         cobbler_setup.enable_services(console)
@@ -193,6 +198,18 @@ class Cobbler_Integrator():
             j=j+1
         return no_proxy_string
 
+    def write_proxy_info_in_bash(self,cobbler_subnet,
+			cobbler_netmask,
+			http_proxy_ip,
+			https_proxy_ip,
+			https_port):
+        no_proxy_string=self.get_no_proxy_string(cobbler_subnet,cobbler_netmask)
+        if http_proxy_ip!='':
+            shell_command("/usr/bin/echo 'export http_proxy=http://" + http_proxy_ip + ":80' >> /etc/bashrc\n")
+            shell_command("/usr/bin/echo \"export no_proxy=`echo " + no_proxy_string + " | sed 's/ /,/g'`\" >> /etc/bashrc\n")
+        if https_proxy_ip!='':
+            shell_command("/usr/bin/echo 'export https_proxy=https://" + https_proxy_ip + ":" + https_port + "' >> /etc/bashrc\n")
+        shell_command("source /etc/bashrc")
 
 if __name__ == "__main__":
     handle = Cobbler_Integrator()

@@ -13,7 +13,9 @@ def configure_cobbler_preboot():
     nameserver=""
     console = cli.ConsoleOutput()
     if len(sys.argv)== 1:
-	Installer(console).run(redhat_username,redhat_password,redhat_pool)		        
+	foremanObj=foreman_integrator.Foreman_Integrator(console)
+        foremanObj.preInstall(redhat_username,redhat_password,redhat_pool)
+        #Installer(console).run(redhat_username,redhat_password,redhat_pool)		        
     elif len(sys.argv) == 2  and  (sys.argv[1] != '-C' and sys.argv[1] != '-F'):
         print "USAGE: python preInstall.py -C/-F"
         exit(1)

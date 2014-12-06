@@ -82,6 +82,17 @@ DeviceTypeSetting(
                   desc = "Network hosts setting for cobbler. Could be also used by packstack.",
                   multiple = True,
                   ).save()
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.COBBLER_TYPE,
+                  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE, DeviceTypeSetting.IP_TYPE,
+                                         DeviceTypeSetting.MAC_TYPE, DeviceTypeSetting.CUSTOM_TYPE,
+                                         DeviceTypeSetting.ALPHA_NUMERIC_TYPE, DeviceTypeSetting.ALPHA_NUMERIC_TYPE]),
+                  label = "Controller Host(Host Name; IP Address; MAC Address; Interface Type; Interface Name; Associated Profile Name)",
+                  standard_label="controller-host(host-name; ip-address; mac-address; interface-type; interface-name; profile)",
+                  desc = "COntroller Host Setting.",
+                  multiple = False,
+                  ).save()
 
 DeviceTypeSetting(
                   level = DeviceTypeSetting.BASIC_LEVEL,
@@ -306,6 +317,17 @@ DeviceTypeSetting(
                   standard_label="network-host(host-name; ip-address; mac-address)",
                   desc = "Network hosts setting for Foreman. Could be also used by packstack.",
                   multiple = True,
+                  ).save()
+
+DeviceTypeSetting(
+                  level = DeviceTypeSetting.BASIC_LEVEL,
+                  dtype = DeviceTypeSetting.FOREMAN_TYPE,
+                  stype = values_to_str([DeviceTypeSetting.ALPHA_NUMERIC_TYPE, DeviceTypeSetting.IP_TYPE,
+                                         DeviceTypeSetting.MAC_TYPE]),
+                  label = "Controller Host(Host Name; IP Address; MAC Address)",
+                  standard_label="controller-host(host-name; ip-address; mac-address)",
+                  desc = "Controller Host setting.",
+                  multiple = False,
                   ).save()
 
 DeviceTypeSetting(

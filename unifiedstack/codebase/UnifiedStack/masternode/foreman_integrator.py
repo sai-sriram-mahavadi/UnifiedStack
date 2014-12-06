@@ -2,7 +2,6 @@ import os,inspect
 import sys,time
 import shutil
 
-
 from codebase.UnifiedStack.config.Config_Parser import Config
 from general_utils import shell_command
 from foreman_setup import Foreman_Setup, Provision_Host
@@ -32,10 +31,10 @@ class Foreman_Integrator():
         if self.read_from_database==False:
             self.read_data_from_config_file()
         else:
-            self.read_data_from_database()
-	
+            self.read_data_from_database()	
 	self.modify_kickstart()
-        installationObj=Foreman_Setup(self.console)
+	self.write_proxy_info_in_bash()
+        installationObj=Foreman_Setup(self.console)	
 	installationObj.enable_repos(self.data_dict['redhat_username'],
                                       self.data_dict['redhat_password'],
                                       self.data_dict['redhat_pool'])
@@ -58,9 +57,8 @@ class Foreman_Integrator():
                                            self.data_dict['max_lease_time'])
 	
 	installationObj.mount(self.data_dict['mount_path'],
-                              self.data_dict['rhel_image_url'])
-	self.run_simpleHTTPserver()	
-        
+                              self.data_dict['rhel_image_url'])	
+       
         provisionObj=Provision_Host(self.console,
                                     self.data_dict['foreman_url'],
                                     self.data_dict['foreman_web_username'],
@@ -135,6 +133,11 @@ class Foreman_Integrator():
         #shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
         #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
         #shell_command("firewall-cmd --reload")
+	from fi import FI_PowerCycle
+        FI_PowerCycle.FIPowerCycleServer().power_cycle()
+        time.sleep(400)
+	for host_name in self.data_dict['system'].keys():
+	    provisionObj.modify_host(host_name + "." + self.data_dict['domain_name'])
 
     def extract_web_user_pass(self):
 	answers=[]
@@ -176,8 +179,7 @@ class Foreman_Integrator():
 	self.data_dict['max_lease_time']="43200"
         self.data_dict['subnet_name']= self.data_dict['system_hostname']
 	#Redhat public OS mounted and accessible through wget
-	self.data_dict['mount_path']="/var/www/images/RHEL"
-	self.data_dict['python_http_server_path']="/var/www/images/"
+	self.data_dict['mount_path']="/usr/share/foreman/public/RHEL"
 	#os 
 	self.data_dict['os_family']="Redhat"
 	self.data_dict['os_major']="7"
@@ -194,10 +196,10 @@ class Foreman_Integrator():
 	self.data_dict['owner']="Admin"
 	#media
 	self.data_dict['installation_media_name']="Redhat mirror"
-	self.data_dict['installation_media_url']="http://" + system_ipaddress + ":8000/RHEL"
+	self.data_dict['installation_media_url']="http://" + self.data_dict['system_ipaddress'] + "/RHEL"
 	#templates
 	self.data_dict['provision_template_name']="rhel7-osp5.ks"
-	self.data_dict['provision_template_path']=self.cur+ "/../data_static/" + provision_template_name
+	self.data_dict['provision_template_path']=self.cur+ "/../data_static/" + self.data_dict['provision_template_name']
 	self.data_dict['pxelinux_template_name']="Kickstart default PXELinux"
 	#python foreman version
 	self.data_dict['python_foreman_version']="0.1.2"
@@ -206,7 +208,6 @@ class Foreman_Integrator():
         for system in systems:
             self.data_dict['system'][system.hostname]={'mac_address':system.mac_address,
                                                        'ip_address':system.ip_address}
-            
 
     def read_data_from_config_file(self): 
         self.data_dict['system_ipaddress'] = '192.168.211.174'
@@ -279,7 +280,7 @@ class Foreman_Integrator():
         no_proxy_string=self.get_no_proxy_string()
         for line in kickstart:
 	    if 'url --url' in line:
-                towrite.append("url --url=http://" + self.data_dict['system_ipaddress'] + ":8000/RHEL\n")
+                towrite.append("url --url=http://" + self.data_dict['system_ipaddress'] + "/RHEL\n")
                 continue
             towrite.append(line)
             if '%post' in line:
@@ -324,11 +325,7 @@ class Foreman_Integrator():
                 line=line[:i] + system_ip_address + line[j:]
 	    toWrite.append(line)
         with open("/var/lib/tftpboot/pxelinux.cfg/" + filename,"w") as file:
-                file.writelines(toWrite)
-
-    def run_simpleHTTPserver(self):
-        shell_command("pushd " + self.data_dict['python_http_server_path'] + "; python -m SimpleHTTPServer  > /dev/null 2>&1 &")
-        shell_command("popd") 
+                file.writelines(toWrite) 
     
     def copy_to_tftp_boot(self):
 	filename=self.data_dict['os_name'] + "-" + self.data_dict['os_major'] + "." + self.data_dict['os_minor'] + "-" + self.data_dict['architecture'] + "-"
@@ -342,7 +339,7 @@ class Foreman_Integrator():
         ip=IPNetwork(self.data_dict['subnet'] + "/" + self.data_dict['netmask'])
         length=len(list(ip))
         ip1=str(ip[0])
-        ip2=str(ip[length-1])
+        ip2=str(ip[length-1])	
         self.data_dict['start_ip']=ip1
         self.data_dict['end_ip']=ip2
         self.data_dict['broadcast_ip']=str(ip[length-2])
@@ -363,3 +360,10 @@ class Foreman_Integrator():
             j=j+1
         return no_proxy_string
 
+    def write_proxy_info_in_bash(self):
+        no_proxy_string=self.get_no_proxy_string()
+	if self.data_dict['http_proxy_ip']!='':
+            shell_command("/usr/bin/echo 'export http_proxy=http://" + self.data_dict['http_proxy_ip'] + ":80' >> /root/.bashrc\n")
+            shell_command("/usr/bin/echo \"export no_proxy=`echo " + no_proxy_string + " | sed 's/ /,/g'`\" >> /root/.bashrc\n")
+        if self.data_dict['https_proxy_ip']!='':
+            shell_command("/usr/bin/echo 'export https_proxy=https://" + self.data_dict['https_proxy_ip'] + ":" + self.data_dict['https_port'] + "' >> /root/.bashrc\n")	

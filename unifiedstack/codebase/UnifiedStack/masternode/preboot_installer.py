@@ -80,7 +80,7 @@ class Installer:
                       "/unifiedstack  " +  virtual_env_path +  "/")
         self.console.cprint_progress_bar("Installing Django", 85)
         shell_command(virtual_env_path + "/bin/pip install django==1.7")
-        shell_command(virtual_env_path + "/bin/pip install djangorestframework")
+	shell_command(virtual_env_path + "/bin/pip install djangorestframework==2.4.3")
 	shell_command(virtual_env_path + "/bin/pip install pyzmq")
 	shell_command("pip install pyzmq")
         self.console.cprint_progress_bar("Installing UcsSdk", 90)

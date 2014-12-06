@@ -25,19 +25,18 @@ sys.path.append(root_path)
 username = "root"
 password = "Cisco12345"
 MAX_TRIES = 5
-
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from codebase.UnifiedStack.masternode import cobbler_integrator as cobb
 from codebase.UnifiedStack.masternode import foreman_integrator as fore
-from codebase.UnifiedStack.packstack import Packstack_Setup as pst
+#from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
 from configurator import fetch_db
+os.environ['no_proxy']=fetch_db.FI().get("fi-cluster-ip-address")
 from configurator.models import Device, DeviceSetting, DeviceTypeSetting
 from codebase.UnifiedStack.fi import FI_Configurator
 from logger.models import ConsoleLog
-
 Config = Config_Parser.Config
 
 class BackEndMessenger:
@@ -89,12 +88,13 @@ class Integrator:
         packstack_config = pst.PackStackConfigurator()
         packstack_config.configure_packstack(console)
         
-    def configure_switch(self, shell, console):
-        from codebase.UnifiedStack.netswitch import Switch_Setup as sw
+    def configure_switch(self, shell, console):	
+        from codebase.UnifiedStack.netswitch import Switch_Setup as sw	
         sw_config = sw.SwitchConfigurator()
         sw_config.configure_switch(console)
         
     def configure_unifiedstack(self):
+	cobbler_device_list = [] #Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
 	if len(cobbler_device_list) != 0:
             system_list=fetch_db.Cobbler().get('systems')
             redhat_username=fetch_db.Cobbler().get('redhat-username')
@@ -104,7 +104,7 @@ class Integrator:
             network_host_ip_list=fetch_db.Cobbler().get_network_hosts_ip()
             controller_host_ip=fetch_db.Cobbler().get_controller_host_ip()
 	    os.environ['http_proxy']="http://" + fetch_db.Cobbler().get('http-proxy-ip') + ":80"
-	    os.environ['https_proxy']="https://" + fetch_db.Cobbler().get('https-proxy-ip') + ":" + fetch_db.Cobbler().get('https-port')
+	    os.environ['https_proxy']="https://" + fetch_db.Cobbler().get('https-proxy-ip') + ":" + fetch_db.Cobbler().get('https-port') 
         else:
             system_list=fetch_db.Foreman().get('systems')
             redhat_username=fetch_db.Foreman().get('redhat-username')
@@ -115,7 +115,7 @@ class Integrator:
             controller_host_ip=fetch_db.Foreman().get_controller_host_ip()
 	    os.environ['http_proxy']="http://" + fetch_db.Foreman().get('http-proxy-ip') + ":80"
             os.environ['https_proxy']="https://" + fetch_db.Foreman().get('https-proxy-ip') + ":" + fetch_db.Cobbler().get('https-port')
-
+   
         console = cli.ConsoleOutput()
         shi.ShellInterpretter.set_console(console)
         shell = shi.ShellInterpretter()
@@ -124,13 +124,15 @@ class Integrator:
 	proxy=True
 	if proxy:
 	    os.environ['no_proxy']=fetch_db.FI().get("fi-cluster-ip-address")
+	"""
 	ficonfig = FI_Configurator.FIConfigurator()
-        ficonfig.configure_fi_components() 
+        ficonfig.configure_fi_components()
 	#SWITCH
         shell.execute_command("yum install python-devel python-paramiko -y")
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
+	"""
 	#LIFE_CYCLE
 	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
@@ -142,7 +144,7 @@ class Integrator:
 	    foreman_config.setup_foreman() 
         #PACKSTACK
 	tries = 0
-	cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
+	#cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
         while not self.poll_all_nodes(system_list):
             time.sleep(10)
             if tries < MAX_TRIES:

@@ -14,18 +14,32 @@
 
 
 
-from UcsSdk import ucs
-from FI_Config_Base import FIConfiguratorBase
-from FI_Config_Parser import FIConfig
+from UcsSdk import *
+from codebase.UnifiedStack.fi.FI_Config_Base import FIConfiguratorBase
+#from codebase.UnifiedStack.fi.FI_Config_Parser import FIConfig
+from configurator import fetch_db
 
 class FIPowerCycleServer(FIConfiguratorBase):
     def power_cycle(self):
         #Power Cycle Server
+	os.environ['no_proxy']=fetch_db.FI().get('fi-cluster-ip-address')
         handle = self.handle
-        handle.StartTranscation()
+        handle.StartTransaction()
         for i in range(1, 9):
-            obj = handle.GetManagedObject(None, ucs.LsPower.ClassId(), {ucs.LsPower.DN:"org-root/ls-" + FIConfig.get_service_profile_name() + str(i) +"/power"})
-            handle.SetManagedObject(obj, ucs.LsPower.ClassId(), {ucs.LsPower.STATE:"hard-reset-immediate"})
+            obj = handle.GetManagedObject(None, LsPower.ClassId(), {LsPower.DN:"org-root/ls-" + fetch_db.FI().get('fi-service-profile-name') + str(i) +"/power"})
+            handle.SetManagedObject(obj, LsPower.ClassId(), {LsPower.STATE:"hard-reset-immediate"})
         handle.CompleteTransaction()
-
+    """
+    def power_cycle(self):
+	try:
+	    handle = UcsHandle()
+            handle.Login("19.19.102.10","admin","Cisco12345")
+	    handle.StartTransaction()
+	    obj = handle.GetManagedObject(None, LsPower.ClassId(), {LsPower.DN:"org-root/ls-demoLS2/power"})
+	    handle.SetManagedObject(obj, LsPower.ClassId(), {LsPower.STATE:"hard-reset-immediate"})
+ 	    handle.CompleteTransaction()
+	except exception as e:
+	    print str(e)
+    """
+	    
     

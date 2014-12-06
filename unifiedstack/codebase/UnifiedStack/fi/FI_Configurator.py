@@ -74,7 +74,7 @@ class FIConfigurator():
         
         for vnic_id in range(1,len(vnic_list)+1):
             for vlan_id in range(int(vnic_list[vnic_id-1].start),int(vnic_list[vnic_id-1].end) + 1):
-                sp_config.add_vlan(vlan_id, 'vlan-' + vlan_id)
+                sp_config.add_vlan(vlan_id, 'vlan-' + str(vlan_id))
             for vlan_id in range(int(vnic_list[vnic_id-1].start),int(vnic_list[vnic_id-1].end) + 1):
                 sp_config.associate_vlan_vnic("vlan-"+str(vlan_id), uuid_pool_list[0].name,
                                               mac_pool_list[0].name, vnic_list[vnic_id-1].name,

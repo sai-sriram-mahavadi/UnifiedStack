@@ -64,7 +64,7 @@ class FIServiceProfileConfigurator(FIConfiguratorBase):
                 ucs.VnicEtherIf.DN: "org-root/ls-" + service_profile_name + "/ether-"+ vnic_name +
                                     "/if-" + vlan_name,
                 ucs.VnicEtherIf.NAME: vlan_name,
-                ucs.VnicEtherIf.DEFAULT_NET: "no"}, True) 
+                ucs.VnicEtherIf.DEFAULT_NET: "yes"}, True) 
         
 
 if __name__ == "__main__":

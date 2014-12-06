@@ -33,8 +33,8 @@ from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
-#from configurator import fetch_db
-#from configurator.models import Device, DeviceSetting, DeviceTypeSetting
+from configurator import fetch_db
+from configurator.models import Device, DeviceSetting, DeviceTypeSetting
 from codebase.UnifiedStack.fi import FI_Configurator
 from logger.models import ConsoleLog
 
@@ -99,18 +99,15 @@ class Integrator:
         shi.ShellInterpretter.set_console(console)
         shell = shi.ShellInterpretter()
 
-        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")      
-	"""
+        console.cprint_header("UnifiedStack - Installer (Beta 1.0)")      	
 	#FI
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components() 
 	#SWITCH
-	"""
         shell.execute_command("yum install python-devel python-paramiko -y")
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
-	"""
 	#LIFE_CYCLE
 	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
@@ -121,6 +118,7 @@ class Integrator:
 	    foreman_config = fore.Foreman_Integrator(console,data_source="database")
 	    foreman_config.setup_foreman() 
         #PACKSTACK
+	
 	tries = 0
 	cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
         if len(cobbler_device_list) != 0:
@@ -128,11 +126,17 @@ class Integrator:
 	    redhat_username=fetch_db.Cobbler().get('redhat-username')
 	    redhat_password=fetch_db.Cobbler().get('redhat-password')
 	    redhat_pool=fetch_db.Cobbler().get('redhat-pool')
+	    compute_host_ip_list=fetch_db.Cobbler().get_compute_hosts_ip()
+	    network_host_ip_list=fetch_db.Cobbler().get_network_hosts_ip()
+	    controller_host_ip=fetch_db.Cobbler().get_controller_host_ip()
         else:
             system_list=fetch_db.Foreman().get('systems')
 	    redhat_username=fetch_db.Foreman().get('redhat-username')
             redhat_password=fetch_db.Foreman().get('redhat-password')
             redhat_pool=fetch_db.Foreman().get('redhat-pool')
+	    compute_host_ip_list=fetch_db.Foreman().get_compute_hosts_ip()
+            network_host_ip_list=fetch_db.Foreman().get_network_hosts_ip()
+            controller_host_ip=fetch_db.Foreman().get_controller_host_ip()
         while not self.poll_all_nodes(system_list):
             time.sleep(10)
             if tries < MAX_TRIES:
@@ -144,14 +148,12 @@ class Integrator:
             exit(0)
         self.configure_nodes(console,system_list,redhat_username,redhat_password,redhat_pool)
         console.cprint_progress_bar("Started Configuration of Packstack", 0)
-        self.configure_packstack(shell, console)
-	"""
-        """
-	# Configuring CIMC
+        self.configure_packstack(shell, console,compute_host_ip_list,network_host_ip_list,controller_host_ip)
+    	# Configuring CIMC
         console.cprint_progress_bar("Started Configuration of CIMC", 0)
         cimc_config = cimc.CIMCConfigurator(console)
         cimc_config.configure_cimc()
-        """
+        
     def console_output(self, msg):
         ConsoleLog(console_summary=msg).save()
     def get_output(self):
@@ -273,7 +275,7 @@ class Integrator:
     def setup_ssh_key(self):
 	shell_command("pip install pysftp")
 	shell_command('ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa')
-
+    
     def ssh_key_exchange(self,host,username,password):
 	import pysftp
 	conObj=pysftp.Connection(host,port=22,username=username,password=password)
@@ -281,12 +283,8 @@ class Integrator:
 	conObj.put("/root/.ssh/id_rsa.pub","/root/.ssh/authorized_keys")
 	conObj.close()
 	shell_command("ssh -o StrictHostKeyChecking=no " + username + "@" + host + " echo")	
-	
-	
+ 	
         
-def shell_command(fully_qualified_command):
-    shell=shi.ShellInterpretter()
-    shell.execute_command(fully_qualified_command)
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
@@ -296,18 +294,5 @@ if __name__ == "__main__":
     from configurator import fetch_db
     integrator = Integrator()  
     integrator.configure_unifiedstack()
-    #integrator.test_poll()  
-   
-"""
-runstatusmsg = "-cobbler-preboot" if len(sys.argv)==1 else sys.argv[1]
-RUNSTATUSCODE = {"-cobbler-preboot":0, "-fi": 1, "-switch": 2, "-cobbler-postboot":3,  "-packstack":4}
-try:
-    runstatus = RUNSTATUSCODE[runstatusmsg]
-except Exception:
-    print "Give appropriate arguments within [ -cobbler-preboot, -cobbler-postboot, -fi, -switch, -packstack ]"
-if(runstatus <= 0):  # Configuring Cobbler pre-boot
-    console.cprint_progress_bar("Started Installation of Cobbler-Preboot", 0)
-    self.configure_cobbler_preboot(shell, console)
-if(runstatus <= 1):
-"""
+    integrator.test_poll()  
 

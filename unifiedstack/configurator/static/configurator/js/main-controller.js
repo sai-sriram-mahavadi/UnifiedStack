@@ -197,7 +197,7 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		$scope.data.newdevice = value;
 		var device_html =
 		    '<div id="device-'+ value.id + '">' +
-			'<h2>'+ $scope.data.device_types[value.dtype] + " - " + value.title + '</h2>' + 				    
+			'<h2 style="padding-top:0px">'+ $scope.data.device_types[value.dtype] + " - " + value.title + '</h2>' + 				    
 		    '</div>'
 		$log.info("Device Added: " + device_html);
 		var compiled_device_html = $compile(device_html)($scope)
@@ -328,7 +328,7 @@ app.controller("mainController", function($scope,$http,$window,$resource, $compi
 		$log.info($scope.data.device_types[devices[i].dtype]);
 		var device_html =
 		    '<div id="device-'+ devices[i].id + '">' +
-			'<h2>'+ $scope.data.device_types[devices[i].dtype] + " - " + devices[i].title + '</h2>' + 				    
+			'<div class="lead" style="padding-top:0px;margin-top:0px">'+ $scope.data.device_types[devices[i].dtype] + " - " + devices[i].title + '</div>' + 				    
 		    '</div>'
 		$log.info("Device Added: " + device_html);
 		var compiled_device_html = $compile(device_html)($scope);

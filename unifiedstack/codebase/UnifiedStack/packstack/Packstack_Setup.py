@@ -23,7 +23,7 @@ sys.path.append(root_path)
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cono
 from codebase.UnifiedStack.config import Config_Parser
-
+from configurator import fetch_db
 AffirmativeList = ['true', 'True', 'TRUE', True, 'yes', 'Yes', 'YES']
 Config = Config_Parser.Config
 
@@ -85,7 +85,7 @@ class PackStackConfigurator:
         value = self.get_packstack_field(section, field)
         return (value == 'y')
 
-    def configure_packstack(self, console):
+    def configure_packstack(self, console,compute_host_ip_list,network_host_ip_list,controller_host_ip):
         console.cprint_progress_bar("Installing Pre-requisites for packstack", 5)
         self.setup_packstack_pre_requisites()
         console.cprint_progress_bar("Installing packstack", 15)
@@ -107,20 +107,26 @@ class PackStackConfigurator:
             "cvf-ntp1")
 
         # Move networker and compute services to proper nodes
-        self.set_packstack_field(
-            "general",
-            "CONFIG_COMPUTE_HOSTS",
-            Config.get_packstack_field("COMPUTE-HOSTS"))
-        self.set_packstack_field(
+	for compute_host_ip in compute_host_ip_list:
+            self.set_packstack_field(
+                "general",
+                "CONFIG_COMPUTE_HOSTS",
+                compute_host_ip)
+	for network_host_ip in network_host_ip_list:
+            self.set_packstack_field(
+                "general",
+                "CONFIG_NETWORK_HOSTS",
+                network_host_ip)
+	self.set_packstack_field(
             "general",
             "CONFIG_NETWORK_HOSTS",
-            Config.get_packstack_field("NETWORK-HOSTS"))
+            controller_host_ip) 
 
         # Customers will want to set admin keystone password to something sane
         self.set_packstack_field(
             "general",
             "CONFIG_KEYSTONE_ADMIN_PW",
-            Config.get_packstack_field("KEYSTONE-ADMIN-PW"))
+            fetch_db.packstack().get("keystone-admin-pw"))
 
         # Set oversubscription based on Karen's requirements
         self.set_packstack_field(
@@ -142,9 +148,9 @@ class PackStackConfigurator:
             "CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES",
             "vlan")
         drivers_str = ""
-        if Config.get_packstack_field("ENABLE-OPENVSWITCH") in AffirmativeList:
+        if fetch_db.packstack().get("enable-openvswitch").title()=='True' in AffirmativeList:
             drivers_str += ("openvswitch" if drivers_str == "" else ",openvswitch")
-        if Config.get_packstack_field("ENABLE-CISCONEXUS") in AffirmativeList:
+        if fetch_db.packstack().get("enable-cisconexus").title()=='True' in AffirmativeList:
             drivers_str += ("cisco_nexus" if drivers_str == "" else ",cisco_nexus")
         # Any of the drivers are enabled
         if drivers_str != "":
@@ -155,7 +161,7 @@ class PackStackConfigurator:
         self.set_packstack_field(
             "general",
             "CONFIG_NEUTRON_ML2_VLAN_RANGES",
-            Config.get_packstack_field("VLAN-MAPPING-RANGES"))
+            fetch_db.packstack().get("vlan-mapping-ranges"))
 
         # Do not packstack_configure demo project/user/network
         self.disable_packstack_field("general", "CONFIG_PROVISION_DEMO")

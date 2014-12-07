@@ -7,27 +7,58 @@ footer{
     text-align: center;    
 }
 
-
-
-
-
-.panel-info {
-    border-color: #e7e7e7;
-}
-
-.panel-info .panel-heading {
-    border-color:  #e7e7e7;
-    /*background-color: #eee;*/
-    background: #f8f8f8;;
+.btn .btn-default{
+    background-color: #9dd49d;
 }
 
 
 
+/* Overriding Settings */
 
+.panel-info .panel-body{
+    background: #fbfdfe;
+}
 
+.navbar{
+    background-color: #3b5998;
+    color: #FFF;
+}
 
+.navbar-top-links li a {
+    padding: 15px;
+    min-height: 50px;
+    color: #FFF;
+}
 
+.navbar .navbar-header .navbar-brand{
+    color: #FFF;
+}
 
+.panel-button{
+  color: #333;
+  background-color: #FFF;
+  border-color: #5bc0de;
+  border-width: 2px;
+}
 
+.btn-default:hover,
+.btn-default:focus,
+.btn-default.focus,
+.btn-default:active,
+.btn-default.active,
+.open > .dropdown-toggle.btn-default {
+  color: #FFF;
+  background-color: #428bca;/*#fcfcfc;*/
+  border-color: #adadad;
+}
 
+/*
+.sidebar{
+    background-color: #4e69a2;
+}
 
+.sidebar a{
+    color: #FFF;
+}
+
+*/

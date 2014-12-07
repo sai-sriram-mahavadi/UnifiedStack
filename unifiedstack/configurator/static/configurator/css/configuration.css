@@ -108,13 +108,13 @@
 .type-setting{
     border: solid;
     padding: 2px;
-    border-width: 1px;
+    border-width: 0px;
     border-color: Gray;
 }
 
 .setting{
     border: solid;
-    border-width: 1px;
+    border-width: 0px;
     margin: 4px;
     padding: 2px;
     border-color: Gray;

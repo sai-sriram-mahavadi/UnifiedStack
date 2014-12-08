@@ -86,7 +86,6 @@ class Integrator:
         
     def configure_packstack(self, console,compute_host_ip_list,network_host_ip_list,controller_host_ip):	
         packstack_config = pst.PackStackConfigurator()
-	print "in heeeellllo"
         packstack_config.configure_packstack(console,compute_host_ip_list,network_host_ip_list,controller_host_ip)
         
     def configure_switch(self, shell, console):	

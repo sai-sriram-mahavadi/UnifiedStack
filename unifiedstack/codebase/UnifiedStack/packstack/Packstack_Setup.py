@@ -84,8 +84,6 @@ class PackStackConfigurator:
         return (value == 'y')
 
     def configure_packstack(self,console,compute_host_ip_list,network_host_ip_list,controller_host_ip):
-        print str(compute_host_ip_list) + " " + str(network_host_ip_list) + " " + str(controller_host_ip)
-	print "123"
 	console.cprint_progress_bar("Installing Pre-requisites for packstack", 5)
         self.setup_packstack_pre_requisites()
         console.cprint_progress_bar("Installing packstack", 15)
@@ -170,8 +168,7 @@ class PackStackConfigurator:
         self.disable_packstack_field("general", "CONFIG_PROVISION_DEMO")
         console.cprint_progress_bar("Setting up/Configuring packstack", 80)
         
-       # self.setup_packstack()
-        #self.setup_packstack()
+        self.setup_packstack()
         console.cprint_progress_bar("Completed packstack setup", 100)
 
 if __name__ == "__main__":

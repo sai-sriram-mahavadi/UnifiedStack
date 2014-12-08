@@ -63,7 +63,6 @@ class Foreman_Integrator():
                                     self.data_dict['foreman_web_username'],
                                     self.data_dict['foreman_web_password'],
                                     self.data_dict['foreman_version'])
-	
 	provisionObj.create_smart_proxy(self.data_dict['system_hostname'] +
                                         "." +
                                         self.data_dict['domain_name'])
@@ -131,10 +130,16 @@ class Foreman_Integrator():
 	#shell_command("firewall-cmd --zone=public --add-port=69/udp --permanent")
         #shell_command("firewall-cmd --zone=public --add-port=80/tcp --permanent")
         #shell_command("firewall-cmd --zone=public --add-port=443/tcp --permanent")
-        #shell_command("firewall-cmd --reload")
-	from fi import FI_PowerCycle
-        FI_PowerCycle.FIPowerCycleServer().power_cycle()
-        time.sleep(400)
+        #shell_command("firewall-cmd --reload")	
+	from codebase.UnifiedStack.fi import FI_PowerCycle	
+        FI_PowerCycle.FIPowerCycleServer().power_cycle()	
+        time.sleep(500)
+	os.environ['no_proxy']=self.data_dict['system_ipaddress']
+	provisionObj=Provision_Host(self.console,
+                                    self.data_dict['foreman_url'],
+                                    self.data_dict['foreman_web_username'],
+                                    self.data_dict['foreman_web_password'],
+                                    self.data_dict['foreman_version'])
 	for host_name in self.data_dict['system'].keys():
 	    provisionObj.modify_host(host_name + "." + self.data_dict['domain_name'])
 

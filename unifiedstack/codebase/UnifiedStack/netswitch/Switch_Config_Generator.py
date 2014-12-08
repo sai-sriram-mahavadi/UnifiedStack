@@ -1,11 +1,6 @@
 import sys
 import os
-
-root_path = os.path.abspath(r"../..")
-sys.path.append(root_path)
 from configurator import fetch_db
-from UnifiedStack.config import Config_Parser
-
 # Helper classes to parse Switch Config Data
 class VlanConfig:
     def __init__(self):

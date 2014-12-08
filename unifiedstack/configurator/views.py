@@ -140,7 +140,9 @@ def save_configuration(request):
 def configure_setup(request):
     print "Configuration started."
     if request.method == "POST":
-        fake_output()
+        print "Integrator Called"
+        from codebase.UnifiedStack import integrator
+        integrator.Integrator().configure_unifiedstack()
     return JSONResponse("Success")
 
 # ViewSets define the view behavior.
@@ -303,7 +305,9 @@ def server_binding_post(request):
     with open(file_containing_dir + '../codebase/UnifiedStack/data_static/unified_stack2.cfg' ,'wb') as configfile:
         unified_config.write(configfile) 
     """
-    #Integrator().get_output()
+    print "Integrator Called"
+    from codebase.UnifiedStack import integrator
+    integrator.Integrator().configure_unifiedstack()
     return HttpResponse(status=201)
 
 def console_output(msg):

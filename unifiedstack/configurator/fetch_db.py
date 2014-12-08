@@ -2,11 +2,11 @@ import os
 import sys
 root_path = os.path.abspath(r"../..")
 sys.path.append(root_path)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
-from django.core.management import execute_from_command_line
-execute_from_command_line(sys.argv)
-from configurator.models import Device, DeviceTypeSetting, DeviceSetting
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
+#from django.core.management import execute_from_command_line
+#execute_from_command_line(sys.argv)
 import django.core.exceptions
+from configurator.models import Device, DeviceTypeSetting, DeviceSetting
 class System:
     def __init__(self):
         self.purpose = ""
@@ -371,6 +371,8 @@ root_path = os.path.abspath(r"..")
 sys.path.append(root_path)
 
 if __name__ == "__main__":
+    root_path = os.path.abspath(r"../..")
+    sys.path.append(root_path)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unifiedstack.settings")
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
@@ -438,4 +440,6 @@ if __name__ == "__main__":
     print Foreman().get("http-proxy-ip")
     print "*" * 60
     print Foreman().get_controller_host_ip()
+    print "*" * 60
+    print FI().get("fi-cluster-ip-address")
     

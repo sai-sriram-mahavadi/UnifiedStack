@@ -84,7 +84,7 @@ class Foreman_Setup():
         #shell_command(virtual_env_path + "/bin/pip install djangorestframework")
 	self.console.cprint_progress_bar("Installing Django", 85)
 	shell_command("pip install django==1.7")
-	shell_command("pip install djangorestframework")
+	shell_command("pip install djangorestframework==2.4.3")
         self.console.cprint_progress_bar("Installing UcsSdk", 85)
         shell_command("wget https://communities.cisco.com/servlet/" +
                       "JiveServlet/download/36899-13-78134/UcsSdk-0.8.2.tar.gz"

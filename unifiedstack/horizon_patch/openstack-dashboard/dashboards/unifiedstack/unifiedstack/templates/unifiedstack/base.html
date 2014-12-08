@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+  {% include 'horizon/common/_sidebar.html' %}
+{% endblock %}
+
+{% block main %}
+    <div> My own style of message </div>
+    {% include "horizon/_messages.html" %}
+    {% block unifiedstack_main %}{% endblock %}
+{% endblock %}
+

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load url from future %}
+
+
+{% block title %}{% trans "Spawnvm" %}{% endblock %}
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Spawnvm") %}
+{% endblock page_header %}
+{% block unifiedstack_main %}
+{% endblock %}
+
+
+{% block main %}
+  <div class="lead">Please select either of the below VMs to be spawned.</div>
+  <a href="{% url 'horizon:unifiedstack:spawnvm:calculatesum' %}" class="btn-primary">
+	<img src="http://www.softwebstudios.com/images/lamp_logo.gif" width=200px />
+  </a> <hr/>
+  <a href="{% url 'horizon:unifiedstack:spawnvm:calculatesum' %}" class="btn-warning">
+	<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcTE0Gtk7j3neYZnRPB6AVkGNKla-8jtJFA_728pMesfoWXgiq8Mvw" width=200px />
+  </a> <hr/>
+  <a href="{% url 'horizon:unifiedstack:spawnvm:calculatesum' %}" class="btn-success">
+        <img src="http://vlexo.net/wp-content/uploads/2013/05/wordpress-logo.jpg" width=200px/>
+  </a> <hr/>
+
+
+{% endblock %}
+
+
+

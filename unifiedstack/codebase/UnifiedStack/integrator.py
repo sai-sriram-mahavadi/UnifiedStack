@@ -28,7 +28,7 @@ MAX_TRIES = 5
 #from UnifiedStack.cimc import CIMC_Setup as cimc
 from codebase.UnifiedStack.masternode import cobbler_integrator as cobb
 from codebase.UnifiedStack.masternode import foreman_integrator as fore
-#from codebase.UnifiedStack.packstack import Packstack_Setup as pst
+from codebase.UnifiedStack.packstack import Packstack_Setup as pst
 from codebase.UnifiedStack.cli import Shell_Interpretter as shi
 from codebase.UnifiedStack.cli import Console_Output as cli
 from codebase.UnifiedStack.config import Config_Parser
@@ -84,9 +84,10 @@ class Integrator:
         # write_bash.writelines([item for item in lines[:-1]])
         write_bash.close()
         
-    def configure_packstack(self, shell, console):
+    def configure_packstack(self, console,compute_host_ip_list,network_host_ip_list,controller_host_ip):	
         packstack_config = pst.PackStackConfigurator()
-        packstack_config.configure_packstack(console)
+	print "in heeeellllo"
+        packstack_config.configure_packstack(console,compute_host_ip_list,network_host_ip_list,controller_host_ip)
         
     def configure_switch(self, shell, console):	
         from codebase.UnifiedStack.netswitch import Switch_Setup as sw	
@@ -121,10 +122,11 @@ class Integrator:
         shell = shi.ShellInterpretter()
         console.cprint_header("UnifiedStack - Installer (Beta 1.0)")      	
 	#FI
+	"""
 	proxy=True
 	if proxy:
 	    os.environ['no_proxy']=fetch_db.FI().get("fi-cluster-ip-address")
-	"""
+	
 	ficonfig = FI_Configurator.FIConfigurator()
         ficonfig.configure_fi_components()
 	#SWITCH
@@ -132,7 +134,6 @@ class Integrator:
         import paramiko
         console.cprint_progress_bar("Started Configuration of Switch", 0)
         self.configure_switch(shell, console)
-	"""
 	#LIFE_CYCLE
 	isCobbler=False
         #Tell the cobbler and Foreman object whether to read the object from databse or from config
@@ -142,10 +143,12 @@ class Integrator:
         else:
 	    foreman_config = fore.Foreman_Integrator(console,data_source="database")
 	    foreman_config.setup_foreman() 
+	
         #PACKSTACK
+	
 	tries = 0
 	#cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
-        while not self.poll_all_nodes(system_list):
+        while not self.poll_all_nodes(system_list): 
             time.sleep(10)
             if tries < MAX_TRIES:
                 tries += 1
@@ -153,15 +156,18 @@ class Integrator:
                 break
         if not self.poll_all_nodes(system_list):
             console.cprint("Not all systems could boot!!!")
-            exit(0)
-        self.configure_nodes(console,system_list,redhat_username,redhat_password,redhat_pool)
-        console.cprint_progress_bar("Started Configuration of Packstack", 0)
-        self.configure_packstack(shell, console,compute_host_ip_list,network_host_ip_list,controller_host_ip)
-    	# Configuring CIMC
+            exit(0)	
+	"""
+        #self.configure_nodes(console,system_list,redhat_username,redhat_password,redhat_pool)
+	
+	console.cprint_progress_bar("Started Configuration of Packstack", 0)
+        self.configure_packstack(console,compute_host_ip_list,network_host_ip_list,controller_host_ip)	
+	# Configuring CIMC
+	"""
         console.cprint_progress_bar("Started Configuration of CIMC", 0)
         cimc_config = cimc.CIMCConfigurator(console)
         cimc_config.configure_cimc()
-        
+        """
     def console_output(self, msg):
         ConsoleLog(console_summary=msg).save()
     def get_output(self):
@@ -201,7 +207,7 @@ class Integrator:
         time.sleep(2)
 
     def establish_connection(self, ipaddress, username, password):
-        import paramiko
+        import paramiko	
         remote_conn_pre = paramiko.SSHClient()
         remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         remote_conn_pre.connect(
@@ -213,7 +219,7 @@ class Integrator:
         return remote_conn_pre
     
     def configure_nodes(self, console,system_list,redhat_username,redhat_password,redhat_pool):
-        self.setup_ssh_key()
+	self.setup_ssh_key()	
 	self.ssh_key_exchange(fetch_db.General().get('host-ip-address'), 'root',fetch_db.General().get('host-password'))
 	cobbler_device_list = Device.objects.filter(dtype=DeviceTypeSetting.COBBLER_TYPE)
         for system in system_list:
@@ -257,6 +263,8 @@ class Integrator:
         return True
     
     def poll_all_nodes(self,system_list):
+	global username
+	global password
         overall_poll_result = True      
         for system in system_list:
             # Calling the function to make the ssh connection
@@ -264,8 +272,8 @@ class Integrator:
                                 ipaddress=system.ip_address,
                                 username=username,
                                 password=password)
-            overall_poll_result = overall_poll_result and result
-            return overall_poll_result
+            overall_poll_result = overall_poll_result and result 
+        return overall_poll_result
         
     def test_poll(self):
         count = 0
@@ -280,8 +288,10 @@ class Integrator:
         else: pass
                 # UnSuccessful
   
-    def setup_ssh_key(self):
+    def setup_ssh_key(self):	
 	shell_command("pip install pysftp")
+	if os.path.isfile('/root/.ssh/id_rsa') and  os.path.getsize('/root/.ssh/id_rsa')!=0:
+	    return
 	shell_command('ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa')
     
     def ssh_key_exchange(self,host,username,password):
@@ -292,6 +302,11 @@ class Integrator:
 	conObj.close()
 	shell_command("ssh -o StrictHostKeyChecking=no " + username + "@" + host + " echo")	
  	
+def shell_command(string):
+    console = cli.ConsoleOutput()
+    shi.ShellInterpretter.set_console(console)
+    shell = shi.ShellInterpretter()
+    shell.execute_command(string)
         
 
 if __name__ == "__main__":

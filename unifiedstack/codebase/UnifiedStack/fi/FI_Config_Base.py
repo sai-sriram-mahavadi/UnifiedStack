@@ -22,8 +22,7 @@ class FIConfiguratorBase:
     handle = ucs.UcsHandle()
     ip=fetch_db.FI().get('fi-cluster-ip-address') 
     username=fetch_db.FI().get("fi-cluster-username")
-    password=fetch_db.FI().get("fi-cluster-password")  
-    print ip + "  " + username + "  " + password 
+    password=fetch_db.FI().get("fi-cluster-password")   
     handle.Login(ip,username,password)
     @staticmethod
     def login(fi_ip, username, password):

@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1back_end_process_communicator =
+[
+    [ "FrontEndMessenger", "classcodebase_1_1_unified_stack_1_1back_end_process_communicator_1_1_front_end_messenger.html", "classcodebase_1_1_unified_stack_1_1back_end_process_communicator_1_1_front_end_messenger" ]
+];

@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1masternode_1_1foreman__integrator =
+[
+    [ "Foreman_Integrator", "classcodebase_1_1_unified_stack_1_1masternode_1_1foreman__integrator_1_1_foreman___integrator.html", "classcodebase_1_1_unified_stack_1_1masternode_1_1foreman__integrator_1_1_foreman___integrator" ]
+];

@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1cli_1_1_shell___interpretter =
+[
+    [ "ShellInterpretter", "classcodebase_1_1_unified_stack_1_1cli_1_1_shell___interpretter_1_1_shell_interpretter.html", "classcodebase_1_1_unified_stack_1_1cli_1_1_shell___interpretter_1_1_shell_interpretter" ]
+];

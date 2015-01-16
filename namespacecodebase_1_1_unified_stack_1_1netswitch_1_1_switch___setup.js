@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1netswitch_1_1_switch___setup =
+[
+    [ "SwitchConfigurator", "classcodebase_1_1_unified_stack_1_1netswitch_1_1_switch___setup_1_1_switch_configurator.html", "classcodebase_1_1_unified_stack_1_1netswitch_1_1_switch___setup_1_1_switch_configurator" ]
+];

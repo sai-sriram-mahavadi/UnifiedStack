@@ -1,0 +1,26 @@
+var classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile =
+[
+    [ "__init__", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a37ee16292f4bb1e9e5b545751b6407e5", null ],
+    [ "get_distro", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a6a6f967f6b0e1e2d6f1c03577484f089", null ],
+    [ "get_enable_pxe_menu", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a33c20d10680c05fad25af84b163df4e9", null ],
+    [ "get_kickstart_file", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#abf694c7b24ee6ae6df8ee1e69116b6fa", null ],
+    [ "get_name", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a97087c930bb527bc14ee48f760a5a4c8", null ],
+    [ "get_owners", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a896c7526ec14ec03e85fb2ceccdd6b9f", null ],
+    [ "get_proxy", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a3df2503c0380ee8973629e33d645a3ec", null ],
+    [ "get_repos", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#ac3997dba6c64958c0208995b304391bb", null ],
+    [ "save_profile", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a8902af87f617b19a13578a90c4315619", null ],
+    [ "set_distro", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a8f767f46efec555017079c9a5aad57b6", null ],
+    [ "set_enable_pxe_menu", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a245f29cc2782112e1f2db128e28530c9", null ],
+    [ "set_kickstart_file", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a7391efb67c17e56bb8298f2bc986c4ca", null ],
+    [ "set_name", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#aa3936cb57f97ae3a3daed4a08ef7d8eb", null ],
+    [ "set_owners", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a3b072eb92ede8b3ed21e9c0326fb01ee", null ],
+    [ "set_proxy", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a61db188a61fd6bbc2521a402c639e0cb", null ],
+    [ "set_repos", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a9217ea51323588197591aa49ce037849", null ],
+    [ "distro", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#af050edb78e975106d1d31e5af407e4df", null ],
+    [ "enable_pxe_menu", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a6d756ead59180e8605e06d73092086b4", null ],
+    [ "kickstart_file", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a266154ca8aab8a92581d4151948db114", null ],
+    [ "name", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a29d6f6a59c72da2e4c80200470d0fd99", null ],
+    [ "owners", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a6aa211c3f39b85f028330a6f6c913efc", null ],
+    [ "proxy", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a4ad18eefe1a4e28d8e9ce7f814de93b3", null ],
+    [ "repos", "classcodebase_1_1_unified_stack_1_1masternode_1_1cobbler__profile_1_1_new__profile.html#a2d2d5582f7bc70246f617f55cdaaa5a6", null ]
+];

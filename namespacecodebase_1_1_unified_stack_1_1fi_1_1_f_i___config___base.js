@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1fi_1_1_f_i___config___base =
+[
+    [ "FIConfiguratorBase", "classcodebase_1_1_unified_stack_1_1fi_1_1_f_i___config___base_1_1_f_i_configurator_base.html", "classcodebase_1_1_unified_stack_1_1fi_1_1_f_i___config___base_1_1_f_i_configurator_base" ]
+];

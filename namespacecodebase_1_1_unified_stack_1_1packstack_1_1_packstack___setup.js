@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1packstack_1_1_packstack___setup =
+[
+    [ "PackStackConfigurator", "classcodebase_1_1_unified_stack_1_1packstack_1_1_packstack___setup_1_1_pack_stack_configurator.html", "classcodebase_1_1_unified_stack_1_1packstack_1_1_packstack___setup_1_1_pack_stack_configurator" ]
+];

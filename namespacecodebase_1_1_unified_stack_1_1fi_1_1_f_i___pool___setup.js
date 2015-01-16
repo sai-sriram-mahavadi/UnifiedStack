@@ -1,0 +1,4 @@
+var namespacecodebase_1_1_unified_stack_1_1fi_1_1_f_i___pool___setup =
+[
+    [ "FIPoolConfigurator", "classcodebase_1_1_unified_stack_1_1fi_1_1_f_i___pool___setup_1_1_f_i_pool_configurator.html", "classcodebase_1_1_unified_stack_1_1fi_1_1_f_i___pool___setup_1_1_f_i_pool_configurator" ]
+];
